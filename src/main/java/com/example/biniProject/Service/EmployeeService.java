@@ -4,14 +4,16 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.biniProject.Entity.Employee;
 import com.example.biniProject.Entity.WeeklyHours;
 import com.example.biniProject.Repository.EmployeeRepository;
-import com.example.biniProject.Repository.WeeklyHoursRepository;
 import com.example.biniProject.Repository.reformTypeRepository;
+import com.example.biniProject.Repository.WeeklyHoursRepository;;
+
 
 @Service
 public class EmployeeService {

@@ -63,36 +63,36 @@ public class WeeklyHoursController {
 		return weeklyHoursService.getLeftJobPercent(tz);
 	}
 
-	@GetMapping("/random")
-	public List<WeeklyHours> randomizeHours(@RequestParam(name="tz") String tz ,
-			@RequestParam(name="reformType") int reformType, 
-			@RequestParam(name="frontalHours") float frontalHours){
+//	@GetMapping("/random")
+//	public List<WeeklyHours> randomizeHours(@RequestParam(name="tz") String tz ,
+//			@RequestParam(name="reformType") int reformType, 
+//			@RequestParam(name="frontalHours") float frontalHours){
+//
+//		Employee emp = employeeService.findById(tz);
+//		calcHours calcHours = calcHoursService.getByFrontalHours(reformType,
+//				emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), 
+//				frontalHours);
+//
+//
+//
+//		return weeklyHoursService.RandomizeHours(tz, calcHours.getFrontalHours(), 
+//				calcHours.getPrivateHours(), calcHours.getPauseHours());
+//	}
 
-		Employee emp = employeeService.findById(tz);
-		calcHours calcHours = calcHoursService.getByFrontalHours(reformType,
-				emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), 
-				frontalHours);
-
-
-
-		return weeklyHoursService.RandomizeHours(tz, calcHours.getFrontalHours(), 
-				calcHours.getPrivateHours(), calcHours.getPauseHours());
-	}
-
-	@GetMapping("/random2")
-	public List<WeeklyHours> randomizeHours2(@RequestParam(name="tz") String tz ,
-			@RequestParam(name="employmentCode") int employmentCode, 
-			@RequestParam(name="frontalHours") float frontalHours){
-
-		Employee emp = employeeService.findById(tz);
-		calcHours calcHours = calcHoursService.getByFrontalHours(convertHoursService.findByCode(employmentCode),
-				emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), 
-				frontalHours);
-
-
-
-		return weeklyHoursService.RandomizeHours(tz, calcHours.getFrontalHours(), 
-				calcHours.getPrivateHours(), calcHours.getPauseHours());
-	}
+//	@GetMapping("/random2")
+//	public List<WeeklyHours> randomizeHours2(@RequestParam(name="tz") String tz ,
+//			@RequestParam(name="employmentCode") int employmentCode, 
+//			@RequestParam(name="frontalHours") float frontalHours){
+//
+//		Employee emp = employeeService.findById(tz);
+//		calcHours calcHours = calcHoursService.getByFrontalHours(convertHoursService.findByCode(employmentCode),
+//				emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), 
+//				frontalHours);
+//
+//
+//
+//		return weeklyHoursService.RandomizeHours(tz, calcHours.getFrontalHours(), 
+//				calcHours.getPrivateHours(), calcHours.getPauseHours());
+//	}
 
 }
