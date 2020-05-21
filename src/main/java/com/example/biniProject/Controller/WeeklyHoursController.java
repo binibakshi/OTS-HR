@@ -11,11 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.biniProject.Entity.Employee;
 import com.example.biniProject.Entity.WeeklyHours;
-import com.example.biniProject.Entity.calcHours;
-import com.example.biniProject.Service.CalcHoursService;
-import com.example.biniProject.Service.ConvertHoursService;
 import com.example.biniProject.Service.EmployeeService;
 import com.example.biniProject.Service.WeeklyHoursService;
 
@@ -26,12 +22,6 @@ public class WeeklyHoursController {
 
 	@Autowired
 	private WeeklyHoursService weeklyHoursService;
-
-	@Autowired
-	private CalcHoursService calcHoursService;
-
-	@Autowired
-	private ConvertHoursService convertHoursService;
 
 	@Autowired
 	private EmployeeService employeeService;
