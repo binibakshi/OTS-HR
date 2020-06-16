@@ -1,6 +1,7 @@
 package com.example.biniProject.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.biniProject.Entity.Employee;
 import com.example.biniProject.Entity.WeeklyHours;
+import com.example.biniProject.Exeption.DataNotFoundExeption;
 import com.example.biniProject.Repository.EmployeeRepository;
 import com.example.biniProject.Repository.reformTypeRepository;
 import com.example.biniProject.Repository.WeeklyHoursRepository;;
@@ -31,8 +33,8 @@ public class EmployeeService {
 	private reformTypeRepository reformTypeRepository;
 
 	public Employee save(Employee employee) {
-		// implemet save 6 rocord for each day
 		Calendar testDate = Calendar.getInstance();
+		employee.setBegda(testDate.getTime());
 		testDate.set(9999, Calendar.DECEMBER, 31);
 		employee.setEndda(testDate.getTime());
 		return emplyeeReposiroty.save(employee);
@@ -47,9 +49,10 @@ public class EmployeeService {
 	}
 	
 	public int getAgeHours(Date birthdate) {
-		LocalDate first = LocalDate.of( LocalDate.now().getYear() , 12 , 31 ) ;
-		LocalDate second = LocalDate.now();
-		long yearsDiff = java.time.temporal.ChronoUnit.YEARS.between( first , second);
+		@SuppressWarnings("deprecation")
+		long yearsDiff = ChronoUnit.YEARS.between(
+				LocalDate.of( birthdate.getYear() , 12 , 31 ) 
+				, LocalDate.now());
 		if(yearsDiff > 55) {
 			return 4;
 		}else if(yearsDiff < 50) {
@@ -60,7 +63,8 @@ public class EmployeeService {
 	}
 
 	public Employee findById(String id) {
-		return emplyeeReposiroty.findById(id).orElse(null);
+//		return emplyeeReposiroty.findById(id).orElse(null);
+		return emplyeeReposiroty.findById(id).orElseThrow(() -> new DataNotFoundExeption(id));
 	}
 
 	public Employee updateStatus(Employee employee) {

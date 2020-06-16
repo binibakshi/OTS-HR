@@ -36,23 +36,23 @@ public class WeeklyHoursController {
 		return weeklyHoursService.findById(tz);
 	}
 
-	@PostMapping("/new")
+	@PostMapping("/save")
 	public WeeklyHours newWeeklyHours(@RequestBody WeeklyHours WeeklyHours) {
 		return weeklyHoursService.save(WeeklyHours);
 	}
 
-	@PostMapping("/newSet")
+	@PostMapping("/saveAll")
 	public List<WeeklyHours> newWeeklyHours(@RequestParam(name="weeklyHours") List<WeeklyHours> weeklyHours,
 			@RequestParam(name="tz") String tz ) {
 
 		return weeklyHoursService.saveAll(weeklyHours, tz, this.employeeService.findById(tz).getReform_type());
 	}
 
-	@GetMapping("/leftJobPercent")
-	public float leftJobPercent(@RequestParam(name="id") String tz) {
-		return weeklyHoursService.getLeftJobPercent(tz);
-	}
-
+//	@GetMapping("/leftJobPercent")
+//	public float leftJobPercent(@RequestParam(name="id") String tz) {
+//		return weeklyHoursService.getLeftJobPercent(tz);
+//	}
+//
 //	@GetMapping("/random")
 //	public List<WeeklyHours> randomizeHours(@RequestParam(name="tz") String tz ,
 //			@RequestParam(name="reformType") int reformType, 

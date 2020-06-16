@@ -28,7 +28,7 @@ public class TeacherEmploymentDetailsController {
 	}
 
 	@PostMapping("/saveAll")
-	public List<TeacherEmploymentDetails> saveAll(@RequestBody List<TeacherEmploymentDetails> teacherEmploymentDetails){
+	public List<TeacherEmploymentDetails> saveAll(@RequestBody List<TeacherEmploymentDetails> teacherEmploymentDetails) {
 
 		return this.teacherEmploymentDetailsService.saveAll(teacherEmploymentDetails);
 	}
@@ -38,10 +38,11 @@ public class TeacherEmploymentDetailsController {
 		return this.teacherEmploymentDetailsService.getWeek(tz);
 	}
 
-	@GetMapping("/getByReform")
+	@GetMapping("/byReform")
 	public List<TeacherEmploymentDetails> getAllByReformType(@RequestParam(name="tz") String tz,
 			@RequestParam(name="mosadId") int mosadId,
 			@RequestParam(name="reformType") int reformType){
+		
 		return teacherEmploymentDetailsService.getAllByReformType(tz, mosadId, reformType);
 	}
 

@@ -13,7 +13,7 @@ import com.example.biniProject.Repository.reformTypeRepository;
 @Service
 public class WeeklyHoursService {
 	
-	private final float MAX_HOURS_IN_DAY = (float)9;
+//	private final float MAX_HOURS_IN_DAY = (float)9;
 	private final float MIN_JOB_PERCENT = (float)33.3;
 	
 	@Autowired
@@ -125,12 +125,12 @@ public class WeeklyHoursService {
 //	}
 	
 	
-	private void getExistHours(String tz, WeeklyHours[] weeklyHours) {
-		this.findAllByTz(tz).stream().forEach(Day -> {
-			weeklyHours[Day.getDay() - 1] = Day;
-		});
-		return;
-	}
+//	private void getExistHours(String tz, WeeklyHours[] weeklyHours) {
+//		this.findAllByTz(tz).stream().forEach(Day -> {
+//			weeklyHours[Day.getDay() - 1] = Day;
+//		});
+//		return;
+//	}
 	
 	// randomize hours between 0 to max hours to append(max is 8 in a day)
 //	private float getRandomHours(float currentHours, float hoursToSub, int day) {

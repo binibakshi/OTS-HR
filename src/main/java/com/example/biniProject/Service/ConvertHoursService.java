@@ -32,5 +32,14 @@ public class ConvertHoursService {
 		return this.convertHoursRepository.findAll().stream().
 				filter(i -> i.getReformType() == reformType ).map(i -> i.getCode()).collect(Collectors.toList());
 	}
+	
+	// get all the frontal codes
+	public List<Integer> getAllFrontal(){
+		return this.convertHoursRepository.findAll().
+										   stream().
+										   filter(el -> el.getHourType() == 1).
+										   map(i -> i.getCode()).
+										   collect(Collectors.toList());
+	}
 
 }

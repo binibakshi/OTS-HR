@@ -11,7 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>biniProject</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>biniProject</name>
 	<description>test project for Spring Boot</description>
 
@@ -65,6 +65,7 @@
 	</dependencies>
 
 	<build>
+	<finalName>ots-app</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

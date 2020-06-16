@@ -36,11 +36,11 @@ public class TeacherEmploymentDetails {
 	@Column(name="DAY")
 	private int day;
 
+	@Column(name="STATUS")
+	private char status;
+
 	@Column(name="HOURS")
 	private float hours;
-
-	@Column(name="JOB_PERCCENT")
-	private float jobPercent;
 
 	@Column(name="CREATE_BY")
 	private String createBy;
@@ -49,9 +49,9 @@ public class TeacherEmploymentDetails {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	public TeacherEmploymentDetails(int id, String tz, Date begda, Date endda, int mosadId, int empCode, int day,
-			float hours, float jobPercent, String createBy) {
+			float hours, String createBy) {
 		super();
 		Id = id;
 		this.tz = tz;
@@ -61,7 +61,6 @@ public class TeacherEmploymentDetails {
 		this.empCode = empCode;
 		this.day = day;
 		this.hours = hours;
-		this.jobPercent = jobPercent;
 		this.createBy = createBy;
 	}
 
@@ -75,11 +74,26 @@ public class TeacherEmploymentDetails {
 			this.empCode = teacherEmploymentDetails.getEmpCode();
 			this.day = teacherEmploymentDetails.getDay();
 			this.hours = teacherEmploymentDetails.getHours();
-			this.jobPercent = teacherEmploymentDetails.getJobPercent();
 			this.createBy = teacherEmploymentDetails.getCreateBy();
 		}
 	}
 
+
+	public TeacherEmploymentDetails(int id, String tz, Date begda, Date endda, int mosadId, int empCode, int day,
+			char status, float hours, String createBy) {
+		super();
+		Id = id;
+		this.tz = tz;
+		this.begda = begda;
+		this.endda = endda;
+		this.mosadId = mosadId;
+		this.empCode = empCode;
+		this.day = day;
+		this.status = status;
+		this.hours = hours;
+		this.createBy = createBy;
+	}
+	
 	public int getId() {
 		return Id;
 	}
@@ -136,20 +150,20 @@ public class TeacherEmploymentDetails {
 		this.day = day;
 	}
 
+	public char getStatus() {
+		return status;
+	}
+
+	public void setStatus(char status) {
+		this.status = status;
+	}
+
 	public float getHours() {
 		return hours;
 	}
 
 	public void setHours(float hours) {
 		this.hours = hours;
-	}
-
-	public float getJobPercent() {
-		return jobPercent;
-	}
-
-	public void setJobPercent(float jobPercent) {
-		this.jobPercent = jobPercent;
 	}
 
 	public String getCreateBy() {

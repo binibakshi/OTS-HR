@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.biniProject.Entity.Employee;
 import com.example.biniProject.Entity.calcHours;
 import com.example.biniProject.Repository.CalcHoursRepository;
 
@@ -14,6 +15,9 @@ public class CalcHoursService {
 
 	@Autowired
 	private CalcHoursRepository CalcHoursRepository;
+	
+	@Autowired
+	private EmployeeService employeeService;
 
 	public List<calcHours> findAll(){
 		return CalcHoursRepository.findAll();
@@ -52,6 +56,11 @@ public class CalcHoursService {
 		}else {
 			return calcHours.get(0);
 		}
+	}
+	
+	public calcHours getByFrontalTzReformType(String tz, float frontalHours, int reformType ) {
+		Employee emp = employeeService.findById(tz);
+		return this.getByFrontalHours(reformType, emp.isMother(),employeeService.getAgeHours(emp.getBirthDate()), frontalHours);
 	}
 	//	public float getJobPercent(int reformType, boolean isMother, int ageHours, float frontalHours) {
 	//		return CalcHoursRepository.findAll().stream()
