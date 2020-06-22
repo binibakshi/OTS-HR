@@ -18,7 +18,7 @@ public class GenericException extends RuntimeException {
 	}
 
 	public GenericException(String arg0) {
-		super("no data found for " + arg0);
+		super(arg0);
 		// TODO Auto-generated constructor stub
 	}
 

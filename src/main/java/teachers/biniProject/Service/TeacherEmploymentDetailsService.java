@@ -112,7 +112,7 @@ public class TeacherEmploymentDetailsService {
 					( teacherEmploymentDetails.get(i).getDay() == 5 && 
 					week[teacherEmploymentDetails.get(i).getDay()] > MAX_HOURS_FRIDAY )
 					) {
-				throw new GenericException("אי אפשר להזין יותר מ" + MAX_HOURS_PER_DAY + " שעות ביום" + i++);
+				throw new GenericException("אי אפשר להזין יותר מ" + MAX_HOURS_PER_DAY + " שעות ביום" + (i + 1));
 				//				return false;
 			}
 

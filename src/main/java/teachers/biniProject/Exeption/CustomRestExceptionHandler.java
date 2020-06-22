@@ -70,17 +70,17 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 				apiError, new HttpHeaders(), apiError.getStatus());
 	}
 	
-	@ExceptionHandler(DataNotFoundExeption.class)
-	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	public @ResponseBody ExceptionResponse handleResourceNotFound(final DataNotFoundExeption exception,
-			final HttpServletRequest request) {
-
-		ExceptionResponse error = new ExceptionResponse();
-		error.setErrorMessage(exception.getMessage());
-		error.callerURL(request.getRequestURI());
-
-		return error;
-	}
+//	@ExceptionHandler(GenericException.class)
+//	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+//	public @ResponseBody ExceptionResponse handleResourceNotFound(final GenericException exception,
+//			final HttpServletRequest request) {
+//
+//		ExceptionResponse error = new ExceptionResponse();
+//		error.setErrorMessage(exception.getMessage());
+//		error.callerURL(request.getRequestURI());
+//
+//		return error;
+//	}
 
 	@ExceptionHandler(GenericException.class)
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
