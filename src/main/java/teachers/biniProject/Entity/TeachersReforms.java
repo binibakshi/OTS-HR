@@ -16,8 +16,8 @@ public class TeachersReforms {
 	@Column(name="ID")
 	private int Id;
 	
-	@Column(name="TZ")
-	private String tz;
+	@Column(name="EMP_ID")
+	private String empId;
 	
 	@Column(name="REFORM_TYPE")
 	private int reformType;
@@ -27,16 +27,10 @@ public class TeachersReforms {
 		// TODO Auto-generated constructor stub
 	}
 
-	public TeachersReforms(String tz, int reformType) {
-		super();
-		this.tz = tz;
-		this.reformType = reformType;
-	}
-
-	public TeachersReforms(int id, String tz, int reformType) {
+	public TeachersReforms(int id, String empId, int reformType) {
 		super();
 		Id = id;
-		this.tz = tz;
+		this.empId = empId;
 		this.reformType = reformType;
 	}
 
@@ -48,12 +42,12 @@ public class TeachersReforms {
 		Id = id;
 	}
 
-	public String getTz() {
-		return tz;
+	public String getEmpId() {
+		return empId;
 	}
 
-	public void setTz(String tz) {
-		this.tz = tz;
+	public void setEmpId(String empId) {
+		this.empId = empId;
 	}
 
 	public int getReformType() {
@@ -62,6 +56,6 @@ public class TeachersReforms {
 
 	public void setReformType(int reformType) {
 		this.reformType = reformType;
-	}
+	}	
 	
 }

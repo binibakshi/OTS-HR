@@ -23,7 +23,7 @@ public class helperService {
 	public TeachersReforms save(TeachersReforms teachersReforms) {
 
 		if (this.teacherReformsRepository.findAll().stream().
-				filter(el ->el.getTz().equals(teachersReforms.getTz())).count() > 1) {
+				filter(el ->el.getEmpId().equals(teachersReforms.getEmpId())).count() > 1) {
 			throw new GenericException("אי אפשר להזין  יותר מ2  רפורמות לעובד");
 		}
 		return teacherReformsRepository.save(teachersReforms);
@@ -31,7 +31,7 @@ public class helperService {
 
 	public float maxJobPercentById(String tz) {
 		List<Integer> cuReforms = this.teacherReformsRepository.findAll().stream().
-				filter(el -> el.getTz().equals(tz)).
+				filter(el -> el.getEmpId().equals(tz)).
 				map(el -> el.getReformType()).
 				collect(Collectors.toList());
 

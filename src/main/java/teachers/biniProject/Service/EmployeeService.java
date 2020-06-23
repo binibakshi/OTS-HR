@@ -14,6 +14,7 @@ import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Entity.WeeklyHours;
 import teachers.biniProject.Exeption.DataNotFoundExeption;
 import teachers.biniProject.Repository.EmployeeRepository;
+import teachers.biniProject.Repository.MosaddotRepository;
 import teachers.biniProject.Repository.WeeklyHoursRepository;
 import teachers.biniProject.Repository.reformTypeRepository;;
 
@@ -32,6 +33,9 @@ public class EmployeeService {
 
 	@Autowired
 	private reformTypeRepository reformTypeRepository;
+	
+	@Autowired
+	private MosaddotRepository mosaddotRepository;
 
 	public Employee save(Employee employee) {
 		Calendar testDate = Calendar.getInstance();
@@ -72,7 +76,7 @@ public class EmployeeService {
 		char status = employee.getStatus();
 
 		// check if there is change at all
-		if(emplyeeReposiroty.findById(employee.getId()).equals(status)) {
+		if(emplyeeReposiroty.findById(employee.getEmpId()).equals(status)) {
 			return null;
 		}
 
@@ -81,7 +85,7 @@ public class EmployeeService {
 			return emplyeeReposiroty.save(employee);
 		}
 		else if(status == 'D'){
-			this.onDenyEmployee(employee.getId());
+			this.onDenyEmployee(employee.getEmpId());
 			return emplyeeReposiroty.save(employee);
 		}else {
 			return null;
@@ -108,23 +112,79 @@ public class EmployeeService {
 									  collect(Collectors.toList());
 	}
 	
+	public List<Employee> getByAnyName(String name){
+		return this.emplyeeReposiroty.findAll().stream().
+									  filter(el -> el.getFirstName().equals(name) ||
+											       el.getLastName().equals(name)).
+									  collect(Collectors.toList());
+	}
+	
 	public List<Employee> getByFullName(String firstName, String lastName){
 		return this.emplyeeReposiroty.findAll().stream().
 									  filter(el -> el.getFirstName().equals(firstName) && 
 											       el.getLastName().equals(lastName)).
 									  collect(Collectors.toList());
 	}
+	
+	public List<Employee> getByIsmother(boolean isMother){
+		return this.emplyeeReposiroty.findAll().stream().
+									  filter(el -> el.isMother() == isMother).
+									  collect(Collectors.toList());
+	}
+	
+	public List<Employee> getByGender(char gender){
+		return this.emplyeeReposiroty.findAll().stream().
+									  filter(el -> el.getGender() == gender).
+									  collect(Collectors.toList());
+	}
+	
+	public List<Employee> getByStratDates(Date startDate, Date endDate){
+		return this.emplyeeReposiroty.findAll().stream().
+									  filter(el -> startDate.before(el.getBegda()) &&
+											       endDate.after(el.getBegda())).
+									  collect(Collectors.toList());	  
+	}
+	
+	public List<Employee> getByEndDates(Date startDate, Date endDate){
+		return this.emplyeeReposiroty.findAll().stream().
+									  filter(el -> startDate.before(el.getEndda()) &&
+											       endDate.after(el.getEndda())).
+									  collect(Collectors.toList());	  
+	}
+	
+	@SuppressWarnings("deprecation")
+	public List<Employee> getByYear(int currYear){
+		return this.emplyeeReposiroty.findAll().stream().
+									  filter(el -> el.getBegda().getYear() <= currYear &&
+											       el.getEndda().getYear() >= currYear).
+									  collect(Collectors.toList());
+	}
+	
+	public List<Employee> getMossad(int mossadId){
+	List<String> empInMossad = this.mosaddotRepository.findAll().stream().
+														filter(el -> el.getMosadId() == mossadId).
+														map(el -> el.getEmpId()).
+														collect(Collectors.toList());
+	
+	return this.emplyeeReposiroty.findAll().stream().
+									  filter(el -> empInMossad.contains(el.getEmpId()) ).
+									  collect(Collectors.toList());
+	}
+	
+	
+	
+	
 
 	private void onApprovedEmployee(Employee employee) {
 
 		// if for some reason there is already record in so don't create new
-		if(weeklyHoursService.findAllByTz(employee.getId()).isEmpty() == false) {
+		if(weeklyHoursService.findAllByTz(employee.getEmpId()).isEmpty() == false) {
 			return;
 		}
 
 		// create 6 empty records for each day in week
 		for(int i = 1; i < 7; i++) {
-			weeklyHoursRepository.save(new WeeklyHours(employee.getId(), 
+			weeklyHoursRepository.save(new WeeklyHours(employee.getEmpId(), 
 					employee.getBegda(), employee.getEndda(), 0, 
 					0, i, 0,
 					0, 0, employee.getCreateBy(), 0));

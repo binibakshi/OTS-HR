@@ -19,18 +19,27 @@ public class Mosaddot {
 	@Column(name="MOSAD_ID")
 	private int mosadId;
 	
-	@Column(name="TZ")
-	private String tz;
+	@Column(name="EMP_ID")
+	private String empId;
 	
 	public Mosaddot() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Mosaddot(int mosadId, String tz) {
+	public Mosaddot(int id, int mosadId, String empId) {
 		super();
+		Id = id;
 		this.mosadId = mosadId;
-		this.tz = tz;
+		this.empId = empId;
+	}
+
+	public int getId() {
+		return Id;
+	}
+
+	public void setId(int id) {
+		Id = id;
 	}
 
 	public int getMosadId() {
@@ -41,20 +50,14 @@ public class Mosaddot {
 		this.mosadId = mosadId;
 	}
 
-	public String getTz() {
-		return tz;
+	public String getEmpId() {
+		return empId;
 	}
 
-	public void setTz(String tz) {
-		this.tz = tz;
+	public void setEmpId(String empId) {
+		this.empId = empId;
 	}
 
-
-
-	
-	
-	
-	
 	
 	
 }

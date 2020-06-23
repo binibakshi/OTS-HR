@@ -34,12 +34,12 @@ public class TeacherEmploymentDetailsController {
 	}
 
 	@GetMapping("weekSum")
-	public float[] getAllWeekHours(@RequestParam(name="tz") String tz) {
+	public float[] getAllWeekHours(@RequestParam(name="empId") String tz) {
 		return this.teacherEmploymentDetailsService.getWeek(tz);
 	}
 
 	@GetMapping("/byReform")
-	public List<TeacherEmploymentDetails> getAllByReformType(@RequestParam(name="tz") String tz,
+	public List<TeacherEmploymentDetails> getAllByReformType(@RequestParam(name="empId") String tz,
 			@RequestParam(name="mosadId") int mosadId,
 			@RequestParam(name="reformType") int reformType){
 		

@@ -18,8 +18,8 @@ public class TeacherEmploymentDetails {
 	@Column(name="record_key")
 	private int Id;
 
-	@Column(name="TZ")
-	private String tz;
+	@Column(name="EMP_ID")
+	private String empId;
 
 	@Column(name="BEGDA")
 	private Date begda;
@@ -54,7 +54,7 @@ public class TeacherEmploymentDetails {
 			float hours, String createBy) {
 		super();
 		Id = id;
-		this.tz = tz;
+		this.empId = tz;
 		this.begda = begda;
 		this.endda = endda;
 		this.mosadId = mosadId;
@@ -67,7 +67,7 @@ public class TeacherEmploymentDetails {
 	public TeacherEmploymentDetails(TeacherEmploymentDetails teacherEmploymentDetails) {
 		if(teacherEmploymentDetails != null) {
 			Id = teacherEmploymentDetails.getId();
-			this.tz = teacherEmploymentDetails.getTz();
+			this.empId = teacherEmploymentDetails.getEmpId();
 			this.begda = teacherEmploymentDetails.getBegda();
 			this.endda = teacherEmploymentDetails.getEndda();
 			this.mosadId = teacherEmploymentDetails.getMosadId();
@@ -83,7 +83,7 @@ public class TeacherEmploymentDetails {
 			char status, float hours, String createBy) {
 		super();
 		Id = id;
-		this.tz = tz;
+		this.empId = tz;
 		this.begda = begda;
 		this.endda = endda;
 		this.mosadId = mosadId;
@@ -93,7 +93,7 @@ public class TeacherEmploymentDetails {
 		this.hours = hours;
 		this.createBy = createBy;
 	}
-	
+
 	public int getId() {
 		return Id;
 	}
@@ -102,12 +102,12 @@ public class TeacherEmploymentDetails {
 		Id = id;
 	}
 
-	public String getTz() {
-		return tz;
+	public String getEmpId() {
+		return empId;
 	}
 
-	public void setTz(String tz) {
-		this.tz = tz;
+	public void setEmpId(String empId) {
+		this.empId = empId;
 	}
 
 	public Date getBegda() {
@@ -173,6 +173,7 @@ public class TeacherEmploymentDetails {
 	public void setCreateBy(String createBy) {
 		this.createBy = createBy;
 	}
-
+	
+	
 
 }

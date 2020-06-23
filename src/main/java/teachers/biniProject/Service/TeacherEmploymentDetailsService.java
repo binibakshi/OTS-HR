@@ -84,7 +84,7 @@ public class TeacherEmploymentDetailsService {
 		// get the current reform type
 		currReformType = this.convertHoursService.findByCode(teacherEmploymentDetails.get(0).getEmpCode());
 
-		tz = teacherEmploymentDetails.get(0).getTz();
+		tz = teacherEmploymentDetails.get(0).getEmpId();
 		employee = this.employeeService.findById(tz);
 		this.checkHoursMatch(teacherEmploymentDetails, tz, employee.isMother(),
 				             employeeService.getAgeHours(employee.getBirthDate()), currReformType);
@@ -138,7 +138,7 @@ public class TeacherEmploymentDetailsService {
 
 		// get all exist hours (without this current reform, hours to avoid duplication)
 		this.teacherEmploymentDetailsRepository.findAll().stream().
-		filter(el -> el.getTz().equals(tz) &&
+		filter(el -> el.getEmpId().equals(tz) &&
 				this.convertHoursService.getAllByReform(currReformType).contains(el.getEmpCode()) == false).
 		forEach(el -> { week[el.getDay()] += el.getHours();
 		});
@@ -146,13 +146,13 @@ public class TeacherEmploymentDetailsService {
 
 	public List<TeacherEmploymentDetails> getEmpDay(String tz, int day) {
 		return this.teacherEmploymentDetailsRepository.findAll().stream().
-				filter(i -> i.getTz().equals(tz) &&
+				filter(i -> i.getEmpId().equals(tz) &&
 						i.getDay() == day).collect(Collectors.toList());
 	}
 
 	public float getExistHours(String tz) {
 		return (float)this.teacherEmploymentDetailsRepository.findAll().stream().
-				filter(i -> i.getTz().equals(tz)).mapToDouble(i -> i.getHours()).sum();
+				filter(i -> i.getEmpId().equals(tz)).mapToDouble(i -> i.getHours()).sum();
 	}
 
 	public float[] getWeek(String tz){
@@ -166,12 +166,12 @@ public class TeacherEmploymentDetailsService {
 	public boolean updateIfExist(TeacherEmploymentDetails teacherEmploymentDetails) {
 
 		TeacherEmploymentDetails temp =  new TeacherEmploymentDetails(teacherEmploymentDetailsRepository.findAll().stream().
-				filter(i->i.getTz().equals(teacherEmploymentDetails.getTz()) &&
+				filter(i->i.getEmpId().equals(teacherEmploymentDetails.getEmpId()) &&
 						i.getMosadId() == teacherEmploymentDetails.getMosadId()  &&
 						i.getDay() == teacherEmploymentDetails.getDay() &&
 						i.getEmpCode() == teacherEmploymentDetails.getEmpCode()).findFirst().orElse(null));
 
-		if(temp.getTz() == null) {
+		if(temp.getEmpId() == null) {
 			return false;
 		}
 		if(temp.getHours() == teacherEmploymentDetails.getHours()) {
@@ -197,7 +197,7 @@ public class TeacherEmploymentDetailsService {
 
 		return this.teacherEmploymentDetailsRepository.findAll().
 				stream().
-				filter(i-> i.getTz().equals(tz) &&
+				filter(i-> i.getEmpId().equals(tz) &&
 						i.getMosadId() == mosadId &&
 						convertHoursService.getAllByReform(reformType).
 						contains(i.getEmpCode())
@@ -235,7 +235,7 @@ public class TeacherEmploymentDetailsService {
 
 		// get the other exist codes
 		frontalHours +=  this.teacherEmploymentDetailsRepository.findAll().
-				stream().filter(el -> el.getTz().equals(tz) &&
+				stream().filter(el -> el.getEmpId().equals(tz) &&
 						this.convertHoursService.getAllByReform(currReformType).contains(el.getEmpCode()) == true &&
 						currCodes.contains(el.getEmpCode()) == false ).
 				mapToDouble(i -> i.getHours()).

@@ -12,8 +12,8 @@ import javax.persistence.Id;
 public class Employee {
 
 	@Id
-	@Column(name="TZ")
-	private String Id;
+	@Column(name="EMP_ID")
+	private String empId;
 	
 	@Column(name="BEGDA")
 	private Date begda;
@@ -44,16 +44,16 @@ public class Employee {
 	
 	@Column(name="STATUS")
 	private char status;
-	
+
 	public Employee() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Employee(String id, Date begda, Date endda, String firstName, String lastName, Date birthDate, char gender,
-			boolean isMother, int reform_type, String createBy, char status) {
+	public Employee(String empId, Date begda, Date endda, String firstName, String lastName, Date birthDate,
+			char gender, boolean isMother, int reform_type, String createBy, char status) {
 		super();
-		Id = id;
+		this.empId = empId;
 		this.begda = begda;
 		this.endda = endda;
 		this.firstName = firstName;
@@ -66,12 +66,12 @@ public class Employee {
 		this.status = status;
 	}
 
-	public String getId() {
-		return Id;
+	public String getEmpId() {
+		return empId;
 	}
 
-	public void setId(String id) {
-		Id = id;
+	public void setEmpId(String empId) {
+		this.empId = empId;
 	}
 
 	public Date getBegda() {
@@ -153,6 +153,8 @@ public class Employee {
 	public void setStatus(char status) {
 		this.status = status;
 	}
+	
+	
 
 	
 	
