@@ -40,12 +40,12 @@ public class CalcHoursController {
 	}
 	
 	@GetMapping("/byId")
-	public calcHours getByFrontal(@RequestParam(name="tz") String tz ,
+	public List<calcHours> getByFrontal(@RequestParam(name="tz") String tz ,
 			@RequestParam(name="reformType") int employmentCode, 
 			@RequestParam(name="frontalHours") float frontalHours){
 
 		Employee emp = employeeService.findById(tz);
-		return calcHoursService.getByFrontalHours(employmentCode,
+		return (List<calcHours>)calcHoursService.getByFrontalHours(employmentCode,
 				emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), 
 				frontalHours);
 		

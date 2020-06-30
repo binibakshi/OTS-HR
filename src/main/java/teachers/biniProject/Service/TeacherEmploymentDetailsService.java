@@ -87,7 +87,7 @@ public class TeacherEmploymentDetailsService {
 		tz = teacherEmploymentDetails.get(0).getEmpId();
 		employee = this.employeeService.findById(tz);
 		this.checkHoursMatch(teacherEmploymentDetails, tz, employee.isMother(),
-				             employeeService.getAgeHours(employee.getBirthDate()), currReformType);
+				employeeService.getAgeHours(employee.getBirthDate()), currReformType);
 
 		// TODO when Authorization is up check if administration skip those checks
 		this.checkMaxHoursInDay(teacherEmploymentDetails, tz, currReformType);
@@ -136,10 +136,12 @@ public class TeacherEmploymentDetailsService {
 
 	public void getWeeklyHours(float[] week, String tz, int currReformType) {
 
+		List<Integer> relevantCodes = this.convertHoursService.getAllByReform(currReformType);
+
 		// get all exist hours (without this current reform, hours to avoid duplication)
 		this.teacherEmploymentDetailsRepository.findAll().stream().
 		filter(el -> el.getEmpId().equals(tz) &&
-				this.convertHoursService.getAllByReform(currReformType).contains(el.getEmpCode()) == false).
+				relevantCodes.contains(el.getEmpCode()) == false).
 		forEach(el -> { week[el.getDay()] += el.getHours();
 		});
 	}
@@ -195,12 +197,13 @@ public class TeacherEmploymentDetailsService {
 
 	public List<TeacherEmploymentDetails> getAllByReformType(String tz, int mosadId, int reformType){
 
+		List<Integer> relevantCodes = this.convertHoursService.getAllByReform(reformType);
+
 		return this.teacherEmploymentDetailsRepository.findAll().
 				stream().
 				filter(i-> i.getEmpId().equals(tz) &&
 						i.getMosadId() == mosadId &&
-						convertHoursService.getAllByReform(reformType).
-						contains(i.getEmpCode())
+						relevantCodes.contains(i.getEmpCode())
 						).
 				collect(Collectors.toList());
 
@@ -220,23 +223,25 @@ public class TeacherEmploymentDetailsService {
 		maxJobPercet = helperService.maxJobPercentById(tz);
 
 		currReformType = this.convertHoursService.findByCode(employmentDetails.get(0).getEmpCode());
+		
+		List<Integer> relevantCodes = this.convertHoursService.getAllByReform(currReformType);
 
 		// get the current codes (to not loop at them...)
 		final List<Integer> currCodes = employmentDetails.stream().
-				filter(el -> this.convertHoursService.getAllByReform(currReformType).contains(el.getEmpCode()) == true ).
+				filter(el -> relevantCodes.contains(el.getEmpCode()) == true ).
 				map(i -> i.getEmpCode()).distinct().
 				collect(Collectors.toList());
 
 		// get the current frontal hours of the sent reform type (always send from the client for each change)
 		frontalHours += employmentDetails.stream().
-				filter(el -> this.convertHoursService.getAllByReform(currReformType).contains(el.getEmpCode()) == true ).
+				filter(el ->relevantCodes.contains(el.getEmpCode()) == true ).
 				mapToDouble(i -> i.getHours()).
 				sum();
 
 		// get the other exist codes
 		frontalHours +=  this.teacherEmploymentDetailsRepository.findAll().
 				stream().filter(el -> el.getEmpId().equals(tz) &&
-						this.convertHoursService.getAllByReform(currReformType).contains(el.getEmpCode()) == true &&
+						relevantCodes.contains(el.getEmpCode()) == true &&
 						currCodes.contains(el.getEmpCode()) == false ).
 				mapToDouble(i -> i.getHours()).
 				sum();
@@ -253,20 +258,25 @@ public class TeacherEmploymentDetailsService {
 			boolean isMother, int ageHours,int currReformType) {
 		float frontalHours, privateHours, pauseHours;
 		calcHours calcHours;
-
+		
 		// get the hours by type(frontal = 1/private = 2/pause = 3)
+		List<Integer> frontalCodes = this.convertHoursService.getHoursByType(1);
+		List<Integer> privateCodes = this.convertHoursService.getHoursByType(2);
+		List<Integer> pauseCodes = this.convertHoursService.getHoursByType(3);
+
+		
 		frontalHours = (float) employmentDetails.stream().
-				filter(el -> this.convertHoursService.getHoursByType(1).contains(el.getEmpCode())).
+				filter(el -> frontalCodes.contains(el.getEmpCode())).
 				mapToDouble(i -> i.getHours()).
 				sum();
 
 		privateHours = (float) employmentDetails.stream().
-				filter(el -> this.convertHoursService.getHoursByType(2).contains(el.getEmpCode())).
+				filter(el -> privateCodes.contains(el.getEmpCode())).
 				mapToDouble(i -> i.getHours()).
 				sum();
 
 		pauseHours = (float) employmentDetails.stream().
-				filter(el -> this.convertHoursService.getHoursByType(3).contains(el.getEmpCode())).
+				filter(el -> pauseCodes.contains(el.getEmpCode())).
 				mapToDouble(i -> i.getHours()).
 				sum();
 

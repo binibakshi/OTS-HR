@@ -24,10 +24,8 @@ public class CalcHoursService {
 	}
 
 	public List<calcHours> getEmployeeOptions(int reformType, boolean isMother, int ageHours) {
-		return CalcHoursRepository.findAll().stream()
-				.filter(record -> record.getReformType() == reformType && 
-				record.getAgeHours() == ageHours &&
-				record.isMother() == isMother).collect(Collectors.toList());
+
+		return CalcHoursRepository.option(isMother, ageHours, reformType);
 
 	}
 

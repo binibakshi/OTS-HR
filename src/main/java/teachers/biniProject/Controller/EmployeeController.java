@@ -30,11 +30,11 @@ public class EmployeeController {
 	}
 	
 	@GetMapping("/byId")
-	public Employee getEmployee(@RequestParam(name="empId") String id) {
+	public List<Employee> getEmployee(@RequestParam(name="empId") String id) {
 //		if (employeeService.findById(id) == null) {
 //			throw new DataNotFoundExeption("employee with " + id + "not found");
 //		}
-		return employeeService.findById(id);
+		return (List<Employee>)employeeService.findById(id);
 	}
 	
 	@PostMapping("/save")
@@ -85,6 +85,12 @@ public class EmployeeController {
 		return this.employeeService.getByGender(gender);
 	}
 	
+	@GetMapping("/byMossad")
+	public List<Employee> getMossad(@RequestParam(name="year") int mossadId){
+
+		return this.employeeService.getMossad(mossadId);
+	}
+	
 	@GetMapping("/byStrartDate")
 	public List<Employee> getByStratDates(@RequestParam(name="minStartDate") Date startDate,
 									  @RequestParam(name="maxStartDate") Date endDate
@@ -101,11 +107,7 @@ public class EmployeeController {
 		return this.employeeService.getByStratDates(startDate, endDate);
 	}
 	
-	@GetMapping("/byMossad")
-	public List<Employee> getMossad(@RequestParam(name="year") int mossadId){
 
-		return this.employeeService.getMossad(mossadId);
-	}
 	
 	
 	
