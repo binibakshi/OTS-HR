@@ -1,16 +1,15 @@
 package teachers.biniProject.Controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Entity.TeachersReforms;
 import teachers.biniProject.Repository.EmployeeRepository;
 import teachers.biniProject.Resources.structForSelection;
 import teachers.biniProject.Service.helperService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin
 @RestController

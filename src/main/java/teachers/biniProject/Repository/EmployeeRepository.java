@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import teachers.biniProject.Entity.Employee;
 
-import java.util.Date;
 import java.util.List;
 
 public interface EmployeeRepository extends JpaRepository<Employee, String> {

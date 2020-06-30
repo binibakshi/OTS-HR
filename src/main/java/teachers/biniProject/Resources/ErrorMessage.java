@@ -1,9 +1,9 @@
 package teachers.biniProject.Resources;
 
+import org.springframework.http.HttpStatus;
+
 import java.util.Arrays;
 import java.util.List;
-
-import org.springframework.http.HttpStatus;
 
 public class ErrorMessage {
 	

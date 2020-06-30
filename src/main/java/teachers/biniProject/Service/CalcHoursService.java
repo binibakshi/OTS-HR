@@ -1,14 +1,13 @@
 package teachers.biniProject.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Entity.calcHours;
 import teachers.biniProject.Repository.CalcHoursRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CalcHoursService {

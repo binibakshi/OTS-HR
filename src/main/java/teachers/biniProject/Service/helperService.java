@@ -1,14 +1,13 @@
 package teachers.biniProject.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import teachers.biniProject.Entity.TeachersReforms;
 import teachers.biniProject.Exeption.GenericException;
 import teachers.biniProject.Repository.TeacherReformsRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class helperService {

@@ -1,11 +1,6 @@
 package teachers.biniProject.Entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "MOSSADOT")
@@ -17,7 +12,7 @@ public class Mosaddot {
 	private int Id;
 	
 	@Column(name="MOSAD_ID")
-	private int mosadId;
+	private int mossadId;
 	
 	@Column(name="EMP_ID")
 	private String empId;
@@ -27,10 +22,10 @@ public class Mosaddot {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Mosaddot(int id, int mosadId, String empId) {
+	public Mosaddot(int id, int mossadId, String empId) {
 		super();
 		Id = id;
-		this.mosadId = mosadId;
+		this.mossadId = mossadId;
 		this.empId = empId;
 	}
 
@@ -42,12 +37,12 @@ public class Mosaddot {
 		Id = id;
 	}
 
-	public int getMosadId() {
-		return mosadId;
+	public int getMossadId() {
+		return mossadId;
 	}
 
-	public void setMosadId(int mosadId) {
-		this.mosadId = mosadId;
+	public void setMossadId(int mossadId) {
+		this.mossadId = mossadId;
 	}
 
 	public String getEmpId() {
