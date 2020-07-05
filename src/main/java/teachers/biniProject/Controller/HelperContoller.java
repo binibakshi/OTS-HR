@@ -35,6 +35,7 @@ public class HelperContoller {
 	@GetMapping("/query")
 	public List<Employee> getForTest(@RequestBody structForSelection structForSelection){
 		return this.EmployeeRepository.findByTest(structForSelection.getEmpId(),
+													structForSelection.getMossadId(),
 													structForSelection.getName(),
 													structForSelection.getName(),
 				structForSelection.getGender()
