@@ -2,40 +2,31 @@ package teachers.biniProject.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import teachers.biniProject.Entity.Mosaddot;
-import teachers.biniProject.Repository.MosaddotRepository;
+import teachers.biniProject.Entity.Mossadot;
+import teachers.biniProject.Repository.MossadotRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/mossadot")
 public class MossadotController {
 
     @Autowired
-    private MosaddotRepository mosaddotRepository;
+    private MossadotRepository mossadotRepository;
 
-    @PostMapping("/save")
-    public List<Mosaddot> save(@RequestBody Mosaddot mosaddot) {
-        return (List<Mosaddot>) this.mosaddotRepository.save(mosaddot);
+    @GetMapping("/all")
+    public List<Mossadot> getAll() {
+        return this.mossadotRepository.findAll();
     }
 
     @GetMapping("/byId")
-    public List<Mosaddot> getByEmpId(@RequestParam("empId") String empId) {
-        return this.mosaddotRepository.findAll().stream().
-                filter(el -> el.getEmpId() == empId).
-                collect(Collectors.toList());
+    public Mossadot getById(@RequestParam(name = "mossadId") int mossadId) {
+        return this.mossadotRepository.findById(mossadId).orElse(null);
     }
 
-    @GetMapping("/byMossad")
-    public List<Mosaddot> getByMossadId(@RequestParam("mossadId") int mossadId) {
-        return this.mosaddotRepository.findAll().stream().
-                filter(el -> el.getMossadId() == mossadId).
-                collect(Collectors.toList());
-    }
-
-    @GetMapping("/all")
-    public List<Mosaddot> getAll() {
-        return this.mosaddotRepository.findAll();
+    @PostMapping("/save")
+    public Mossadot save(@RequestBody Mossadot mossad) {
+        return this.mossadotRepository.save(mossad);
     }
 }

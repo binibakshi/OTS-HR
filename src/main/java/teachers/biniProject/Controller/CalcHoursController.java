@@ -29,7 +29,7 @@ public class CalcHoursController {
 	
 	@GetMapping("/options")
 	public List<calcHours> getEmpOptions(@RequestParam(name="reformType") int reformType, 
-										 @RequestParam(name="tz") String tz ){
+										 @RequestParam(name="empId") String tz ){
 		
 		Employee emp = employeeService.findById(tz);
 		

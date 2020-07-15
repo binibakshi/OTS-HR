@@ -3,10 +3,9 @@ package teachers.biniProject.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.Employee;
-import teachers.biniProject.Entity.WeeklyHours;
 import teachers.biniProject.Exeption.DataNotFoundExeption;
+import teachers.biniProject.Repository.EmpToMossadRepository;
 import teachers.biniProject.Repository.EmployeeRepository;
-import teachers.biniProject.Repository.MosaddotRepository;
 import teachers.biniProject.Repository.WeeklyHoursRepository;
 import teachers.biniProject.Repository.reformTypeRepository;
 
@@ -36,7 +35,7 @@ public class EmployeeService {
     private reformTypeRepository reformTypeRepository;
 
     @Autowired
-    private MosaddotRepository mosaddotRepository;
+    private EmpToMossadRepository empToMossadRepository;
 
     public Employee save(Employee employee) {
         Calendar testDate = Calendar.getInstance();
@@ -161,7 +160,7 @@ public class EmployeeService {
     }
 
     public List<Employee> getMossad(int mossadId) {
-        List<String> empInMossad = this.mosaddotRepository.findAll().stream().
+        List<String> empInMossad = this.empToMossadRepository.findAll().stream().
                 filter(el -> el.getMossadId() == mossadId).
                 map(el -> el.getEmpId()).
                 collect(Collectors.toList());
@@ -173,24 +172,8 @@ public class EmployeeService {
 
 
     private void onApprovedEmployee(Employee employee) {
-
-        // if for some reason there is already record in so don't create new
-        if (weeklyHoursService.findAllByTz(employee.getEmpId()).isEmpty() == false) {
-            return;
-        }
-
-        // create 6 empty records for each day in week
-        for (int i = 1; i < 7; i++) {
-            weeklyHoursRepository.save(new WeeklyHours(employee.getEmpId(),
-                    employee.getBegda(), employee.getEndda(), 0,
-                    0, i, 0,
-                    0, 0, employee.getCreateBy(), 0));
-        }
     }
 
     private void onDenyEmployee(String tz) {
-        List<WeeklyHours> weeklyHoursToDelete = weeklyHoursService.findAllByTz(tz);
-
-        weeklyHoursRepository.deleteAll(weeklyHoursToDelete);
     }
 }
