@@ -47,6 +47,14 @@ public class TeacherEmploymentDetailsService {
         return teacherEmploymentDetailsRepository.findById(id).orElse(null);
     }
 
+    public void deleteByEmpId(String empId) {
+        this.teacherEmploymentDetailsRepository.deleteByEmpId(empId);
+    }
+
+    public void deleteByEmpIdAndMossadId(String empId, int mossadId) {
+        this.teacherEmploymentDetailsRepository.deleteByEmpIdAndMossad(empId, mossadId);
+    }
+
     public TeacherEmploymentDetails save(TeacherEmploymentDetails teacherEmploymentDetails) {
         Calendar calendar = Calendar.getInstance();
         teacherEmploymentDetails.setBegda(calendar.getTime());
@@ -280,7 +288,7 @@ public class TeacherEmploymentDetailsService {
         currHoursPerMossad = mossadotRepository.findById(teacherEmploymentDetails.get(0).getMosadId()
         ).get().getCurrHours();
 
-        maxHoursPerMossad = currHoursPerMossad = mossadotRepository.findById(teacherEmploymentDetails.get(0).getMosadId()
+        maxHoursPerMossad = mossadotRepository.findById(teacherEmploymentDetails.get(0).getMosadId()
         ).get().getMaxHours();
 
         if ((newHours + currHoursPerMossad) > maxHoursPerMossad) {
@@ -316,6 +324,9 @@ public class TeacherEmploymentDetailsService {
 
         calcHours = this.calcHourService.getByFrontalHours(currReformType, isMother, ageHours, frontalHours);
 
+        if (calcHours == null) {
+            throw new GenericException("לא קיים פיצול שעות עבור נתונים שהוזנו");
+        }
         if (calcHours.getPauseHours() != pauseHours) {
             throw new GenericException("אי תאימות בשעות נא להזין " + calcHours.getPauseHours() + "שעות שהייה");
 

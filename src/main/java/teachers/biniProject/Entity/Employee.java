@@ -10,151 +10,136 @@ import java.util.Date;
 @Table(name = "EMPLOYEES")
 public class Employee {
 
-	@Id
-	@Column(name="EMP_ID")
-	private String empId;
-	
-	@Column(name="BEGDA")
-	private Date begda;
-	
-	@Column(name="ENDDA")
-	private Date endda;
+    @Id
+    @Column(name = "EMP_ID")
+    private String empId;
 
-	@Column(name="FIRST_NAME")
-	private String firstName;
+    @Column(name = "BEGDA")
+    private Date begda;
 
-	@Column(name="LAST_NAME")
-	private String lastName;
+    @Column(name = "ENDDA")
+    private Date endda;
 
-	@Column(name="BIRTH_DATE")
-	private Date birthDate;
+    @Column(name = "FIRST_NAME")
+    private String firstName;
 
-	@Column(name="GENDER")
-	private char gender;
+    @Column(name = "LAST_NAME")
+    private String lastName;
 
-	@Column(name="IS_MOTHER")
-	private boolean isMother;
-	
-	@Column(name="REFORM_TYPE")
-	private int reform_type;
-	
-	@Column(name="CREATE_BY")
-	private String createBy;
-	
-	@Column(name="STATUS")
-	private char status;
+    @Column(name = "BIRTH_DATE")
+    private Date birthDate;
 
-	public Employee() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    @Column(name = "GENDER")
+    private char gender;
 
-	public Employee(String empId, Date begda, Date endda, String firstName, String lastName, Date birthDate,
-			char gender, boolean isMother, int reform_type, String createBy, char status) {
-		super();
-		this.empId = empId;
-		this.begda = begda;
-		this.endda = endda;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.birthDate = birthDate;
-		this.gender = gender;
-		this.isMother = isMother;
-		this.reform_type = reform_type;
-		this.createBy = createBy;
-		this.status = status;
-	}
+    @Column(name = "IS_MOTHER")
+    private boolean isMother;
 
-	public String getEmpId() {
-		return empId;
-	}
+    @Column(name = "CREATE_BY")
+    private String createBy;
 
-	public void setEmpId(String empId) {
-		this.empId = empId;
-	}
+    @Column(name = "STATUS")
+    private char status;
 
-	public Date getBegda() {
-		return begda;
-	}
+    public Employee() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
-	public void setBegda(Date begda) {
-		this.begda = begda;
-	}
+    public Employee(String empId, Date begda, Date endda, String firstName, String lastName, Date birthDate,
+                    char gender, boolean isMother, String createBy, char status) {
+        super();
+        this.empId = empId;
+        this.begda = begda;
+        this.endda = endda;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.isMother = isMother;
+        this.createBy = createBy;
+        this.status = status;
+    }
 
-	public Date getEndda() {
-		return endda;
-	}
+    public String getEmpId() {
+        return empId;
+    }
 
-	public void setEndda(Date endda) {
-		this.endda = endda;
-	}
+    public void setEmpId(String empId) {
+        this.empId = empId;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public Date getBegda() {
+        return begda;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setBegda(Date begda) {
+        this.begda = begda;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public Date getEndda() {
+        return endda;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setEndda(Date endda) {
+        this.endda = endda;
+    }
 
-	public Date getBirthDate() {
-		return birthDate;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setBirthDate(Date birthDate) {
-		this.birthDate = birthDate;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public char getGender() {
-		return gender;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setGender(char gender) {
-		this.gender = gender;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public boolean isMother() {
-		return isMother;
-	}
+    public Date getBirthDate() {
+        return birthDate;
+    }
 
-	public void setMother(boolean isMother) {
-		this.isMother = isMother;
-	}
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
 
-	public int getReform_type() {
-		return reform_type;
-	}
+    public char getGender() {
+        return gender;
+    }
 
-	public void setReform_type(int reform_type) {
-		this.reform_type = reform_type;
-	}
+    public void setGender(char gender) {
+        this.gender = gender;
+    }
 
-	public String getCreateBy() {
-		return createBy;
-	}
+    public boolean isMother() {
+        return isMother;
+    }
 
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
+    public void setMother(boolean isMother) {
+        this.isMother = isMother;
+    }
 
-	public char getStatus() {
-		return status;
-	}
+    public String getCreateBy() {
+        return createBy;
+    }
 
-	public void setStatus(char status) {
-		this.status = status;
-	}
-	
-	
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
 
-	
-	
+    public char getStatus() {
+        return status;
+    }
+
+    public void setStatus(char status) {
+        this.status = status;
+    }
+
+
 }

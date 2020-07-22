@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Exeption.DataNotFoundExeption;
-import teachers.biniProject.Repository.EmpToMossadRepository;
 import teachers.biniProject.Repository.EmployeeRepository;
-import teachers.biniProject.Repository.WeeklyHoursRepository;
 import teachers.biniProject.Repository.reformTypeRepository;
 
 import java.time.LocalDate;
@@ -16,8 +14,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-;
-
 
 @Service
 public class EmployeeService {
@@ -26,22 +22,20 @@ public class EmployeeService {
     private EmployeeRepository emplyeeReposiroty;
 
     @Autowired
-    private WeeklyHoursService weeklyHoursService;
-
-    @Autowired
-    private WeeklyHoursRepository weeklyHoursRepository;
-
-    @Autowired
     private reformTypeRepository reformTypeRepository;
 
     @Autowired
-    private EmpToMossadRepository empToMossadRepository;
+    private EmpToMossadService empToMossadService;
+
+    @Autowired
+    private TeacherEmploymentDetailsService teacherEmploymentDetailsService;
 
     public Employee save(Employee employee) {
         Calendar testDate = Calendar.getInstance();
         employee.setBegda(testDate.getTime());
         testDate.set(9999, Calendar.DECEMBER, 31);
         employee.setEndda(testDate.getTime());
+        employee.setStatus('A'); //Approved
         return emplyeeReposiroty.save(employee);
     }
 
@@ -51,6 +45,15 @@ public class EmployeeService {
 
     public List<Employee> findAll() {
         return emplyeeReposiroty.findAll();
+    }
+
+    public void deleteByEmpId(String empId) {
+        if (this.emplyeeReposiroty.existsById(empId)){
+            this.emplyeeReposiroty.deleteById(empId);
+        }
+        this.emplyeeReposiroty.deleteById(empId);
+        this.empToMossadService.deleteByEmpId(empId);
+        this.teacherEmploymentDetailsService.deleteByEmpId(empId);
     }
 
     public int getAgeHours(Date birthdate) {
@@ -68,7 +71,6 @@ public class EmployeeService {
     }
 
     public Employee findById(String id) {
-//		return emplyeeReposiroty.findById(id).orElse(null);
         return emplyeeReposiroty.findById(id).orElseThrow(() -> new DataNotFoundExeption(id));
     }
 
@@ -89,79 +91,14 @@ public class EmployeeService {
         } else {
             return null;
         }
-
     }
 
-    public float getMaxJobPercent(String tz) {
-        return reformTypeRepository.findById(
-                emplyeeReposiroty.findById(tz).get().getReform_type()).
-                get().getmaxJobPercent();
-
-    }
-
-    public List<Employee> getByFirstName(String firstName) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> el.getFirstName().equals(firstName)).
-                collect(Collectors.toList());
-    }
-
-    public List<Employee> getBylastName(String lastName) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> el.getFirstName().equals(lastName)).
-                collect(Collectors.toList());
-    }
-
-    public List<Employee> getByAnyName(String name) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> el.getFirstName().equals(name) ||
-                        el.getLastName().equals(name)).
-                collect(Collectors.toList());
-    }
-
-    public List<Employee> getByFullName(String firstName, String lastName) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> el.getFirstName().equals(firstName) &&
-                        el.getLastName().equals(lastName)).
-                collect(Collectors.toList());
-    }
-
-    public List<Employee> getByIsmother(boolean isMother) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> el.isMother() == isMother).
-                collect(Collectors.toList());
-    }
-
-    public List<Employee> getByGender(char gender) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> el.getGender() == gender).
-                collect(Collectors.toList());
-    }
-
-    public List<Employee> getByStratDates(Date startDate, Date endDate) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> startDate.before(el.getBegda()) &&
-                        endDate.after(el.getBegda())).
-                collect(Collectors.toList());
-    }
-
-    public List<Employee> getByEndDates(Date startDate, Date endDate) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> startDate.before(el.getEndda()) &&
-                        endDate.after(el.getEndda())).
-                collect(Collectors.toList());
-    }
-
-    @SuppressWarnings("deprecation")
-    public List<Employee> getByYear(int currYear) {
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> el.getBegda().getYear() <= currYear &&
-                        el.getEndda().getYear() >= currYear).
-                collect(Collectors.toList());
+    public void delete(String empId) {
+        this.emplyeeReposiroty.deleteById(empId);
     }
 
     public List<Employee> getMossad(int mossadId) {
-        List<String> empInMossad = this.empToMossadRepository.findAll().stream().
-                filter(el -> el.getMossadId() == mossadId).
+        List<String> empInMossad = this.empToMossadService.findAllByMossad(mossadId).stream().
                 map(el -> el.getEmpId()).
                 collect(Collectors.toList());
 

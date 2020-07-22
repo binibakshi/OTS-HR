@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "EMP_TO_MOSSAD")
-public class empToMossad {
+public class EmpToMossad {
 
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,12 +17,12 @@ public class empToMossad {
     @Column(name = "EMP_ID")
     private String empId;
 
-    public empToMossad() {
+    public EmpToMossad() {
         super();
         // TODO Auto-generated constructor stub
     }
 
-    public empToMossad(int id, int mossadId, String empId) {
+    public EmpToMossad(int id, int mossadId, String empId) {
         super();
         Id = id;
         this.mossadId = mossadId;

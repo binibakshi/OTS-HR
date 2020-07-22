@@ -1,6 +1,7 @@
 package teachers.biniProject.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import teachers.biniProject.Entity.Mossadot;
 import teachers.biniProject.Repository.MossadotRepository;
@@ -28,5 +29,10 @@ public class MossadotController {
     @PostMapping("/save")
     public Mossadot save(@RequestBody Mossadot mossad) {
         return this.mossadotRepository.save(mossad);
+    }
+
+    @DeleteMapping("/byId")
+    public void deleteByMossadId(@Param("mossadId") int mossadId) {
+        this.mossadotRepository.deleteById(mossadId);
     }
 }

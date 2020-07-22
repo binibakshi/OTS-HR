@@ -7,8 +7,6 @@ import teachers.biniProject.Entity.calcHours;
 import teachers.biniProject.Service.CalcHoursService;
 import teachers.biniProject.Service.EmployeeService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @CrossOrigin
@@ -37,14 +35,14 @@ public class CalcHoursController {
 	}
 	
 	@GetMapping("/byId")
-	public List<calcHours> getByFrontal(@RequestParam(name="tz") String tz ,
+	public calcHours getByFrontal(@RequestParam(name="tz") String tz ,
 			@RequestParam(name="reformType") int employmentCode, 
 			@RequestParam(name="frontalHours") float frontalHours){
 
 		Employee emp = employeeService.findById(tz);
-		return new ArrayList<>(Arrays.asList(calcHoursService.getByFrontalHours(employmentCode,
-				emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), 
-				frontalHours)));
+		return calcHoursService.getByFrontalHours(employmentCode,
+				emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()),
+				frontalHours);
 		
 
 }
