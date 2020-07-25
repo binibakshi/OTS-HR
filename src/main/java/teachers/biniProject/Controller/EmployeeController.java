@@ -8,7 +8,7 @@ import teachers.biniProject.Service.EmployeeService;
 
 import java.util.List;
 
-@CrossOrigin
+@CrossOrigin("http://localhost:8080")
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
