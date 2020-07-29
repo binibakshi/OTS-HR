@@ -4,7 +4,11 @@ import java.io.Serializable;
 
 public class AuthenticationResponse implements Serializable {
 
-    private final String jwt;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5785354139318518003L;
+	private final String jwt;
 
     public AuthenticationResponse(String jwt) {
         this.jwt = jwt;

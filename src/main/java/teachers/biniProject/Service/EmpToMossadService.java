@@ -20,11 +20,11 @@ public class EmpToMossadService {
     }
 
     public void deleteByEmpId(String empId) {
-        this.empToMossadRepository.deletebyEmpId(empId);
+        this.empToMossadRepository.deleteAllByEmpId(empId);
         this.teacherEmploymentDetailsService.deleteByEmpId(empId);
     }
 
     public List<EmpToMossad> findAllByMossad(int mossadId) {
-       return this.empToMossadRepository.findAllByMossad(mossadId);
+       return this.empToMossadRepository.findAllByMossadId(mossadId);
     }
 }

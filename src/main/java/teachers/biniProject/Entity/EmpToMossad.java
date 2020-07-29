@@ -29,6 +29,12 @@ public class EmpToMossad {
         this.empId = empId;
     }
 
+    public EmpToMossad( int mossadId, String empId) {
+        super();
+        this.mossadId = mossadId;
+        this.empId = empId;
+    }
+
     public int getId() {
         return Id;
     }

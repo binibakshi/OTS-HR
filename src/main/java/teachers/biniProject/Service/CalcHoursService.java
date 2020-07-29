@@ -55,7 +55,7 @@ public class CalcHoursService {
 		}
 	}
 	
-	public calcHours getByFrontalTzReformType(String tz, float frontalHours, int reformType ) {
+	calcHours getByFrontalTzReformType(String tz, float frontalHours, int reformType) {
 		Employee emp = employeeService.findById(tz);
 		return this.getByFrontalHours(reformType, emp.isMother(),employeeService.getAgeHours(emp.getBirthDate()), frontalHours);
 	}

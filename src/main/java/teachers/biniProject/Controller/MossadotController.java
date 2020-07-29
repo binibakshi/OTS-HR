@@ -8,7 +8,6 @@ import teachers.biniProject.Repository.MossadotRepository;
 
 import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/mossadot")
 public class MossadotController {

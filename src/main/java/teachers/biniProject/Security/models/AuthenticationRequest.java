@@ -4,8 +4,11 @@ import java.io.Serializable;
 
 public class AuthenticationRequest implements Serializable {
 
-
-    private String username;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2249114080895165072L;
+	private String username;
     private String password;
 
     //need default constructor for JSON Parsing

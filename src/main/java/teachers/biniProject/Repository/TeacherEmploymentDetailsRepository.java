@@ -5,28 +5,28 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import teachers.biniProject.Entity.TeacherEmploymentDetails;
 
-public interface TeacherEmploymentDetailsRepository extends JpaRepository<TeacherEmploymentDetails, Integer> {
+import java.util.List;
 
-    @Query(value = "select SINGLE * " +
-            "from teachers_info " +
+public interface TeacherEmploymentDetailsRepository extends JpaRepository<TeacherEmploymentDetails, Integer> {
+    @Query(value = "select * from teacher_info " +
             "where emp_id = :empId AND " +
             "day = :day AND " +
-            "mosad_id = :mossadId AND " +
-            "emp_code = :empCode ",
+            "mossad_id = :mossadId AND " +
+            "employment_code =:empCode ",
             nativeQuery = true)
-    TeacherEmploymentDetails findSingleRecord(@Param("empId") String empId,
-                                              @Param("day") int day,
-                                              @Param("mossadId") int mossadId,
-                                              @Param("empCode") int empCode);
+    TeacherEmploymentDetails findSingleRecord(@Param("empId") String empId, @Param("day") int day,
+                                              @Param("mossadId") int mossadId, @Param("empCode") int empCode);
 
+    List<TeacherEmploymentDetails> findByEmpId(String empId);
 
-    @Query(value = "DELETE FROM TEACHERS_INFO where empId = :empId",
-            nativeQuery = true)
-    void deleteByEmpId(@Param("empId") String empId);
+    List<TeacherEmploymentDetails> findByEmpIdAndMossadId(String empId, int mossadId);
 
-    @Query(value = "DELETE FROM TEACHERS_INFO where empId = :empId AND " +
-                                                  " mosad_id = :mossadId",
-            nativeQuery = true)
-    void deleteByEmpIdAndMossad(@Param("empId") String empId,
-                                @Param("mossadId") int mossadId);
+    List<TeacherEmploymentDetails> findByEmpIdAndDay(String empId, int day);
+
+    List<TeacherEmploymentDetails> findByEmpIdAndMossadIdAndDay(String empId, int mossadId, int day);
+
+    void deleteByEmpId(String empId);
+
+    void deleteByEmpIdAndMossadId(String empId, int mossadId);
+
 }

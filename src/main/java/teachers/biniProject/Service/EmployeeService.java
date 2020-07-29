@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Exeption.DataNotFoundExeption;
 import teachers.biniProject.Repository.EmployeeRepository;
-import teachers.biniProject.Repository.reformTypeRepository;
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -20,9 +18,6 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository emplyeeReposiroty;
-
-    @Autowired
-    private reformTypeRepository reformTypeRepository;
 
     @Autowired
     private EmpToMossadService empToMossadService;
@@ -107,10 +102,8 @@ public class EmployeeService {
                 collect(Collectors.toList());
     }
 
-
     private void onApprovedEmployee(Employee employee) {
     }
-
     private void onDenyEmployee(String tz) {
     }
 }

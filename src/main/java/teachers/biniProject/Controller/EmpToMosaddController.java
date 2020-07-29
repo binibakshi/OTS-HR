@@ -15,8 +15,8 @@ public class EmpToMosaddController {
     private EmpToMossadRepository empToMossadRepository;
 
     @PostMapping("/save")
-    public List<EmpToMossad> save(@RequestBody EmpToMossad mosaddot) {
-        return (List<EmpToMossad>) this.empToMossadRepository.save(mosaddot);
+    public EmpToMossad save(@RequestBody EmpToMossad mosaddot) {
+        return this.empToMossadRepository.save(mosaddot);
     }
 
     @GetMapping("/byId")
@@ -28,6 +28,11 @@ public class EmpToMosaddController {
 
     @GetMapping("/byMossad")
     public List<EmpToMossad> getByMossadId(@RequestParam("mossadId") int mossadId) {
+        return this.empToMossadRepository.findAllByMossadId(mossadId);
+    }
+
+    @GetMapping("/test")
+    public List<EmpToMossad> test(@RequestParam("mossadId") int mossadId) {
         return this.empToMossadRepository.findAll().stream().
                 filter(el -> el.getMossadId() == mossadId).
                 collect(Collectors.toList());

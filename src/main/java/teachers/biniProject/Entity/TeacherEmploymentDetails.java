@@ -21,8 +21,8 @@ public class TeacherEmploymentDetails {
 	@Column(name="ENDDA")
 	private Date endda;
 
-	@Column(name="MOSAD_ID")
-	private int mosadId;
+	@Column(name="MOSSAD_ID")
+	private int mossadId;
 
 	@Column(name="EMPLOYMENT_CODE")
 	private int empCode;
@@ -44,14 +44,14 @@ public class TeacherEmploymentDetails {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public TeacherEmploymentDetails(int id, String tz, Date begda, Date endda, int mosadId, int empCode, int day,
+	public TeacherEmploymentDetails(int id, String empID, Date begda, Date endda, int mosadId, int empCode, int day,
 			float hours, String createBy) {
 		super();
 		Id = id;
-		this.empId = tz;
+		this.empId = empID;
 		this.begda = begda;
 		this.endda = endda;
-		this.mosadId = mosadId;
+		this.mossadId = mosadId;
 		this.empCode = empCode;
 		this.day = day;
 		this.hours = hours;
@@ -64,7 +64,7 @@ public class TeacherEmploymentDetails {
 			this.empId = teacherEmploymentDetails.getEmpId();
 			this.begda = teacherEmploymentDetails.getBegda();
 			this.endda = teacherEmploymentDetails.getEndda();
-			this.mosadId = teacherEmploymentDetails.getMosadId();
+			this.mossadId = teacherEmploymentDetails.getMossadId();
 			this.empCode = teacherEmploymentDetails.getEmpCode();
 			this.day = teacherEmploymentDetails.getDay();
 			this.hours = teacherEmploymentDetails.getHours();
@@ -73,14 +73,14 @@ public class TeacherEmploymentDetails {
 	}
 
 
-	public TeacherEmploymentDetails(int id, String tz, Date begda, Date endda, int mosadId, int empCode, int day,
+	public TeacherEmploymentDetails(int id, String empID, Date begda, Date endda, int mosadId, int empCode, int day,
 			char status, float hours, String createBy) {
 		super();
 		Id = id;
-		this.empId = tz;
+		this.empId = empID;
 		this.begda = begda;
 		this.endda = endda;
-		this.mosadId = mosadId;
+		this.mossadId = mosadId;
 		this.empCode = empCode;
 		this.day = day;
 		this.status = status;
@@ -120,12 +120,12 @@ public class TeacherEmploymentDetails {
 		this.endda = endda;
 	}
 
-	public int getMosadId() {
-		return mosadId;
+	public int getMossadId() {
+		return mossadId;
 	}
 
-	public void setMosadId(int mosadId) {
-		this.mosadId = mosadId;
+	public void setMossadId(int mosadId) {
+		this.mossadId = mosadId;
 	}
 
 	public int getEmpCode() {

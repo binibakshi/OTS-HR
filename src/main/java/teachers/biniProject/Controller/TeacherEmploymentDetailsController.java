@@ -7,7 +7,6 @@ import teachers.biniProject.Service.TeacherEmploymentDetailsService;
 
 import java.util.List;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/teacherEmploymentDetails")
 public class TeacherEmploymentDetailsController {
@@ -27,16 +26,22 @@ public class TeacherEmploymentDetailsController {
     }
 
     @GetMapping("weekSum")
-    public float[] getAllWeekHours(@RequestParam(name = "empId") String tz) {
-        return this.teacherEmploymentDetailsService.getWeek(tz);
+    public float[] getAllWeekHours(@RequestParam(name = "empId") String empId) {
+        return this.teacherEmploymentDetailsService.getWeek(empId);
+    }
+
+    @GetMapping("weekSumPerMossad")
+    public float[] getAllWeekHoursPerMossad(@RequestParam(name = "empId") String empId,
+                                            @RequestParam(name = "mossadId") int mossadId) {
+        return this.teacherEmploymentDetailsService.getWeekPerMossad(empId, mossadId);
     }
 
     @GetMapping("/byReform")
-    public List<TeacherEmploymentDetails> getAllByReformType(@RequestParam(name = "empId") String tz,
-                                                             @RequestParam(name = "mosadId") int mosadId,
+    public List<TeacherEmploymentDetails> getAllByReformType(@RequestParam(name = "empId") String empId,
+                                                             @RequestParam(name = "mossadId") int mossadId,
                                                              @RequestParam(name = "reformType") int reformType) {
 
-        return teacherEmploymentDetailsService.getAllByReformType(tz, mosadId, reformType);
+        return teacherEmploymentDetailsService.getAllByReformType(empId, mossadId, reformType);
     }
 
 

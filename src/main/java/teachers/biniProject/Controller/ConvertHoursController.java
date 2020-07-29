@@ -7,22 +7,20 @@ import teachers.biniProject.Service.ConvertHoursService;
 
 import java.util.List;
 
-
-@CrossOrigin
 @RestController
 @RequestMapping("/convertHours")
 public class ConvertHoursController {
-	
-	@Autowired
-	private ConvertHoursService convertHoursService;
-	
-	@GetMapping("/all")
-	public List<convertHours> getAll(){
-		return this.convertHoursService.findAll();
-	}
-	
-	@GetMapping("/byReform")
-	public List<convertHours> getByReform(@RequestParam(name="reformType") int reformType){
-		return this.convertHoursService.getByReform(reformType);
-	}
+
+    @Autowired
+    private ConvertHoursService convertHoursService;
+
+    @GetMapping("/all")
+    public List<convertHours> getAll() {
+        return this.convertHoursService.findAll();
+    }
+
+    @GetMapping("/byReform")
+    public List<convertHours> getByReform(@RequestParam(name = "reformType") int reformType) {
+        return this.convertHoursService.getByReform(reformType);
+    }
 }
