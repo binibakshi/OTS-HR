@@ -5,12 +5,13 @@ import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Exeption.DataNotFoundExeption;
 import teachers.biniProject.Repository.EmployeeRepository;
+import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -21,6 +22,9 @@ public class EmployeeService {
 
     @Autowired
     private EmpToMossadService empToMossadService;
+
+    @Autowired
+    private TeacherEmploymentDetailsRepository teacherEmploymentDetailsRepository;
 
     @Autowired
     private TeacherEmploymentDetailsService teacherEmploymentDetailsService;
@@ -43,7 +47,7 @@ public class EmployeeService {
     }
 
     public void deleteByEmpId(String empId) {
-        if (this.emplyeeReposiroty.existsById(empId)){
+        if (this.emplyeeReposiroty.existsById(empId)) {
             this.emplyeeReposiroty.deleteById(empId);
         }
         this.emplyeeReposiroty.deleteById(empId);
@@ -92,18 +96,13 @@ public class EmployeeService {
         this.emplyeeReposiroty.deleteById(empId);
     }
 
-    public List<Employee> getMossad(int mossadId) {
-        List<String> empInMossad = this.empToMossadService.findAllByMossad(mossadId).stream().
-                map(el -> el.getEmpId()).
-                collect(Collectors.toList());
-
-        return this.emplyeeReposiroty.findAll().stream().
-                filter(el -> empInMossad.contains(el.getEmpId())).
-                collect(Collectors.toList());
+    public List<Employee> getAllEmpInMossad(int mossadId) {
+        return this.emplyeeReposiroty.findAllById(this.teacherEmploymentDetailsRepository.findAllEmpByMossadId(mossadId));
     }
 
     private void onApprovedEmployee(Employee employee) {
     }
+
     private void onDenyEmployee(String tz) {
     }
 }

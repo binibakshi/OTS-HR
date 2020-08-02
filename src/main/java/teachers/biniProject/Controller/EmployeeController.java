@@ -41,9 +41,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/byMossad")
-    public List<Employee> getMossad(@RequestParam(name = "year") int mossadId) {
-
-        return this.employeeService.getMossad(mossadId);
+    public List<Employee> getMossad(@RequestParam(name = "mossadId") int mossadId) {
+        return this.employeeService.getAllEmpInMossad(mossadId);
     }
 
 

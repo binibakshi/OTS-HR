@@ -42,11 +42,7 @@ public class TeacherEmploymentDetailsService {
         return teacherEmploymentDetailsRepository.findAll();
     }
 
-    public TeacherEmploymentDetails findById(int id) {
-        return teacherEmploymentDetailsRepository.findById(id).orElse(null);
-    }
-
-    void deleteByEmpId(String empId) {
+    public void deleteByEmpId(String empId) {
         this.teacherEmploymentDetailsRepository.deleteByEmpId(empId);
     }
 
@@ -139,7 +135,7 @@ public class TeacherEmploymentDetailsService {
 
         // get all exist hours (without this current reform, hours to avoid duplication)
         for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpId(empId))
-            if (relevantCodes.contains(el.getEmpCode())) {
+            if (!relevantCodes.contains(el.getEmpCode())) {
                 week[el.getDay()] += el.getHours();
             }
 
@@ -207,6 +203,18 @@ public class TeacherEmploymentDetailsService {
             }
         }
         return list;
+    }
+
+    public List<TeacherEmploymentDetails> getEmpHoursByMossad(String empId, int mossadId) {
+        return this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId);
+    }
+
+    public List<TeacherEmploymentDetails> getAllByMossad(int mossadId) {
+        List<Integer> frontalCodes = this.convertHoursService.getAllFrontal();
+        return this.teacherEmploymentDetailsRepository
+                .findByMossadId(mossadId).stream()
+                .filter(el -> frontalCodes.contains(el.getEmpCode()))
+                .collect(Collectors.toList());
     }
 
     // check for max job percent

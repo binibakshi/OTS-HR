@@ -17,7 +17,13 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
     TeacherEmploymentDetails findSingleRecord(@Param("empId") String empId, @Param("day") int day,
                                               @Param("mossadId") int mossadId, @Param("empCode") int empCode);
 
+    @Query(value = "select distinct teacher_info.emp_id from teacher_info where mossad_id = :mossadId",
+            nativeQuery = true)
+    List<String> findAllEmpByMossadId(@Param("mossadId") int mossadId);
+
     List<TeacherEmploymentDetails> findByEmpId(String empId);
+
+    List<TeacherEmploymentDetails> findByMossadId(int mossadId);
 
     List<TeacherEmploymentDetails> findByEmpIdAndMossadId(String empId, int mossadId);
 

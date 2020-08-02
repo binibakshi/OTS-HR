@@ -14,10 +14,6 @@ public class MyConfiguration {
     public FilterRegistrationBean<CorsFilter> corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowedHeaders(Arrays.asList("Authorization"));
-//        config.setExposedHeaders(Arrays.asList("Authorization"));
-//        config.addAllowedOrigin("https://ots-hr.herokuapp.com");
-//        config.addAllowedOrigin("http://localhost:8080");
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");

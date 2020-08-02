@@ -23,4 +23,9 @@ public class ConvertHoursController {
     public List<convertHours> getByReform(@RequestParam(name = "reformType") int reformType) {
         return this.convertHoursService.getByReform(reformType);
     }
+
+    @GetMapping("/allFrontal")
+    public List<Integer> getAllFrontal(){
+       return this.convertHoursService.getAllFrontal();
+    }
 }

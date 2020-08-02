@@ -25,15 +25,26 @@ public class TeacherEmploymentDetailsController {
         return this.teacherEmploymentDetailsService.saveAll(teacherEmploymentDetails);
     }
 
-    @GetMapping("weekSum")
+    @GetMapping("/weekSum")
     public float[] getAllWeekHours(@RequestParam(name = "empId") String empId) {
         return this.teacherEmploymentDetailsService.getWeek(empId);
     }
 
-    @GetMapping("weekSumPerMossad")
+    @GetMapping("/weekSumPerMossad")
     public float[] getAllWeekHoursPerMossad(@RequestParam(name = "empId") String empId,
                                             @RequestParam(name = "mossadId") int mossadId) {
         return this.teacherEmploymentDetailsService.getWeekPerMossad(empId, mossadId);
+    }
+
+    @GetMapping("/byMossad")
+    public List<TeacherEmploymentDetails> getEmpHoursByMossad(@RequestParam(name = "empId") String empId,
+                                                              @RequestParam(name = "mossadId") int mossadId) {
+        return teacherEmploymentDetailsService.getEmpHoursByMossad(empId, mossadId);
+    }
+
+    @GetMapping("/allByMossad")
+    public List<TeacherEmploymentDetails> getAllByMossad(@RequestParam(name = "mossadId") int mossadId) {
+        return teacherEmploymentDetailsService.getAllByMossad( mossadId);
     }
 
     @GetMapping("/byReform")
@@ -43,6 +54,5 @@ public class TeacherEmploymentDetailsController {
 
         return teacherEmploymentDetailsService.getAllByReformType(empId, mossadId, reformType);
     }
-
 
 }
