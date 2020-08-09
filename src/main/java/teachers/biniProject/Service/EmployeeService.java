@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Exeption.DataNotFoundExeption;
+import teachers.biniProject.Exeption.GenericException;
 import teachers.biniProject.Repository.EmployeeRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 
@@ -49,10 +50,10 @@ public class EmployeeService {
     public void deleteByEmpId(String empId) {
         if (this.emplyeeReposiroty.existsById(empId)) {
             this.emplyeeReposiroty.deleteById(empId);
+        } else {
+            throw new GenericException("לא נמצא עובד עם תעודת זהות" + empId);
         }
-        this.emplyeeReposiroty.deleteById(empId);
         this.empToMossadService.deleteByEmpId(empId);
-        this.teacherEmploymentDetailsService.deleteByEmpId(empId);
     }
 
     public int getAgeHours(Date birthdate) {

@@ -30,7 +30,7 @@ public class CalcHoursController {
 
         Employee emp = employeeService.findById(tz);
 
-        return this.calcHoursService.getEmployeeOptions(reformType, emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()));
+        return this.calcHoursService.getEmployeeByReform(reformType, emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()));
     }
 
     @GetMapping("/byId")

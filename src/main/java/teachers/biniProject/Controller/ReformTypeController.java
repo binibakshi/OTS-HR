@@ -17,7 +17,6 @@ public class ReformTypeController {
     @Autowired
     public reformTypeRepository reformTypeRepository;
 
-
     @GetMapping("/all")
     public List<reformType> getAllReformTypes() {
         return this.reformTypeRepository.findAll();

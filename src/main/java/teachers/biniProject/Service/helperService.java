@@ -28,23 +28,5 @@ public class helperService {
 		return teacherReformsRepository.save(teachersReforms);
 	}
 
-	public float maxJobPercentById(String tz) {
-		List<Integer> cuReforms = this.teacherReformsRepository.findAll().stream().
-				filter(el -> el.getEmpId().equals(tz)).
-				map(el -> el.getReformType()).
-				collect(Collectors.toList());
 
-		if (cuReforms.contains(2) || cuReforms.contains(3) || cuReforms.contains(4) ) {
-			return 117;
-
-		} else if (cuReforms.contains(5) || cuReforms.contains(6) ) {
-			return 125;
-
-		} else if (cuReforms.contains(1) || cuReforms.contains(7)) {
-			return 140;
-		}
-		else {
-			return 100;
-		}
-	}
 }

@@ -5,6 +5,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 import teachers.biniProject.Entity.Mossadot;
 import teachers.biniProject.Repository.MossadotRepository;
+import teachers.biniProject.Service.MossadotService;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ import java.util.List;
 @RequestMapping("/mossadot")
 public class MossadotController {
 
+    @Autowired
+    MossadotService mossadotService;
     @Autowired
     private MossadotRepository mossadotRepository;
 
@@ -23,6 +26,11 @@ public class MossadotController {
     @GetMapping("/byId")
     public Mossadot getById(@RequestParam(name = "mossadId") int mossadId) {
         return this.mossadotRepository.findById(mossadId).orElse(null);
+    }
+
+    @PostMapping("/fixMossadHours")
+    public int dixMossadHours(@RequestParam(name = "mossadId") int mossaId) {
+        return mossadotService.fixMossadotHours(mossaId);
     }
 
     @PostMapping("/save")

@@ -48,11 +48,10 @@ public class AuthController {
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
+
     @RequestMapping(value = "/getMossad", method = RequestMethod.GET)
     public int getUserMossad(@RequestParam(name = "username") String username) {
 
         return this.userRepository.findByUserName(username).orElse(null).getMossadId();
     }
-
-
 }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import teachers.biniProject.Entity.TeacherEmploymentDetails;
 import teachers.biniProject.Service.TeacherEmploymentDetailsService;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @RestController
@@ -20,6 +21,7 @@ public class TeacherEmploymentDetailsController {
     }
 
     @PostMapping("/saveAll")
+    @Transactional
     public List<TeacherEmploymentDetails> saveAll(@RequestBody List<TeacherEmploymentDetails> teacherEmploymentDetails) {
 
         return this.teacherEmploymentDetailsService.saveAll(teacherEmploymentDetails);

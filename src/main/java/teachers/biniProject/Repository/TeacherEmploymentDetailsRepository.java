@@ -27,6 +27,8 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
 
     List<TeacherEmploymentDetails> findByEmpIdAndMossadId(String empId, int mossadId);
 
+    List<TeacherEmploymentDetails> findByEmpIdAndMossadIdAndReformType(String empId, int mossadId, int reformType);
+
     List<TeacherEmploymentDetails> findByEmpIdAndDay(String empId, int day);
 
     List<TeacherEmploymentDetails> findByEmpIdAndMossadIdAndDay(String empId, int mossadId, int day);
@@ -34,5 +36,8 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
     void deleteByEmpId(String empId);
 
     void deleteByEmpIdAndMossadId(String empId, int mossadId);
+
+    void deleteByEmpIdAndMossadIdAndReformType(String empId, int mossadId, int reformType);
+
 
 }
