@@ -19,26 +19,35 @@ public class User {
     @Column(name = "roles", nullable = false)
     private String roles;
 
-    @Column(name = "mossad_id")
+    // 999 for administration
+    @Column(name = "mossad_id", nullable = false)
     private Integer mossadId;
+
+    @Column(name = "firstname", length = 55)
+    private String firstName;
+
+    @Column(name = "lastname", length = 55)
+    private String lastName;
 
     public User() {
         super();
     }
 
-    public User(String userName, String password, String roles, Integer mossadId) {
+    public User(String userName, String password, String roles, Integer mossadId, String firstName, String lastName) {
         this.userName = userName;
         this.password = password;
         this.roles = roles;
         this.mossadId = mossadId;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public String getUserName() {
         return userName;
     }
 
-    public void setUserName(String empId) {
-        this.userName = empId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {
@@ -57,11 +66,27 @@ public class User {
         this.roles = roles;
     }
 
-    public int getMossadId() {
+    public Integer getMossadId() {
         return mossadId;
     }
 
     public void setMossadId(Integer mossadId) {
         this.mossadId = mossadId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

@@ -53,7 +53,6 @@ public class EmployeeService {
         } else {
             throw new GenericException("לא נמצא עובד עם תעודת זהות" + empId);
         }
-        this.empToMossadService.deleteByEmpId(empId);
     }
 
     public int getAgeHours(Date birthdate) {

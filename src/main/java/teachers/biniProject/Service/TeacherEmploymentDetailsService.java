@@ -1,5 +1,6 @@
 package teachers.biniProject.Service;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.*;
@@ -48,7 +49,7 @@ public class TeacherEmploymentDetailsService {
         this.teacherEmploymentDetailsRepository.deleteByEmpIdAndMossadId(empId, mossadId);
     }
 
-    public TeacherEmploymentDetails save(TeacherEmploymentDetails teacherEmploymentDetails) {
+    public TeacherEmploymentDetails save(@NotNull TeacherEmploymentDetails teacherEmploymentDetails) {
         Calendar calendar = Calendar.getInstance();
         teacherEmploymentDetails.setBegda(calendar.getTime());
         calendar.set(Calendar.getInstance().get(Calendar.YEAR + 1), Calendar.DECEMBER, 31);
@@ -76,7 +77,9 @@ public class TeacherEmploymentDetailsService {
         teacherEmploymentDetails = teacherEmploymentDetails.stream().filter(el -> el.getHours() != 0).collect(Collectors.toList());
 
         oldHours = this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadIdAndReformType(empId, mossadId, reformType)
-                .stream().mapToDouble(TeacherEmploymentDetails::getHours).sum();
+                .stream().filter(el -> frontalCodes.contains(el.getEmpCode()))
+                .mapToDouble(TeacherEmploymentDetails::getHours).sum();
+
         if (!teacherEmploymentDetails.isEmpty()) {
             newHours = teacherEmploymentDetails.stream().filter(el -> frontalCodes.contains(el.getEmpCode()))
                     .mapToDouble(TeacherEmploymentDetails::getHours).sum();
@@ -90,7 +93,7 @@ public class TeacherEmploymentDetailsService {
     }
 
     // validate checks raise exceptions if needed
-    public void checkNewHoursValidation(List<TeacherEmploymentDetails> teacherEmploymentDetails) {
+    public void checkNewHoursValidation(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
         int currReformType;
         String empId;
         Employee employee;
@@ -113,7 +116,7 @@ public class TeacherEmploymentDetailsService {
         this.checkMaxHoursPerMossad(teacherEmploymentDetails);
     }
 
-    private void checkMaxHoursInDay(List<TeacherEmploymentDetails> teacherEmploymentDetails, String empId, int currReformType) {
+    private void checkMaxHoursInDay(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails, String empId, int currReformType) {
         float[] week = new float[6];
         Arrays.fill(week, 0);
 
@@ -132,7 +135,7 @@ public class TeacherEmploymentDetailsService {
     }
 
     // Set some values
-    public void setRecordForSave(List<TeacherEmploymentDetails> teacherEmploymentDetails) {
+    public void setRecordForSave(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
 
         List<convertHours> localConvertHours = this.convertHoursService.findAll();
 
@@ -207,35 +210,27 @@ public class TeacherEmploymentDetailsService {
     }
 
     // check for max job percent
-    private void checkMaxJobPercent(List<TeacherEmploymentDetails> employmentDetails, String empId) {
+    private void checkMaxJobPercent(@NotNull List<TeacherEmploymentDetails> employmentDetails, String empId) {
         int currReformType;
-        float maxJobPercet = 0;
-        float frontalHours = 0;
-        calcHours calcHours;
+        float maxJobPercet = 0, currJobPercnt = 0, allHours = 0;
 
         maxJobPercet = this.maxJobPercentById(empId);
         currReformType = this.convertHoursService.findByCode(employmentDetails.get(0).getEmpCode());
-        List<Integer> relevantCodes = this.convertHoursService.getAllFrontalAndReform(currReformType);
 
-        // get the current frontal hours of the sent reform type (always send from the client for each change)
-        frontalHours += employmentDetails.stream().
-                filter(el -> relevantCodes.contains(el.getEmpCode())).
+        // get the hours of the sent reform type (always send from the client for each change)
+        allHours += employmentDetails.stream().
                 mapToDouble(TeacherEmploymentDetails::getHours).
                 sum();
 
-        //TODO remove or find more appropriate check
-        if (frontalHours > 31) {
-            throw new GenericException("אי אפשר להזין לעובד כמות שעות כזו");
-        }
-        calcHours = this.calcHourService.getByFrontalTzReformType(empId, frontalHours, currReformType);
+        currJobPercnt = this.calcHourService.getJobPercent(currReformType, empId, allHours);
 
-        if (calcHours.getJobPercent() > maxJobPercet) {
-            throw new GenericException("לעובד יש מגבלת מגבלת אחוז משרה של " + maxJobPercet + "כעת יש %" + calcHours.getJobPercent() + "%");
+        if (currJobPercnt > maxJobPercet) {
+            throw new GenericException("לעובד יש מגבלת מגבלת אחוז משרה של " + maxJobPercet + "כעת יש %" + currJobPercnt + "%");
         }
     }
 
     //  check if there no exception from max hours per mossad
-    private void checkMaxHoursPerMossad(List<TeacherEmploymentDetails> teacherEmploymentDetails) {
+    private void checkMaxHoursPerMossad(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
         double newHours = 0;
         double currHoursPerMossad = 0;
         double maxHoursPerMossad = 0;
@@ -253,20 +248,24 @@ public class TeacherEmploymentDetailsService {
         }
     }
 
+    //this check should be performed only for oz letmura and ofek hadash(reformType 2,5)
     private void checkHoursMatch(List<TeacherEmploymentDetails> teacherEmploymentDetails, String empId,
                                  boolean isMother, int ageHours, int currReformType) {
         float frontalHours, privateHours, pauseHours;
         calcHours calcHours;
-
+        // check if right reform else get out
+        if (currReformType != 2 && currReformType != 5) {
+            return;
+        }
         // get the hours by type(frontal = 1/private = 2/pause = 3)
         List<Integer> frontalCodes = this.convertHoursService.getHoursByType(1);
         List<Integer> privateCodes = this.convertHoursService.getHoursByType(2);
         List<Integer> pauseCodes = this.convertHoursService.getHoursByType(3);
 
-        frontalHours = (float) teacherEmploymentDetails.stream().
+        frontalHours = Math.round((float) teacherEmploymentDetails.stream().
                 filter(el -> frontalCodes.contains(el.getEmpCode())).
                 mapToDouble(TeacherEmploymentDetails::getHours).
-                sum();
+                sum());
 
         double sum = 0.0;
         for (TeacherEmploymentDetails employmentDetail : teacherEmploymentDetails) {
@@ -303,43 +302,36 @@ public class TeacherEmploymentDetailsService {
 
     public float getEmpJobPercent(String empId) {
         final float[] jobPercentSum = {0};
-        List<Integer> frontalCodes = this.convertHoursService.getAllFrontal();
 
-        HashMap<Integer, Float> frontalsum = new HashMap<Integer, Float>();
+        HashMap<Integer, Float> hoursSum = new HashMap<Integer, Float>();
 
         for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpId(empId)) {
-            if (frontalCodes.contains(el.getEmpCode())) {
-                if (!frontalsum.containsKey(el.getReformType())) {
-                    frontalsum.put(el.getReformType(), el.getHours());
-                } else {
-                    frontalsum.put(el.getReformType(), el.getHours() + frontalsum.get(el.getReformType()));
-                }
+            if (!hoursSum.containsKey(el.getReformType())) {
+                hoursSum.put(el.getReformType(), el.getHours());
+            } else {
+                hoursSum.put(el.getReformType(), el.getHours() + hoursSum.get(el.getReformType()));
             }
         }
-        frontalsum.forEach((k, v) ->
-                jobPercentSum[0] += this.calcHourService.getByFrontalTzReformType(empId, v, k).getJobPercent()
-        );
+
+        hoursSum.forEach((k, v) ->
+                jobPercentSum[0] += this.calcHourService.getJobPercent(k, empId, v));
         return jobPercentSum[0];
     }
 
     public float getEmpJobPercentPerMossad(String empId, int mossadId) {
         final float[] jobPercentSum = {0};
-        List<Integer> frontalCodes = this.convertHoursService.getAllFrontal();
 
-        HashMap<Integer, Float> frontalsum = new HashMap<Integer, Float>();
+        HashMap<Integer, Float> hoursSum = new HashMap<Integer, Float>();
 
         for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId)) {
-            if (frontalCodes.contains(el.getEmpCode())) {
-                if (!frontalsum.containsKey(el.getReformType())) {
-                    frontalsum.put(el.getReformType(), el.getHours());
-                } else {
-                    frontalsum.put(el.getReformType(), el.getHours() + frontalsum.get(el.getReformType()));
-                }
+            if (!hoursSum.containsKey(el.getReformType())) {
+                hoursSum.put(el.getReformType(), el.getHours());
+            } else {
+                hoursSum.put(el.getReformType(), el.getHours() + hoursSum.get(el.getReformType()));
             }
         }
-        frontalsum.forEach((k, v) ->
-                jobPercentSum[0] += this.calcHourService.getByFrontalTzReformType(empId, v, k).getJobPercent()
-        );
+        hoursSum.forEach((k, v) ->
+                jobPercentSum[0] += this.calcHourService.getJobPercent(k, empId, v));
         return jobPercentSum[0];
     }
 

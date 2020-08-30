@@ -22,13 +22,13 @@ public class calcHours {
 	private int ageHours;
 	
 	@Column(name="FRONTAL")
-	private int frontalHours;
+	private float frontalHours;
 	
 	@Column(name="PRIVATE")
-	private int privateHours;
+	private float privateHours;
 	
 	@Column(name="PAUSE")
-	private int pauseHours;
+	private float pauseHours;
 	
 	@Column(name="JOB_PERCENT")
 	private float jobPercent;
@@ -38,8 +38,8 @@ public class calcHours {
 		// TODO Auto-generated constructor stub
 	}
 
-	public calcHours(int reformType, boolean isMother, int ageHours, int frontalHours, int privateHours,
-			int pauseHours, float jobPercent) {
+	public calcHours(int reformType, boolean isMother, int ageHours, float frontalHours, float privateHours,
+			float pauseHours, float jobPercent) {
 		super();
 		this.reformType = reformType;
 		this.isMother = isMother;
@@ -82,27 +82,27 @@ public class calcHours {
 		this.ageHours = ageHours;
 	}
 
-	public int getFrontalHours() {
+	public float getFrontalHours() {
 		return frontalHours;
 	}
 
-	public void setFrontalHours(int frontalHours) {
+	public void setFrontalHours(float frontalHours) {
 		this.frontalHours = frontalHours;
 	}
 
-	public int getPrivateHours() {
+	public float getPrivateHours() {
 		return privateHours;
 	}
 
-	public void setPrivateHours(int privateHours) {
+	public void setPrivateHours(float privateHours) {
 		this.privateHours = privateHours;
 	}
 
-	public int getPauseHours() {
+	public float getPauseHours() {
 		return pauseHours;
 	}
 
-	public void setPauseHours(int pauseHours) {
+	public void setPauseHours(float pauseHours) {
 		this.pauseHours = pauseHours;
 	}
 
@@ -114,6 +114,4 @@ public class calcHours {
 		this.jobPercent = jobPercent;
 	}
 
-		
-	
 }

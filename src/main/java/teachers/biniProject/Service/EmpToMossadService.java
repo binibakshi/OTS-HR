@@ -16,15 +16,15 @@ public class EmpToMossadService {
     private EmpToMossadRepository empToMossadRepository;
 
     public List<EmpToMossad> findAll() {
-       return this.empToMossadRepository.findAll();
+        return this.empToMossadRepository.findAll();
     }
 
     public void deleteByEmpId(String empId) {
-        this.empToMossadRepository.deleteAllByEmpId(empId);
+//        this.empToMossadRepository.deleteAllByEmpId(empId);
         this.teacherEmploymentDetailsService.deleteByEmpId(empId);
     }
 
     public List<EmpToMossad> findAllByMossad(int mossadId) {
-       return this.empToMossadRepository.findAllByMossadId(mossadId);
+        return this.empToMossadRepository.findAllByMossadId(mossadId);
     }
 }
