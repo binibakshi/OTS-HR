@@ -9,6 +9,7 @@ import teachers.biniProject.Repository.EmployeeRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,10 +58,13 @@ public class EmployeeService {
 
     public int getAgeHours(Date birthdate) {
         @SuppressWarnings("deprecation")
-        long yearsDiff = ChronoUnit.YEARS.between(
-                LocalDate.of(birthdate.getYear(), 12, 31)
-                , LocalDate.now());
-        if (yearsDiff > 55) {
+        Date currDate = new Date();
+        int yearsDiff = currDate.getYear() - birthdate.getYear();
+
+        if (currDate.getMonth() >= 8) {
+            yearsDiff += 1;
+        }
+        if (yearsDiff >= 55) {
             return 4;
         } else if (yearsDiff < 50) {
             return 0;

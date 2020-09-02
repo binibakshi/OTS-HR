@@ -45,5 +45,4 @@ public class EmployeeController {
         return this.employeeService.getAllEmpInMossad(mossadId);
     }
 
-
 }
