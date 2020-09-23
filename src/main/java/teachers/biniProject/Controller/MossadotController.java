@@ -2,11 +2,13 @@ package teachers.biniProject.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import teachers.biniProject.Entity.Mossadot;
 import teachers.biniProject.Repository.MossadotRepository;
 import teachers.biniProject.Service.MossadotService;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -29,8 +31,10 @@ public class MossadotController {
     }
 
     @PostMapping("/fixMossadHours")
-    public int dixMossadHours(@RequestParam(name = "mossadId") int mossaId) {
-        return mossadotService.fixMossadotHours(mossaId);
+    public int dixMossadHours(@RequestParam(name = "mossadId") int mossaId,
+                              @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
+                              @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {
+        return mossadotService.fixMossadotHours(mossaId, begda, endda);
     }
 
     @PostMapping("/save")

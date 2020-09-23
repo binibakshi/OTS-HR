@@ -100,8 +100,8 @@ public class EmployeeService {
         this.emplyeeReposiroty.deleteById(empId);
     }
 
-    public List<Employee> getAllEmpInMossad(int mossadId) {
-        return this.emplyeeReposiroty.findAllById(this.teacherEmploymentDetailsRepository.findAllEmpByMossadId(mossadId));
+    public List<Employee> getAllEmpInMossad(int mossadId, Date begda, Date endda) {
+        return this.emplyeeReposiroty.findAllById(this.teacherEmploymentDetailsRepository.findAllEmpByMossadId(mossadId, begda, endda));
     }
 
     private void onApprovedEmployee(Employee employee) {

@@ -45,38 +45,40 @@ public class TeacherEmploymentDetailsService {
         this.teacherEmploymentDetailsRepository.deleteByEmpId(empId);
     }
 
-    public void deleteByEmpIdAndMossadId(String empId, int mossadId) {
-        this.teacherEmploymentDetailsRepository.deleteByEmpIdAndMossadId(empId, mossadId);
+    public void deleteByEmpIdAndMossadId(String empId, int mossadId, Date begda, Date endda) {
+        this.teacherEmploymentDetailsRepository.deleteByEmpIdAndMossadId(empId, mossadId, begda, endda);
     }
 
-    public TeacherEmploymentDetails save(@NotNull TeacherEmploymentDetails teacherEmploymentDetails) {
-        Calendar calendar = Calendar.getInstance();
-        teacherEmploymentDetails.setBegda(calendar.getTime());
-        calendar.set(Calendar.getInstance().get(Calendar.YEAR + 1), Calendar.DECEMBER, 31);
-        teacherEmploymentDetails.setEndda(calendar.getTime());
-        return teacherEmploymentDetailsRepository.save(teacherEmploymentDetails);
-    }
+//    public TeacherEmploymentDetails save(@NotNull TeacherEmploymentDetails teacherEmploymentDetails) {
+//        Calendar calendar = Calendar.getInstance();
+//        teacherEmploymentDetails.setBegda(calendar.getTime());
+//        calendar.set(Calendar.getInstance().get(Calendar.YEAR + 1), Calendar.DECEMBER, 31);
+//        teacherEmploymentDetails.setEndda(calendar.getTime());
+//        return teacherEmploymentDetailsRepository.save(teacherEmploymentDetails);
+//    }
 
     public List<TeacherEmploymentDetails> saveAll(List<TeacherEmploymentDetails> teacherEmploymentDetails) {
         String empId = "";
         int mossadId = 0, reformType = 0;
+        Date begda = new Date(), endda = new Date();
         double oldHours = 0, newHours = 0;
         List<Integer> frontalCodes = this.convertHoursService.getAllFrontal();
 
         // check validation raise exception if needed
-        this.checkNewHoursValidation(teacherEmploymentDetails);
-
-        empId = teacherEmploymentDetails.get(0).getEmpId();
-        mossadId = teacherEmploymentDetails.get(0).getMossadId();
-        reformType = this.convertHoursService.findByCode(teacherEmploymentDetails.get(0).getEmpCode());
+        this.checkNewHoursValidation(teacherEmploymentDetails, begda, endda);
 
         //  set some values
         this.setRecordForSave(teacherEmploymentDetails);
+        empId = teacherEmploymentDetails.get(0).getEmpId();
+        mossadId = teacherEmploymentDetails.get(0).getMossadId();
+        reformType = this.convertHoursService.findByCode(teacherEmploymentDetails.get(0).getEmpCode());
+        begda = teacherEmploymentDetails.get(0).getBegda();
+        endda = teacherEmploymentDetails.get(0).getEndda();
 
         // remove unnecessary items
         teacherEmploymentDetails = teacherEmploymentDetails.stream().filter(el -> el.getHours() != 0).collect(Collectors.toList());
 
-        oldHours = this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadIdAndReformType(empId, mossadId, reformType)
+        oldHours = this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadIdAndReformType(empId, mossadId, reformType, begda, endda)
                 .stream().filter(el -> frontalCodes.contains(el.getEmpCode()))
                 .mapToDouble(TeacherEmploymentDetails::getHours).sum();
 
@@ -85,7 +87,7 @@ public class TeacherEmploymentDetailsService {
                     .mapToDouble(TeacherEmploymentDetails::getHours).sum();
         }
 
-        this.teacherEmploymentDetailsRepository.deleteByEmpIdAndMossadIdAndReformType(empId, mossadId, reformType);
+        this.teacherEmploymentDetailsRepository.deleteByEmpIdAndMossadIdAndReformType(empId, mossadId, reformType, begda, endda);
         this.teacherEmploymentDetailsRepository.saveAll(teacherEmploymentDetails);
         this.updateMossadHours(mossadId, (int) (newHours - oldHours));
 
@@ -93,7 +95,7 @@ public class TeacherEmploymentDetailsService {
     }
 
     // validate checks raise exceptions if needed
-    public void checkNewHoursValidation(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
+    public void checkNewHoursValidation(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails, Date begda, Date endda) {
         int currReformType;
         String empId;
         Employee employee;
@@ -111,16 +113,16 @@ public class TeacherEmploymentDetailsService {
                 employeeService.getAgeHours(employee.getBirthDate()), currReformType);
 
         // TODO when Authorization is up check if administration skip those checks
-        this.checkMaxHoursInDay(teacherEmploymentDetails, empId, currReformType);
+        this.checkMaxHoursInDay(teacherEmploymentDetails, empId, currReformType, begda, endda);
         this.checkMaxJobPercent(teacherEmploymentDetails, empId);
         this.checkMaxHoursPerMossad(teacherEmploymentDetails);
     }
 
-    private void checkMaxHoursInDay(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails, String empId, int currReformType) {
+    private void checkMaxHoursInDay(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails, String empId, int currReformType, Date begda, Date endda) {
         float[] week = new float[6];
         Arrays.fill(week, 0);
 
-        this.getWeeklyHours(week, empId, currReformType);
+        this.getWeeklyHours(week, empId, teacherEmploymentDetails.get(0).getMossadId(), currReformType, begda, endda);
 
         // TODO Auto-generated method stub
         IntStream.range(0, teacherEmploymentDetails.size()).forEach(i -> {
@@ -136,60 +138,61 @@ public class TeacherEmploymentDetailsService {
 
     // Set some values
     public void setRecordForSave(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
-
         List<convertHours> localConvertHours = this.convertHoursService.findAll();
+        int reformType = localConvertHours.stream()
+                .filter(e -> e.getCode() == teacherEmploymentDetails.get(0)
+                        .getEmpCode()).findFirst().get().getReformType();
 
         Date todayDate = new Date();
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.MONTH, 11); // 11 = december
-        cal.set(Calendar.DAY_OF_MONTH, 31); // new years eve
+        cal.set(Calendar.MONTH, 6);
+        cal.set(Calendar.DAY_OF_MONTH, 30);
 
         for (TeacherEmploymentDetails el : teacherEmploymentDetails) {
-            el.setBegda(todayDate);
-            el.setEndda(cal.getTime());
-            el.setReformType(localConvertHours.stream()
-                    .filter(e -> e.getCode() == el.getEmpCode()).findFirst().get().getReformType());
+            if (el.getBegda() == null) el.setBegda(todayDate);
+            if (el.getEndda() == null) el.setEndda(cal.getTime());
+            el.setReformType(reformType);
         }
     }
 
-    private void getWeeklyHours(float[] week, String empId, int currReformType) {
+    private void getWeeklyHours(float[] week, String empId, int mossadId, int currReformType, Date begda, Date endda) {
 
         List<Integer> relevantCodes = this.convertHoursService.getAllByReform(currReformType);
 
         // get all exist hours (without this current reform, hours to avoid duplication)
-        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpId(empId))
-            if (!relevantCodes.contains(el.getEmpCode())) {
+        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpId(empId, begda, endda))
+            if (el.getMossadId() != mossadId || !relevantCodes.contains(el.getEmpCode())) {
                 week[el.getDay()] += el.getHours();
             }
 
     }
 
-    public float[] getWeek(String empId) {
+    public float[] getWeek(String empId, Date begda, Date endda) {
         float[] week = new float[7];
         for (int i = 0; i < 6; i++) {
-            week[i] = (float) this.teacherEmploymentDetailsRepository.findByEmpIdAndDay(empId, i).
+            week[i] = (float) this.teacherEmploymentDetailsRepository.findByEmpIdAndDay(empId, i, begda, endda).
                     stream().mapToDouble(TeacherEmploymentDetails::getHours).sum();
         }
-        week[6] = this.getEmpJobPercent(empId);
+        week[6] = this.getEmpJobPercent(empId, begda, endda);
         return week;
     }
 
-    public float[] getWeekPerMossad(String empId, int mossadId) {
+    public float[] getWeekPerMossad(String empId, int mossadId, Date begda, Date endda) {
         float[] week = new float[7];
         for (int i = 0; i < 6; i++) {
-            week[i] = (float) this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadIdAndDay(empId, mossadId, i).
+            week[i] = (float) this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadIdAndDay(empId, mossadId, i, begda, endda).
                     stream().mapToDouble(TeacherEmploymentDetails::getHours).sum();
         }
-        week[6] = this.getEmpJobPercentPerMossad(empId, mossadId);
+        week[6] = this.getEmpJobPercentPerMossad(empId, mossadId, begda, endda);
         return week;
     }
 
-    public List<TeacherEmploymentDetails> getAllByReformType(String empId, int mossadId, int reformType) {
+    public List<TeacherEmploymentDetails> getAllByReformType(String empId, int mossadId, int reformType, Date begda, Date endda) {
 
         List<Integer> relevantCodes = this.convertHoursService.getAllByReform(reformType);
         List<TeacherEmploymentDetails> list = new ArrayList<>();
 
-        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId)) {
+        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda)) {
             if (relevantCodes.contains(el.getEmpCode())) {
                 list.add(el);
             }
@@ -197,14 +200,14 @@ public class TeacherEmploymentDetailsService {
         return list;
     }
 
-    public List<TeacherEmploymentDetails> getEmpHoursByMossad(String empId, int mossadId) {
-        return this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId);
+    public List<TeacherEmploymentDetails> getEmpHoursByMossad(String empId, int mossadId, Date begda, Date endda) {
+        return this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda);
     }
 
-    public List<TeacherEmploymentDetails> getAllByMossad(int mossadId) {
+    public List<TeacherEmploymentDetails> getAllByMossad(int mossadId, Date begda, Date endda) {
         List<Integer> frontalCodes = this.convertHoursService.getAllFrontal();
         return this.teacherEmploymentDetailsRepository
-                .findByMossadId(mossadId).stream()
+                .findByMossadId(mossadId, begda, endda).stream()
                 .filter(el -> frontalCodes.contains(el.getEmpCode()))
                 .collect(Collectors.toList());
     }
@@ -280,7 +283,7 @@ public class TeacherEmploymentDetailsService {
                 mapToDouble(TeacherEmploymentDetails::getHours).
                 sum();
 
-        calcHours = this.calcHourService.getByFrontalHours(currReformType, isMother, ageHours, frontalHours);
+        calcHours = this.calcHourService.getByFrontalHours(Math.round(currReformType), isMother, ageHours, frontalHours);
 
         if (calcHours == null) {
             throw new GenericException("לא קיים פיצול שעות עבור נתונים שהוזנו");
@@ -300,12 +303,12 @@ public class TeacherEmploymentDetailsService {
         this.mossadotRepository.save(mossad);
     }
 
-    public float getEmpJobPercent(String empId) {
+    public float getEmpJobPercent(String empId, Date begda, Date endda) {
         final float[] jobPercentSum = {0};
 
         HashMap<Integer, Float> hoursSum = new HashMap<Integer, Float>();
 
-        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpId(empId)) {
+        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpId(empId, begda, endda)) {
             if (!hoursSum.containsKey(el.getReformType())) {
                 hoursSum.put(el.getReformType(), el.getHours());
             } else {
@@ -318,12 +321,12 @@ public class TeacherEmploymentDetailsService {
         return jobPercentSum[0];
     }
 
-    public float getEmpJobPercentPerMossad(String empId, int mossadId) {
+    public float getEmpJobPercentPerMossad(String empId, int mossadId, Date begda, Date endda) {
         final float[] jobPercentSum = {0};
 
         HashMap<Integer, Float> hoursSum = new HashMap<Integer, Float>();
 
-        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId)) {
+        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda)) {
             if (!hoursSum.containsKey(el.getReformType())) {
                 hoursSum.put(el.getReformType(), el.getHours());
             } else {

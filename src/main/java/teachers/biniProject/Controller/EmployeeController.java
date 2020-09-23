@@ -2,10 +2,12 @@ package teachers.biniProject.Controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Service.EmployeeService;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -41,8 +43,10 @@ public class EmployeeController {
     }
 
     @GetMapping("/byMossad")
-    public List<Employee> getMossad(@RequestParam(name = "mossadId") int mossadId) {
-        return this.employeeService.getAllEmpInMossad(mossadId);
+    public List<Employee> getMossad(@RequestParam(name = "mossadId") int mossadId,
+                                    @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
+                                    @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {
+        return this.employeeService.getAllEmpInMossad(mossadId, begda, endda);
     }
 
 }
