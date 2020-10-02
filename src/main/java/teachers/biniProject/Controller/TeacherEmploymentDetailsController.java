@@ -25,7 +25,6 @@ public class TeacherEmploymentDetailsController {
     @PostMapping("/saveAll")
     @Transactional
     public List<TeacherEmploymentDetails> saveAll(@RequestBody List<TeacherEmploymentDetails> teacherEmploymentDetails) {
-
         return this.teacherEmploymentDetailsService.saveAll(teacherEmploymentDetails);
     }
 
@@ -67,6 +66,13 @@ public class TeacherEmploymentDetailsController {
                                                              @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {
 
         return teacherEmploymentDetailsService.getAllByReformType(empId, mossadId, reformType, begda, endda);
+    }
+
+    @GetMapping("/byId")
+    public List<TeacherEmploymentDetails> getAllByEmpId(@RequestParam(name = "empId") String empId,
+                                                        @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
+                                                        @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {
+        return teacherEmploymentDetailsService.getByEmpId(empId, begda, endda);
     }
 
 }

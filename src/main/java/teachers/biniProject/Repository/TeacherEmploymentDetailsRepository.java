@@ -30,21 +30,21 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
                                       @Param("begda") Date begda,
                                       @Param("endda") Date endda);
 
-    @Query(value = "select distinct * from teacher_info where emp_id = :empId AND " +
+    @Query(value = "select * from teacher_info where emp_id = :empId AND " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
     List<TeacherEmploymentDetails> findByEmpId(@Param("empId") String empId,
                                                @Param("begda") Date begda,
                                                @Param("endda") Date endda);
 
-    @Query(value = "select distinct * from teacher_info where mossad_id =:mossadId AND " +
+    @Query(value = "select * from teacher_info where mossad_id =:mossadId AND " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
     List<TeacherEmploymentDetails> findByMossadId(@Param("mossadId") int mossadId,
                                                   @Param("begda") Date begda,
                                                   @Param("endda") Date endda);
 
-    @Query(value = "select distinct * from teacher_info where emp_id = :empId AND mossad_id =:mossadId AND  " +
+    @Query(value = "select * from teacher_info where emp_id = :empId AND mossad_id =:mossadId AND  " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
     List<TeacherEmploymentDetails> findByEmpIdAndMossadId(@Param("empId") String empId,
@@ -52,7 +52,7 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
                                                           @Param("begda") Date begda,
                                                           @Param("endda") Date endda);
 
-    @Query(value = "select distinct * from teacher_info where emp_id = :empId AND mossad_id =:mossadId AND " +
+    @Query(value = "select * from teacher_info where emp_id = :empId AND mossad_id =:mossadId AND " +
             "reform_type =:reformType AND " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
@@ -62,7 +62,18 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
                                                                        @Param("begda") Date begda,
                                                                        @Param("endda") Date endda);
 
-    @Query(value = "select distinct * from teacher_info where emp_id =:empId AND day =:day AND " +
+    @Query(value = "select * from teacher_info where emp_id = :empId AND " +
+            "( :mossadId = 0 OR mossad_id = :mossadId ) AND " +
+            "( :reformType = 0 OR  reform_type = :reformType ) AND " +
+            "( begda <= :endda AND endda >= :begda )",
+            nativeQuery = true)
+    List<TeacherEmploymentDetails> findOverlapping(@Param("empId") String empId,
+                                                   @Param("mossadId") int mossadId,
+                                                   @Param("reformType") int reformType,
+                                                   @Param("begda") Date begda,
+                                                   @Param("endda") Date endda);
+
+    @Query(value = "select * from teacher_info where emp_id =:empId AND day =:day AND " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
     List<TeacherEmploymentDetails> findByEmpIdAndDay(@Param("empId") String empId,
@@ -70,7 +81,7 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
                                                      @Param("begda") Date begda,
                                                      @Param("endda") Date endda);
 
-    @Query(value = "select distinct * from teacher_info where emp_id =:empId AND mossad_id =:mossadId AND day =:day AND " +
+    @Query(value = "select * from teacher_info where emp_id =:empId AND mossad_id =:mossadId AND day =:day AND " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
     List<TeacherEmploymentDetails> findByEmpIdAndMossadIdAndDay(@Param("empId") String empId,
@@ -82,6 +93,7 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
     void deleteByEmpId(String empId);
 
     @Modifying
+    @Transactional
     @Query(value = "delete from teacher_info where emp_id =:empId AND mossad_id =:mossadId AND day =:day AND " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
@@ -102,5 +114,16 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
                                                @Param("begda") Date begda,
                                                @Param("endda") Date endda);
 
-
+    @Transactional
+    @Modifying
+    @Query(value = "delete from teacher_info where emp_id = :empId AND " +
+            "( :mossadId = 0 OR mossad_id = :mossadId ) AND " +
+            "( :reformType = 0 OR  reform_type = :reformType ) AND " +
+            "( begda <= :endda AND endda >= :begda )",
+            nativeQuery = true)
+    void deleteOverlapps(@Param("empId") String empId,
+                         @Param("mossadId") int mossadId,
+                         @Param("reformType") int reformType,
+                         @Param("begda") Date begda,
+                         @Param("endda") Date endda);
 }

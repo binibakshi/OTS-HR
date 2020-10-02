@@ -2,19 +2,20 @@ package teachers.biniProject.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import teachers.biniProject.Entity.Mossadot;
+import teachers.biniProject.Entity.MossadHours;
 import teachers.biniProject.Entity.TeacherEmploymentDetails;
-import teachers.biniProject.Repository.MossadotRepository;
+import teachers.biniProject.HelperClasses.MossadHoursComositeKey;
+import teachers.biniProject.Repository.MossadHoursRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 
 import java.util.Date;
 import java.util.List;
 
 @Service
-public class MossadotService {
+public class MossodHoursService {
 
     @Autowired
-    MossadotRepository mossadotRepository;
+    MossadHoursRepository mossadHoursRepository;
 
     @Autowired
     TeacherEmploymentDetailsRepository teacherEmploymentDetailsRepository;
@@ -22,17 +23,22 @@ public class MossadotService {
     @Autowired
     ConvertHoursService convertHoursService;
 
-    public int fixMossadotHours(int mossadId, Date begda, Date endda) {
+    public int fixMossadotHours(int mossadId, int year) {
+        Date begda = new Date(year - 1, 8, 1);
+        Date endda = new Date(year, 5, 20);
+
 
         double frontalSum = 0;
         List<Integer> frontalCodes = this.convertHoursService.getAllFrontal();
-        Mossadot mossad = new Mossadot(this.mossadotRepository.findById(mossadId).get());
+        MossadHours mossad = this.mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, year)).get();
 
         frontalSum = this.teacherEmploymentDetailsRepository.findByMossadId(mossadId, begda, endda)
                 .stream().filter(el -> frontalCodes.contains(el.getEmpCode()))
                 .mapToDouble(TeacherEmploymentDetails::getHours).sum();
+
         mossad.setCurrHours((int) frontalSum);
-        this.mossadotRepository.save(mossad);
+        this.mossadHoursRepository.save(mossad);
         return (int) frontalSum;
     }
+
 }

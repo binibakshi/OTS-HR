@@ -19,30 +19,20 @@ public class Mossadot {
     @Column(name = "MOSSAD_TYPE")
     private char mossadType;
 
-    @Column(name = "MAX_HOURS")
-    private int maxHours;
-
-    @Column(name = "CURR_HOURS")
-    private int currHours;
-
     public Mossadot() {
         super();
     }
 
-    public Mossadot(int mossadId, String mossadName, char mossadType, int maxHours, int currHours) {
+    public Mossadot(int mossadId, String mossadName, char mossadType) {
         this.mossadId = mossadId;
         this.mossadName = mossadName;
         this.mossadType = mossadType;
-        this.maxHours = maxHours;
-        this.currHours = currHours;
     }
 
-    public Mossadot(Mossadot mossad){
+    public Mossadot(Mossadot mossad) {
         this.mossadId = mossad.mossadId;
         this.mossadName = mossad.getMossadName();
         this.mossadType = mossad.getMossadType();
-        this.maxHours = mossad.getMaxHours();
-        this.currHours = mossad.getCurrHours();
     }
 
     public int getMossadId() {
@@ -67,21 +57,5 @@ public class Mossadot {
 
     public void setMossadType(char mossadType) {
         this.mossadType = mossadType;
-    }
-
-    public int getMaxHours() {
-        return maxHours;
-    }
-
-    public void setMaxHours(int maxHours) {
-        this.maxHours = maxHours;
-    }
-
-    public int getCurrHours() {
-        return currHours;
-    }
-
-    public void setCurrHours(int currHours) {
-        this.currHours = currHours;
     }
 }
