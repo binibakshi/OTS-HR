@@ -7,7 +7,6 @@ import teachers.biniProject.Entity.*;
 import teachers.biniProject.Exeption.GenericException;
 import teachers.biniProject.HelperClasses.MossadHoursComositeKey;
 import teachers.biniProject.Repository.MossadHoursRepository;
-import teachers.biniProject.Repository.MossadotRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 import teachers.biniProject.Repository.TeacherReformsRepository;
 
@@ -34,13 +33,29 @@ public class TeacherEmploymentDetailsService {
     private CalcHoursService calcHourService;
 
     @Autowired
-    private MossadotRepository mossadotRepository;
-
-    @Autowired
     private MossadHoursRepository mossadHoursRepository;
 
     @Autowired
     private TeacherReformsRepository teacherReformsRepository;
+
+    public List<TeacherEmploymentDetails> getReportSelection(Date begda, Date endda, List<Integer> mossadId, List<Integer> reformType,
+                                                             List<Integer> empCode, List<Character> status) {
+        List<TeacherEmploymentDetails> selectedRecords = this.teacherEmploymentDetailsRepository.findByBegdaAfterAndEnddaBefore(begda, endda);
+        if (mossadId != null && mossadId.size() != 0) {
+            selectedRecords.removeIf(el -> !mossadId.contains(el.getMossadId()));
+        }
+        if (reformType != null && reformType.size() != 0) {
+            selectedRecords.removeIf(el -> !reformType.contains(el.getReformType()));
+        }
+        if (empCode != null && empCode.size() != 0) {
+            selectedRecords.removeIf(el -> !empCode.contains(el.getEmpCode()));
+        }
+        if (status != null && status.size() != 0) {
+            selectedRecords.removeIf(el -> !status.contains(el.getStatus()));
+        }
+
+        return selectedRecords;
+    }
 
     public List<TeacherEmploymentDetails> findAll() {
         return teacherEmploymentDetailsRepository.findAll();
@@ -126,7 +141,7 @@ public class TeacherEmploymentDetailsService {
 
         // TODO when Authorization is up check if administration skip those checks
         this.checkMaxHoursInDay(teacherEmploymentDetails, empId, currReformType, begda, endda);
-        this.checkMaxJobPercent(teacherEmploymentDetails, empId);
+        this.checkMaxJobPercent(teacherEmploymentDetails, empId, currReformType, begda, endda);
         this.checkMaxHoursPerMossad(teacherEmploymentDetails, year);
     }
 
@@ -169,11 +184,9 @@ public class TeacherEmploymentDetailsService {
 
     private void getWeeklyHours(float[] week, String empId, int mossadId, int currReformType, Date begda, Date endda) {
 
-        List<Integer> relevantCodes = this.convertHoursService.getAllByReform(currReformType);
-
         // get all exist hours (without this current reform, hours to avoid duplication)
         for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findOverlapping(empId, 0, 0, begda, endda))
-            if (el.getMossadId() != mossadId || !relevantCodes.contains(el.getEmpCode())) {
+            if (el.getMossadId() != mossadId || el.getReformType() != currReformType) {
                 week[el.getDay()] += el.getHours();
             }
 
@@ -201,11 +214,10 @@ public class TeacherEmploymentDetailsService {
 
     public List<TeacherEmploymentDetails> getAllByReformType(String empId, int mossadId, int reformType, Date begda, Date endda) {
 
-        List<Integer> relevantCodes = this.convertHoursService.getAllByReform(reformType);
         List<TeacherEmploymentDetails> list = new ArrayList<>();
 
         for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda)) {
-            if (relevantCodes.contains(el.getEmpCode())) {
+            if (el.getReformType() == reformType) {
                 list.add(el);
             }
         }
@@ -227,22 +239,36 @@ public class TeacherEmploymentDetailsService {
     }
 
     // check for max job percent
-    private void checkMaxJobPercent(@NotNull List<TeacherEmploymentDetails> employmentDetails, String empId) {
-        int currReformType;
-        float maxJobPercet = 0, currJobPercnt = 0, allHours = 0;
+    private void checkMaxJobPercent(@NotNull List<TeacherEmploymentDetails> employmentDetails, String empId, int currReformType, Date begda, Date endda) {
+        int mossadId;
+        float maxJobPercet = 0;
+        final float[] jobPercentSum = {0};
+        HashMap<Integer, Float> hoursSum = new HashMap<Integer, Float>();
 
-        maxJobPercet = this.maxJobPercentById(empId);
-        currReformType = this.convertHoursService.findByCode(employmentDetails.get(0).getEmpCode());
+        mossadId = employmentDetails.get(0).getMossadId();
+        maxJobPercet = this.maxJobPercentById(empId, begda, endda, currReformType);
 
-        // get the hours of the sent reform type (always send from the client for each change)
-        allHours += employmentDetails.stream().
+        // add new hours
+        hoursSum.put(currReformType, (float) employmentDetails.stream().
                 mapToDouble(TeacherEmploymentDetails::getHours).
-                sum();
+                sum());
 
-        currJobPercnt = this.calcHourService.getJobPercent(currReformType, empId, allHours);
+        // get all exist hours (without this current reform per mossad, hours to avoid duplication)
+        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findOverlapping(empId, 0, 0, begda, endda))
+            if (el.getMossadId() != mossadId || el.getReformType() != currReformType) {
+                if (!hoursSum.containsKey(el.getReformType())) {
+                    hoursSum.put(el.getReformType(), el.getHours());
+                } else {
+                    hoursSum.put(el.getReformType(), el.getHours() + hoursSum.get(el.getReformType()));
+                }
+            }
+        // sum all by reform
+        hoursSum.forEach((k, v) ->
+                jobPercentSum[0] += this.calcHourService.getJobPercent(k, empId, v));
 
-        if (currJobPercnt > maxJobPercet) {
-            throw new GenericException("לעובד יש מגבלת מגבלת אחוז משרה של " + maxJobPercet + "כעת יש %" + currJobPercnt + "%");
+
+        if (jobPercentSum[0] > maxJobPercet) {
+            throw new GenericException("לעובד יש מגבלת מגבלת אחוז משרה של " + maxJobPercet + "כעת יש %" + jobPercentSum[0] + "%");
         }
     }
 
@@ -352,17 +378,13 @@ public class TeacherEmploymentDetailsService {
         return jobPercentSum[0];
     }
 
-    private float maxJobPercentById(String tz) {
-        List<Integer> cuReforms = new ArrayList<>();
-        for (TeachersReforms el : this.teacherReformsRepository.findAll()) {
-            if (el.getEmpId().equals(tz)) {
-                Integer reformType = el.getReformType();
-                cuReforms.add(reformType);
-            }
-        }
-        if (cuReforms.contains(2) || cuReforms.contains(3) || cuReforms.contains(4)) return 117;
-        else if (cuReforms.contains(5) || cuReforms.contains(6)) return 125;
-        else if (cuReforms.contains(1) || cuReforms.contains(7)) return 140;
+    private float maxJobPercentById(String empId, Date begda, Date endda, int currReformType) {
+        List<Integer> currReforms = this.teacherEmploymentDetailsRepository.getReformTypeByEmpId(empId, begda, endda);
+        if (!currReforms.contains(currReformType)) currReforms.add(currReformType);
+
+        if (currReforms.contains(2) || currReforms.contains(3) || currReforms.contains(4)) return 117;
+        else if (currReforms.contains(5) || currReforms.contains(6)) return 125;
+        else if (currReforms.contains(1) || currReforms.contains(7)) return 140;
         else return 100;
     }
 

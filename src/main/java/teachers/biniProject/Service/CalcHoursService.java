@@ -12,122 +12,118 @@ import java.util.stream.Collectors;
 @Service
 public class CalcHoursService {
 
-    @Autowired
-    private CalcHoursRepository CalcHoursRepository;
+	@Autowired
+	private CalcHoursRepository CalcHoursRepository;
 
-    @Autowired
-    private EmployeeService employeeService;
+	@Autowired
+	private EmployeeService employeeService;
 
-    public List<calcHours> findAll() {
-        return CalcHoursRepository.findAll();
-    }
+	public List<calcHours> findAll() {
+		return CalcHoursRepository.findAll();
+	}
 
-    public List<calcHours> getEmployeeByReform(int reformType, boolean isMother, int ageHours) {
+	public List<calcHours> getEmployeeByReform(int reformType, boolean isMother, int ageHours) {
 
-        return CalcHoursRepository.option(isMother, ageHours, reformType);
+		return CalcHoursRepository.option(isMother, ageHours, reformType);
 
-    }
+	}
 
-    public calcHours getByJobPercent(int reformType, boolean isMother, int ageHours, float jobPercent) {
-        List<calcHours> calcHours = CalcHoursRepository.findAll().stream()
-                .filter(record -> record.getReformType() == reformType &&
-                        record.getAgeHours() == ageHours &&
-                        record.isMother() == isMother &&
-                        record.getJobPercent() == jobPercent).collect(Collectors.toList());
-        if (calcHours.isEmpty()) {
-            return null;
-        } else {
-            return calcHours.get(0);
-        }
-    }
+	public calcHours getByJobPercent(int reformType, boolean isMother, int ageHours, float jobPercent) {
+		List<calcHours> calcHours = CalcHoursRepository.findAll().stream()
+				.filter(record -> record.getReformType() == reformType &&
+				record.getAgeHours() == ageHours &&
+				record.isMother() == isMother &&
+				record.getJobPercent() == jobPercent).collect(Collectors.toList());
+		if (calcHours.isEmpty()) {
+			return null;
+		} else {
+			return calcHours.get(0);
+		}
+	}
 
-    public calcHours getByFrontalHours(int reformType, boolean isMother, int ageHours, float frontalHours) {
+	public calcHours getByFrontalHours(int reformType, boolean isMother, int ageHours, float frontalHours) {
 
-        List<calcHours> calcHours = CalcHoursRepository.findAll().stream()
-                .filter(record -> record.getReformType() == reformType &&
-                        record.getAgeHours() == ageHours &&
-                        record.isMother() == isMother &&
-                        record.getFrontalHours() == frontalHours).collect(Collectors.toList());
-        if (calcHours.isEmpty()) {
-            return null;
-        } else {
-            return calcHours.get(0);
-        }
-    }
+		List<calcHours> calcHours = CalcHoursRepository.findAll().stream()
+				.filter(record -> record.getReformType() == reformType &&
+				record.getAgeHours() == ageHours &&
+				record.isMother() == isMother &&
+				record.getFrontalHours() == frontalHours).collect(Collectors.toList());
+		if (calcHours.isEmpty()) {
+			return null;
+		} else {
+			return calcHours.get(0);
+		}
+	}
 
-    calcHours getByFrontalTzReformType(String tz, float frontalHours, int reformType) {
-        Employee emp = employeeService.findById(tz);
-        return this.getByFrontalHours(reformType, emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), frontalHours);
-    }
+	calcHours getByFrontalTzReformType(String tz, float frontalHours, int reformType) {
+		Employee emp = employeeService.findById(tz);
+		return this.getByFrontalHours(reformType, emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), frontalHours);
+	}
 
-    public float getJobPercent(int reformType, String empId, float allHours) {
-        int ageHours = 0;
-        Employee emp = employeeService.findById(empId);
-        ageHours = employeeService.getAgeHours(emp.getBirthDate());
-        emp = employeeService.findById(empId);
+	public float getJobPercent(int reformType, String empId, float allHours) {
+		int ageHours = 0;
+		Employee emp = employeeService.findById(empId);
+		ageHours = employeeService.getAgeHours(emp.getBirthDate());
+		emp = employeeService.findById(empId);
 
-        float jobPercent = 0;
-        switch (reformType) {
-            case 1: // Olam yashan upper class
-                jobPercent = this.getOlamYashanJobPercent(ageHours, emp.isMother(), allHours);
-                break;
-            case 7: // Olam yashan middle class
-                jobPercent = this.getOlamYashanJobPercent(ageHours, emp.isMother(), allHours);
-                break;
-            case 2: // Ofek hadash
-                jobPercent = this.getOfekHasashJobPercent(ageHours, emp.isMother(), allHours);
-                break;
-            case 5: // OZ letmura
-                jobPercent = this.getOzLetmuraJobPercent(ageHours, emp.isMother(), allHours);
-                break;
-            case 8: // administration
-                jobPercent = this.getMinhalaJobPercent(ageHours, emp.isMother(), allHours);
-                break;
-            default:
-                break;
-        }
-        return jobPercent;
-    }
+		float jobPercent = 0;
+		switch (reformType) {
+		case 1: // Olam yashan upper class
+			jobPercent = this.getOlamYashanJobPercent(ageHours, emp.isMother(), allHours);
+			break;
+		case 7: // Olam yashan middle class
+			jobPercent = this.getOlamYashanJobPercent(ageHours, emp.isMother(), allHours);
+			break;
+		case 2: // Ofek hadash
+			jobPercent = this.getOfekHasashJobPercent(ageHours, emp.isMother(), allHours);
+			break;
+		case 5: // OZ letmura
+			jobPercent = this.getOzLetmuraJobPercent(ageHours, emp.isMother(), allHours);
+			break;
+		case 8: // administration
+			jobPercent = this.getMinhalaJobPercent(ageHours, emp.isMother(), allHours);
+			break;
+		default:
+			break;
+		}
+		return jobPercent;
+	}
 
-    private float getOlamYashanJobPercent(int ageHours, boolean isMother, float frontalHours) {
-        float jobPercent = 0, fullJobHours = 24;
-        fullJobHours -= ageHours;
-        jobPercent = (frontalHours / fullJobHours) * 100;
-        if (isMother) {
-            jobPercent = jobPercent * (float) 1.10;
-        }
-        return jobPercent;
-    }
+	private float getOlamYashanJobPercent(int ageHours, boolean isMother, float frontalHours) {
+		float jobPercent = 0, fullJobHours = 24;
+		fullJobHours -= ageHours;
+		jobPercent = (frontalHours / fullJobHours) * 100;
+		if (isMother) {
+			jobPercent = jobPercent * (float) 1.10;
+		}
+		return jobPercent;
+	}
 
-    private float getOfekHasashJobPercent(int ageHours, boolean isMother, float allHours) {
-        float jobPercent = 0, fullJobHours = 36;
-        fullJobHours -= ageHours;
-        if (isMother) {
-            fullJobHours -= 2;
-        }
-        jobPercent = (allHours / fullJobHours) * 100;
-        return jobPercent;
-    }
+	private float getOfekHasashJobPercent(int ageHours, boolean isMother, float allHours) {
+		float jobPercent = 0, fullJobHours = 36;
+		fullJobHours -= ageHours;
+		if (isMother) {
+			fullJobHours -= 2;
+		}
+		jobPercent = (allHours / fullJobHours) * 100;
+		return jobPercent;
+	}
 
-    private float getOzLetmuraJobPercent(int ageHours, boolean isMother, float allHours) {
-        float jobPercent = 0, fullJobHours = 40;
-        fullJobHours -= ageHours;
-        jobPercent = (allHours / fullJobHours) * 100;
-        if (isMother) {
-            if (allHours >= 31.5) {
-                jobPercent = jobPercent + 7;
-            } else {
-                jobPercent = jobPercent * (float) 1.10;
-            }
-        }
-        return jobPercent;
-    }
+	private float getOzLetmuraJobPercent(int ageHours, boolean isMother, float allHours) {
+		float jobPercent = 0, fullJobHours = 40;
+		fullJobHours -= ageHours;
+		jobPercent = (allHours / fullJobHours) * 100;
+		if (isMother) {
+			jobPercent = jobPercent * (float) 1.07;
+		}
+		return jobPercent;
+	}
 
-    private float getMinhalaJobPercent(int ageHours, boolean isMother, float allHours) {
-        float jobPercent = 0, fullJobHours = 20;
-        jobPercent = (allHours / fullJobHours) * 100;
-        return jobPercent;
-    }
+	private float getMinhalaJobPercent(int ageHours, boolean isMother, float allHours) {
+		float jobPercent = 0, fullJobHours = 20;
+		jobPercent = (allHours / fullJobHours) * 100;
+		return jobPercent;
+	}
 
 
 }

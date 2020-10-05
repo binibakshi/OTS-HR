@@ -3,7 +3,6 @@ package teachers.biniProject.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 import teachers.biniProject.Entity.Employee;
 
 import java.util.List;

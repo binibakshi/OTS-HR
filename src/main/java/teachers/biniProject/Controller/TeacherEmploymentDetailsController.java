@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import teachers.biniProject.Entity.TeacherEmploymentDetails;
+import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 import teachers.biniProject.Service.TeacherEmploymentDetailsService;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -75,4 +77,14 @@ public class TeacherEmploymentDetailsController {
         return teacherEmploymentDetailsService.getByEmpId(empId, begda, endda);
     }
 
+    @GetMapping("/getReport")
+    public List<TeacherEmploymentDetails> test(@RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
+                                               @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda,
+                                               @RequestParam(name = "mossadId", required = false) List<Integer> mossadId,
+                                               @RequestParam(name = "reformType", required = false) List<Integer> reformType,
+                                               @RequestParam(name = "empCode", required = false) List<Integer> empCode,
+                                               @RequestParam(name = "status", required = false) List<Character> status) {
+        return this.teacherEmploymentDetailsService.getReportSelection(begda, endda, mossadId, reformType, empCode, status);
+
+    }
 }
