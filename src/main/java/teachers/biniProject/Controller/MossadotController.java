@@ -24,6 +24,7 @@ public class MossadotController {
     public Mossadot getById(@RequestParam(name = "mossadId") int mossadId) {
         return this.mossadotRepository.findById(mossadId).orElse(null);
     }
+
     @PostMapping("/save")
     public Mossadot save(@RequestBody Mossadot mossad) {
         return this.mossadotRepository.save(mossad);

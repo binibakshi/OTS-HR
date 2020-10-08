@@ -69,7 +69,7 @@ public class TeacherEmploymentDetailsService {
         this.teacherEmploymentDetailsRepository.deleteByEmpIdAndMossadId(empId, mossadId, begda, endda);
     }
 
-    public List<TeacherEmploymentDetails> saveAll(List<TeacherEmploymentDetails> teacherEmploymentDetails) {
+    public List<TeacherEmploymentDetails> saveAll(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
         int mossadId = 0, reformType = 0, year = 0;
         double oldHours = 0, newHours = 0;
         String empId = "";
@@ -119,8 +119,63 @@ public class TeacherEmploymentDetailsService {
         return teacherEmploymentDetails;
     }
 
+    // Set some values
+    public void setRecordForSave(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
+        List<convertHours> localConvertHours = this.convertHoursService.findAll();
+        int reformType = localConvertHours.stream()
+                .filter(e -> e.getCode() == teacherEmploymentDetails.get(0)
+                        .getEmpCode()).findFirst().get().getReformType();
+
+        Date todayDate = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, 6);
+        cal.set(Calendar.DAY_OF_MONTH, 30);
+
+        for (TeacherEmploymentDetails el : teacherEmploymentDetails) {
+            if (el.getBegda() == null) el.setBegda(todayDate);
+            if (el.getEndda() == null) el.setEndda(cal.getTime());
+            el.setReformType(reformType);
+        }
+    }
+
+    private void getWeeklyHours(float[] week, String empId, int mossadId, int currReformType, Date begda, Date endda) {
+
+        // get all exist hours (without this current reform, hours to avoid duplication)
+        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findOverlapping(empId, 0, 0, begda, endda))
+            if (el.getMossadId() != mossadId || el.getReformType() != currReformType) {
+                week[el.getDay()] += el.getHours();
+            }
+
+    }
+
+    public List<TeacherEmploymentDetails> getAllByReformType(String empId, int mossadId, int reformType, Date begda, Date endda) {
+
+        List<TeacherEmploymentDetails> list = new ArrayList<>();
+
+        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda)) {
+            if (el.getReformType() == reformType) {
+                list.add(el);
+            }
+        }
+        return list;
+    }
+
+    public List<TeacherEmploymentDetails> getEmpHoursByMossad(String empId, int mossadId, Date begda, Date endda) {
+        return this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda);
+    }
+
+    public List<TeacherEmploymentDetails> getByEmpId(String empId, Date begda, Date endda) {
+        return this.teacherEmploymentDetailsRepository.findByEmpId(empId, begda, endda);
+    }
+
+    public List<TeacherEmploymentDetails> getAllByMossad(int mossadId, Date begda, Date endda) {
+        return this.teacherEmploymentDetailsRepository
+                .findByMossadId(mossadId, begda, endda).stream()
+                .collect(Collectors.toList());
+    }
+
     // validate checks raise exceptions if needed
-    public void checkNewHoursValidation(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails, Date begda, Date endda) {
+    private void checkNewHoursValidation(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails, Date begda, Date endda) {
         int currReformType, year = 0;
         String empId;
         Calendar cal = Calendar.getInstance();
@@ -161,81 +216,6 @@ public class TeacherEmploymentDetailsService {
                     throw new GenericException("אי אפשר להזין יותר מ" + MAX_HOURS_FRIDAY + " שעות ביום" + (teacherEmploymentDetails.get(i).getDay() + 1));
                 }
         });
-    }
-
-    // Set some values
-    public void setRecordForSave(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
-        List<convertHours> localConvertHours = this.convertHoursService.findAll();
-        int reformType = localConvertHours.stream()
-                .filter(e -> e.getCode() == teacherEmploymentDetails.get(0)
-                        .getEmpCode()).findFirst().get().getReformType();
-
-        Date todayDate = new Date();
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.MONTH, 6);
-        cal.set(Calendar.DAY_OF_MONTH, 30);
-
-        for (TeacherEmploymentDetails el : teacherEmploymentDetails) {
-            if (el.getBegda() == null) el.setBegda(todayDate);
-            if (el.getEndda() == null) el.setEndda(cal.getTime());
-            el.setReformType(reformType);
-        }
-    }
-
-    private void getWeeklyHours(float[] week, String empId, int mossadId, int currReformType, Date begda, Date endda) {
-
-        // get all exist hours (without this current reform, hours to avoid duplication)
-        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findOverlapping(empId, 0, 0, begda, endda))
-            if (el.getMossadId() != mossadId || el.getReformType() != currReformType) {
-                week[el.getDay()] += el.getHours();
-            }
-
-    }
-
-    public float[] getWeek(String empId, Date begda, Date endda) {
-        float[] week = new float[7];
-        for (int i = 0; i < 6; i++) {
-            week[i] = (float) this.teacherEmploymentDetailsRepository.findByEmpIdAndDay(empId, i, begda, endda).
-                    stream().mapToDouble(TeacherEmploymentDetails::getHours).sum();
-        }
-        week[6] = this.getEmpJobPercent(empId, begda, endda);
-        return week;
-    }
-
-    public float[] getWeekPerMossad(String empId, int mossadId, Date begda, Date endda) {
-        float[] week = new float[7];
-        for (int i = 0; i < 6; i++) {
-            week[i] = (float) this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadIdAndDay(empId, mossadId, i, begda, endda).
-                    stream().mapToDouble(TeacherEmploymentDetails::getHours).sum();
-        }
-        week[6] = this.getEmpJobPercentPerMossad(empId, mossadId, begda, endda);
-        return week;
-    }
-
-    public List<TeacherEmploymentDetails> getAllByReformType(String empId, int mossadId, int reformType, Date begda, Date endda) {
-
-        List<TeacherEmploymentDetails> list = new ArrayList<>();
-
-        for (TeacherEmploymentDetails el : this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda)) {
-            if (el.getReformType() == reformType) {
-                list.add(el);
-            }
-        }
-        return list;
-    }
-
-    public List<TeacherEmploymentDetails> getEmpHoursByMossad(String empId, int mossadId, Date begda, Date endda) {
-        return this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda);
-    }
-
-    public List<TeacherEmploymentDetails> getByEmpId(String empId, Date begda, Date endda) {
-        return this.teacherEmploymentDetailsRepository.findByEmpId(empId, begda, endda);
-    }
-
-    public List<TeacherEmploymentDetails> getAllByMossad(int mossadId, Date begda, Date endda) {
-        return this.teacherEmploymentDetailsRepository
-                .findByMossadId(mossadId, begda, endda).stream()
-                .collect(Collectors.toList());
     }
 
     // check for max job percent

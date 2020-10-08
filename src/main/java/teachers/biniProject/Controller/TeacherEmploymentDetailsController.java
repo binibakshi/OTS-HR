@@ -30,21 +30,6 @@ public class TeacherEmploymentDetailsController {
         return this.teacherEmploymentDetailsService.saveAll(teacherEmploymentDetails);
     }
 
-    @GetMapping("/weekSum")
-    public float[] getAllWeekHours(@RequestParam(name = "empId") String empId,
-                                   @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
-                                   @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {
-        return this.teacherEmploymentDetailsService.getWeek(empId, begda, endda);
-    }
-
-    @GetMapping("/weekSumPerMossad")
-    public float[] getAllWeekHoursPerMossad(@RequestParam(name = "empId") String empId,
-                                            @RequestParam(name = "mossadId") int mossadId,
-                                            @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
-                                            @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {
-        return this.teacherEmploymentDetailsService.getWeekPerMossad(empId, mossadId, begda, endda);
-    }
-
     @GetMapping("/byMossad")
     public List<TeacherEmploymentDetails> getEmpHoursByMossad(@RequestParam(name = "empId") String empId,
                                                               @RequestParam(name = "mossadId") int mossadId,

@@ -1,5 +1,6 @@
 package teachers.biniProject.Controller;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import teachers.biniProject.Security.models.AuthenticationResponse;
 import teachers.biniProject.Security.models.User;
 import teachers.biniProject.Security.util.JwtUtil;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -47,6 +49,42 @@ public class AuthController {
         final String jwt = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
+
+    @RequestMapping(value = "/authenticate/refresh", method = RequestMethod.GET)
+    public ResponseEntity<?> refreshAuthenticationToken(@RequestParam(name = "token") String token,
+                                                        @RequestParam(name = "username") String username) throws Exception {
+        try {
+            if (jwtTokenUtil.extractExpiration(token).before(new Date())) {
+                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+                final String jwt = jwtTokenUtil.generateToken(userDetails);
+                return ResponseEntity.ok(new AuthenticationResponse(jwt));
+            }
+        } catch (ExpiredJwtException e) {
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            final String jwt = jwtTokenUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new AuthenticationResponse(jwt));
+        } catch (BadCredentialsException e) {
+            throw new Exception("Error in create token", e);
+        } catch (Exception e) {
+            throw new Exception("Some Error accrued ", e);
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "/authenticate/isExpired", method = RequestMethod.GET)
+    public boolean isTokenExpired(@RequestParam(name = "token") String token) throws Exception {
+        try {
+            jwtTokenUtil.extractExpiration(token).before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (BadCredentialsException e) {
+            throw new Exception("Error in create token", e);
+        } catch (Exception e) {
+            throw new Exception("Some Error accrued ", e);
+        }
+        return false;
+    }
+
 
     @RequestMapping(value = "/getMossad", method = RequestMethod.GET)
     public int getUserMossad(@RequestParam(name = "username") String username) {
