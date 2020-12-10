@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import teachers.biniProject.Entity.TeacherEmploymentDetails;
-import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 import teachers.biniProject.Service.TeacherEmploymentDetailsService;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +26,11 @@ public class TeacherEmploymentDetailsController {
     @Transactional
     public List<TeacherEmploymentDetails> saveAll(@RequestBody List<TeacherEmploymentDetails> teacherEmploymentDetails) {
         return this.teacherEmploymentDetailsService.saveAll(teacherEmploymentDetails);
+    }
+
+    @PostMapping("/simulatSave")
+    public void simulatSave(@RequestBody List<TeacherEmploymentDetails> teacherEmploymentDetails) {
+        this.teacherEmploymentDetailsService.simulateSave(teacherEmploymentDetails);
     }
 
     @GetMapping("/byMossad")

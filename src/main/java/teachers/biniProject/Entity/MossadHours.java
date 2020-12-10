@@ -21,7 +21,7 @@ public class MossadHours {
     private int maxHours;
 
     @Column(name = "CURR_HOURS")
-    private int currHours;
+    private float currHours;
 
     public MossadHours() {
         super();
@@ -58,11 +58,11 @@ public class MossadHours {
         this.maxHours = maxHours;
     }
 
-    public int getCurrHours() {
+    public float getCurrHours() {
         return currHours;
     }
 
-    public void setCurrHours(int currHours) {
+    public void setCurrHours(float currHours) {
         this.currHours = currHours;
     }
 }

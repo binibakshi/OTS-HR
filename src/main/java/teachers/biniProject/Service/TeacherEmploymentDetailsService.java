@@ -115,8 +115,17 @@ public class TeacherEmploymentDetailsService {
         //                    this.saveHours(el, empId, mossadId, reformType, begda, endda);
         //        }
 
-        this.updateMossadHours(mossadId, year, (int) (newHours - oldHours));
+        this.updateMossadHours(mossadId, year, (float) (newHours - oldHours));
         return teacherEmploymentDetails;
+    }
+
+    public void simulateSave(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
+        this.setRecordForSave(teacherEmploymentDetails);
+        Date begda = teacherEmploymentDetails.get(0).getBegda();
+        Date endda = teacherEmploymentDetails.get(0).getEndda();
+
+        // check validation raise exception if needed
+        this.checkNewHoursValidation(teacherEmploymentDetails, begda, endda);
     }
 
     // Set some values
@@ -316,7 +325,7 @@ public class TeacherEmploymentDetailsService {
     }
 
     // add or sub the total hours
-    private void updateMossadHours(int mossadId, int year, int hourToAdd) {
+    private void updateMossadHours(int mossadId, int year, float hourToAdd) {
         // set the new hours in total sum hours per mossad
         MossadHours mossadHours = this.mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, year)).get();
         mossadHours.setCurrHours(mossadHours.getCurrHours() + hourToAdd);
@@ -386,4 +395,5 @@ public class TeacherEmploymentDetailsService {
         }
         this.teacherEmploymentDetailsRepository.save(rec);
     }
+
 }

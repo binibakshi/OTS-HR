@@ -7,20 +7,25 @@ import javax.persistence.*;
 @Entity
 @IdClass(EmpIdYearComositeKey.class)
 @Table(name = "teacher_job_percent")
-public class teacherJobPercent {
+public class TeacherJobPercent {
 
     @Id
     @Column(name = "emp_id")
     private String empId;
 
     @Id
+    @Column(name = "mossad_id")
+    private String mossadId;
+
+    @Id
     @Column(name = "year")
-    private int Year;
+    private int year;
 
     @Column(name = "job_percent")
     private float jobPercent;
 
-    public teacherJobPercent() {
+    public TeacherJobPercent() {
+        super();
     }
 
     public String getEmpId() {
@@ -31,12 +36,20 @@ public class teacherJobPercent {
         this.empId = empId;
     }
 
+    public String getMossadId() {
+        return mossadId;
+    }
+
+    public void setMossadId(String mossadId) {
+        this.mossadId = mossadId;
+    }
+
     public int getYear() {
-        return Year;
+        return year;
     }
 
     public void setYear(int year) {
-        Year = year;
+        this.year = year;
     }
 
     public float getJobPercent() {

@@ -30,6 +30,7 @@ public interface TeacherEmploymentDetailsRepository extends JpaRepository<Teache
                                       @Param("begda") Date begda,
                                       @Param("endda") Date endda);
 
+
     @Query(value = "select * from teacher_info where emp_id = :empId AND " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
