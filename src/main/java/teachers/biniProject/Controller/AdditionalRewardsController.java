@@ -3,7 +3,7 @@ package teachers.biniProject.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import teachers.biniProject.Entity.AdditionalRewerds;
+import teachers.biniProject.Entity.AdditionalRewards;
 import teachers.biniProject.Repository.AdditionalRewardsRepository;
 
 import java.util.List;
@@ -16,22 +16,22 @@ public class AdditionalRewardsController {
     private AdditionalRewardsRepository additionalRewardsRepository;
 
     @GetMapping("/all")
-    public List<AdditionalRewerds> getAll() {
+    public List<AdditionalRewards> getAll() {
         return additionalRewardsRepository.findAll();
     }
 
     @PostMapping("/saveAll")
-    public void save(List<AdditionalRewerds> additionalRewerds) {
+    public void save(List<AdditionalRewards> additionalRewerds) {
         this.additionalRewardsRepository.saveAll(additionalRewerds);
     }
 
     @PostMapping("/save")
-    public AdditionalRewerds save(AdditionalRewerds additionalRewerds) {
-        return this.additionalRewardsRepository.save(additionalRewerds);
+    public AdditionalRewards save(AdditionalRewards additionalRewards) {
+        return this.additionalRewardsRepository.save(additionalRewards);
     }
 
     @DeleteMapping("/delete")
-    public void delete(AdditionalRewerds additionalRewerds) {
-        this.additionalRewardsRepository.delete(additionalRewerds);
+    public void delete(AdditionalRewards additionalRewards) {
+        this.additionalRewardsRepository.delete(additionalRewards);
     }
 }

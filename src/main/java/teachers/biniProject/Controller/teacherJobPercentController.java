@@ -47,6 +47,4 @@ public class teacherJobPercentController {
     public List<TeacherJobPercent> getById(@RequestBody List<TeacherJobPercent> teacherJobPercent) {
         return this.teacherJobPercentService.saveAll(teacherJobPercent);
     }
-
-
 }

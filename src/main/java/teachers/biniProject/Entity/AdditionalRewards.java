@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "ADDITIONAL_REWARDS")
-public class AdditionalRewerds {
+public class AdditionalRewards {
 
     @Id
     @Column(name = "record_key")
@@ -28,17 +28,25 @@ public class AdditionalRewerds {
     @Column(name = "hours_reward")
     private float hoursReward;
 
-    public AdditionalRewerds(int recordkey, String profession, int studyUnits, String questionnaire, boolean isExternal, float hoursReward) {
+    @Column(name = "percent_reward")
+    private float percentReward;
+
+    @Column(name = "reform_id")
+    private int reformId;
+
+    public AdditionalRewards() {
+        super();
+    }
+
+    public AdditionalRewards(int recordkey, String profession, int studyUnits, String questionnaire, boolean isExternal, float hoursReward, float percentReward, int reformId) {
         this.recordkey = recordkey;
         this.profession = profession;
         this.studyUnits = studyUnits;
         this.questionnaire = questionnaire;
         this.isExternal = isExternal;
         this.hoursReward = hoursReward;
-    }
-
-    public AdditionalRewerds() {
-        super();
+        this.percentReward = percentReward;
+        this.reformId = reformId;
     }
 
     public int getRecordkey() {
@@ -87,5 +95,21 @@ public class AdditionalRewerds {
 
     public void setHoursReward(float hoursReward) {
         this.hoursReward = hoursReward;
+    }
+
+    public float getPercentReward() {
+        return percentReward;
+    }
+
+    public void setPercentReward(float percentReward) {
+        this.percentReward = percentReward;
+    }
+
+    public int getReformId() {
+        return reformId;
+    }
+
+    public void setReformId(int reformId) {
+        this.reformId = reformId;
     }
 }
