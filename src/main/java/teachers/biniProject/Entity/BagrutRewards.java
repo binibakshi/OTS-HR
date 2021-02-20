@@ -1,15 +1,13 @@
 package teachers.biniProject.Entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "BAGRUT_REWARDS")
 public class BagrutRewards {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "record_key")
     private int recordkey;
 

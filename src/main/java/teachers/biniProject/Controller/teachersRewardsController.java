@@ -2,43 +2,51 @@ package teachers.biniProject.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import teachers.biniProject.Entity.teachersRewards;
-import teachers.biniProject.Service.teachersRewardsServise;
+import teachers.biniProject.Entity.TeachersRewards;
+import teachers.biniProject.HelperClasses.GapsRewardHours;
+import teachers.biniProject.Service.TeachersRewardsServise;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/teachersRewards")
-public class teachersRewardsController {
+public class TeachersRewardsController {
 
     @Autowired
-    private teachersRewardsServise teachersRewardsServise;
+    private TeachersRewardsServise teachersRewardsServise;
 
     @GetMapping("/all")
-    public List<teachersRewards> getAll() {
+    public List<TeachersRewards> getAll() {
         return this.teachersRewardsServise.findAll();
     }
 
     @GetMapping("/byMossadAndYear")
-    public List<teachersRewards> findAllByMossadIdAndYear(@RequestParam(name = "mossadId") int mossadId,
+    public List<TeachersRewards> findAllByMossadIdAndYear(@RequestParam(name = "mossadId") int mossadId,
                                                           @RequestParam(name = "year") int year) {
         return this.teachersRewardsServise.findAllByMossadIdAndYear(mossadId, year);
     }
 
     @GetMapping("/byEmpIdAndMossadAndYear")
-    public List<teachersRewards> findAllByMossadIdAndYear(@RequestParam(name = "empId") int empId,
+    public List<TeachersRewards> findAllByMossadIdAndYear(@RequestParam(name = "empId") int empId,
                                                           @RequestParam(name = "mossadId") int mossadId,
                                                           @RequestParam(name = "year") int year) {
         return this.teachersRewardsServise.findAllByEmpIdAndMossadIdAndYear(empId, mossadId, year);
     }
 
+    @GetMapping("/findGaps")
+    public List<GapsRewardHours> findAllGaps(@RequestParam(name = "year") int year,
+                                             @RequestParam(name = "mossadId") int mossadId,
+                                             @RequestParam(name = "reformId") int reformId) {
+        return this.teachersRewardsServise.findAllGaps(year, mossadId, reformId);
+    }
+
     @PostMapping("/saveAll")
-    public List<teachersRewards> saveAll(@RequestBody List<teachersRewards> teachersRewards) {
+    public List<TeachersRewards> saveAll(@RequestBody List<TeachersRewards> teachersRewards) {
         return this.teachersRewardsServise.saveAll(teachersRewards);
     }
 
     @PostMapping("/save")
-    public teachersRewards save(@RequestBody teachersRewards teachersRewards) {
+    public TeachersRewards save(@RequestBody TeachersRewards teachersRewards) {
         return this.teachersRewardsServise.save(teachersRewards);
     }
 

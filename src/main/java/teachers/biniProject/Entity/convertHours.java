@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "convert_hour_type")
-public class convertHours {
+public class ConvertHours {
 
 	@Id
 	@Column(name="CODE")

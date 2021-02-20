@@ -7,7 +7,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "REFORM_TYPES")
-public class reformType {
+public class ReformType {
 	
 	@Id
 	@Column(name="ID")
@@ -19,7 +19,7 @@ public class reformType {
 	@Column(name="max_job_percent")
 	private int maxJobPercent;
 
-	public reformType() {
+	public ReformType() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

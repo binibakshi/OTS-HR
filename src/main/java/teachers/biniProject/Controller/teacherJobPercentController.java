@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/jobPercent")
-public class teacherJobPercentController {
+public class TeacherJobPercentController {
 
     @Autowired
     TeacherJobPercentService teacherJobPercentService;

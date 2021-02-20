@@ -1,8 +1,8 @@
 package teachers.biniProject.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import teachers.biniProject.Entity.reformType;
+import teachers.biniProject.Entity.ReformType;
 
-public interface reformTypeRepository extends JpaRepository<reformType, Integer> {
+public interface ReformTypeRepository extends JpaRepository<ReformType, Integer> {
 
 }

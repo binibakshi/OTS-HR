@@ -3,11 +3,11 @@ package teachers.biniProject.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import teachers.biniProject.Entity.calcHours;
+import teachers.biniProject.Entity.CalcHours;
 
 import java.util.List;
 
-public interface CalcHoursRepository extends JpaRepository<calcHours, Integer> {
+public interface CalcHoursRepository extends JpaRepository<CalcHours, Integer> {
 
     @Query(value = "select * " +
             "from calc_hours " +
@@ -15,7 +15,7 @@ public interface CalcHoursRepository extends JpaRepository<calcHours, Integer> {
             "age_hours = :ageHours AND " +
             "reform_type = :reformType )",
             nativeQuery = true)
-    List<calcHours> option(@Param("isMother") boolean isMother,
+    List<CalcHours> option(@Param("isMother") boolean isMother,
                            @Param("ageHours") int ageHours,
                            @Param("reformType") int reformType);
 }

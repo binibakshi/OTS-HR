@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @IdClass(teachersRewardsCompositeKey.class)
 @Table(name = "TEACHERS_REWARDS")
-public class teachersRewards {
+public class TeachersRewards {
 
     @Id
     @Column(name = "emp_id")
@@ -29,6 +29,12 @@ public class teachersRewards {
     @Column(name = "class")
     private int teachingClass;
 
+    @Column(name = "reform_id")
+    private int reformId;
+
+    @Column(name = "is_external")
+    private boolean isExternal;
+
     @Column(name = "is_split")
     private boolean isSplit;
 
@@ -41,16 +47,18 @@ public class teachersRewards {
     @Column(name = "percent")
     private float percent;
 
-    public teachersRewards() {
+    public TeachersRewards() {
         super();
     }
 
-    public teachersRewards(int empId, int rewardId, int mossadId, int year, int teachingClass, boolean isSplit, int students, float hours, float percent) {
+    public TeachersRewards(int empId, int rewardId, int mossadId, int year, int teachingClass, int reformId, boolean isExternal, boolean isSplit, int students, float hours, float percent) {
         this.empId = empId;
         this.rewardId = rewardId;
         this.mossadId = mossadId;
         this.year = year;
         this.teachingClass = teachingClass;
+        this.reformId = reformId;
+        this.isExternal = isExternal;
         this.isSplit = isSplit;
         this.students = students;
         this.hours = hours;
@@ -95,6 +103,22 @@ public class teachersRewards {
 
     public void setTeachingClass(int teachingClass) {
         this.teachingClass = teachingClass;
+    }
+
+    public int getReformId() {
+        return reformId;
+    }
+
+    public void setReformId(int reformId) {
+        this.reformId = reformId;
+    }
+
+    public boolean isExternal() {
+        return isExternal;
+    }
+
+    public void setExternal(boolean external) {
+        isExternal = external;
     }
 
     public boolean isSplit() {

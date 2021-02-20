@@ -3,7 +3,7 @@ package teachers.biniProject.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.Employee;
-import teachers.biniProject.Entity.calcHours;
+import teachers.biniProject.Entity.CalcHours;
 import teachers.biniProject.Repository.CalcHoursRepository;
 
 import java.util.List;
@@ -18,18 +18,18 @@ public class CalcHoursService {
 	@Autowired
 	private EmployeeService employeeService;
 
-	public List<calcHours> findAll() {
+	public List<CalcHours> findAll() {
 		return CalcHoursRepository.findAll();
 	}
 
-	public List<calcHours> getEmployeeByReform(int reformType, boolean isMother, int ageHours) {
+	public List<CalcHours> getEmployeeByReform(int reformType, boolean isMother, int ageHours) {
 
 		return CalcHoursRepository.option(isMother, ageHours, reformType);
 
 	}
 
-	public calcHours getByJobPercent(int reformType, boolean isMother, int ageHours, float jobPercent) {
-		List<calcHours> calcHours = CalcHoursRepository.findAll().stream()
+	public CalcHours getByJobPercent(int reformType, boolean isMother, int ageHours, float jobPercent) {
+		List<CalcHours> calcHours = CalcHoursRepository.findAll().stream()
 				.filter(record -> record.getReformType() == reformType &&
 				record.getAgeHours() == ageHours &&
 				record.isMother() == isMother &&
@@ -41,9 +41,9 @@ public class CalcHoursService {
 		}
 	}
 
-	public calcHours getByFrontalHours(int reformType, boolean isMother, int ageHours, float frontalHours) {
+	public CalcHours getByFrontalHours(int reformType, boolean isMother, int ageHours, float frontalHours) {
 
-		List<calcHours> calcHours = CalcHoursRepository.findAll().stream()
+		List<CalcHours> calcHours = CalcHoursRepository.findAll().stream()
 				.filter(record -> record.getReformType() == reformType &&
 				record.getAgeHours() == ageHours &&
 				record.isMother() == isMother &&
@@ -55,7 +55,7 @@ public class CalcHoursService {
 		}
 	}
 
-	calcHours getByFrontalTzReformType(String tz, float frontalHours, int reformType) {
+	CalcHours getByFrontalTzReformType(String tz, float frontalHours, int reformType) {
 		Employee emp = employeeService.findById(tz);
 		return this.getByFrontalHours(reformType, emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), frontalHours);
 	}

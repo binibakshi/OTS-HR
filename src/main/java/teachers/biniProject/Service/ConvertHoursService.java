@@ -2,7 +2,7 @@ package teachers.biniProject.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import teachers.biniProject.Entity.convertHours;
+import teachers.biniProject.Entity.ConvertHours;
 import teachers.biniProject.Repository.ConvertHoursRepository;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class ConvertHoursService {
     @Autowired
     private ConvertHoursRepository convertHoursRepository;
 
-    public List<convertHours> findAll() {
+    public List<ConvertHours> findAll() {
         return this.convertHoursRepository.findAll();
     }
 
@@ -23,7 +23,7 @@ public class ConvertHoursService {
         return this.convertHoursRepository.findById(empCode).get().getReformType();
     }
 
-    public List<convertHours> getByReform(int reformType) {
+    public List<ConvertHours> getByReform(int reformType) {
         return this.convertHoursRepository.findAll().stream().
                 filter(i -> i.getReformType() == reformType).collect(Collectors.toList());
     }
@@ -42,7 +42,7 @@ public class ConvertHoursService {
     // get all the frontal codes
     public List<Integer> getAllFrontal() {
 		List<Integer> list = new ArrayList<>();
-		for (convertHours i : this.convertHoursRepository.findByHourType(1)) {
+		for (ConvertHours i : this.convertHoursRepository.findByHourType(1)) {
 			Integer code = i.getCode();
 			list.add(code);
 		}

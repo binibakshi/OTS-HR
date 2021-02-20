@@ -31,14 +31,11 @@ public class AdditionalRewards {
     @Column(name = "percent_reward")
     private float percentReward;
 
-    @Column(name = "reform_id")
-    private int reformId;
-
     public AdditionalRewards() {
         super();
     }
 
-    public AdditionalRewards(int recordkey, String profession, int studyUnits, String questionnaire, boolean isExternal, float hoursReward, float percentReward, int reformId) {
+    public AdditionalRewards(int recordkey, String profession, int studyUnits, String questionnaire, boolean isExternal, float hoursReward, float percentReward) {
         this.recordkey = recordkey;
         this.profession = profession;
         this.studyUnits = studyUnits;
@@ -46,7 +43,6 @@ public class AdditionalRewards {
         this.isExternal = isExternal;
         this.hoursReward = hoursReward;
         this.percentReward = percentReward;
-        this.reformId = reformId;
     }
 
     public int getRecordkey() {
@@ -103,13 +99,5 @@ public class AdditionalRewards {
 
     public void setPercentReward(float percentReward) {
         this.percentReward = percentReward;
-    }
-
-    public int getReformId() {
-        return reformId;
-    }
-
-    public void setReformId(int reformId) {
-        this.reformId = reformId;
     }
 }

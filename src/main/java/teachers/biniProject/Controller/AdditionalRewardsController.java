@@ -8,6 +8,7 @@ import teachers.biniProject.Repository.AdditionalRewardsRepository;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/additionalRewards")
 public class AdditionalRewardsController {
@@ -21,17 +22,17 @@ public class AdditionalRewardsController {
     }
 
     @PostMapping("/saveAll")
-    public void save(List<AdditionalRewards> additionalRewerds) {
+    public void save(@RequestBody List<AdditionalRewards> additionalRewerds) {
         this.additionalRewardsRepository.saveAll(additionalRewerds);
     }
 
     @PostMapping("/save")
-    public AdditionalRewards save(AdditionalRewards additionalRewards) {
+    public AdditionalRewards save(@RequestBody AdditionalRewards additionalRewards) {
         return this.additionalRewardsRepository.save(additionalRewards);
     }
 
     @DeleteMapping("/delete")
-    public void delete(AdditionalRewards additionalRewards) {
+    public void delete(@RequestBody AdditionalRewards additionalRewards) {
         this.additionalRewardsRepository.delete(additionalRewards);
     }
 }

@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "CALC_HOURS")
-public class calcHours {
+public class CalcHours {
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -33,13 +33,13 @@ public class calcHours {
 	@Column(name="JOB_PERCENT")
 	private float jobPercent;
 	
-	public calcHours() {
+	public CalcHours() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public calcHours(int reformType, boolean isMother, int ageHours, float frontalHours, float privateHours,
-			float pauseHours, float jobPercent) {
+	public CalcHours(int reformType, boolean isMother, int ageHours, float frontalHours, float privateHours,
+					 float pauseHours, float jobPercent) {
 		super();
 		this.reformType = reformType;
 		this.isMother = isMother;

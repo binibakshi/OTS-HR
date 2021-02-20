@@ -19,10 +19,10 @@ public class TeacherEmploymentDetailsService {
 
     private final float MAX_HOURS_PER_DAY = 9;
     private final float MAX_HOURS_FRIDAY = 6;
-
+    @Autowired
+    TeacherEmploymentHoursService teacherEmploymentHoursService;
     @Autowired
     private TeacherEmploymentDetailsRepository teacherEmploymentDetailsRepository;
-
     @Autowired
     private EmployeeService employeeService;
 
@@ -76,6 +76,7 @@ public class TeacherEmploymentDetailsService {
         Date begda = new Date(), endda = new Date();
         Calendar cal = Calendar.getInstance();
         List<Integer> frontalCodes = this.convertHoursService.getAllFrontal();
+        List<Integer> currEmpCodes = teacherEmploymentDetails.stream().map(el -> el.getEmpCode()).collect(Collectors.toList());
 
         if (teacherEmploymentDetails.isEmpty()) {
             throw new GenericException("לא נמצאו נתונים");
@@ -110,10 +111,9 @@ public class TeacherEmploymentDetailsService {
         }
         // TODO: temperary until timeConstraint fix delete and save all
         this.teacherEmploymentDetailsRepository.deleteOverlapps(empId, mossadId, reformType, begda, endda);
+//        this.teacherEmploymentHoursService.deleteOverLappsByEmpCodes(empId, mossadId, reformType, begda, endda);
         this.teacherEmploymentDetailsRepository.saveAll(teacherEmploymentDetails);
-        //        for (TeacherEmploymentDetails el : teacherEmploymentDetails) {
-        //                    this.saveHours(el, empId, mossadId, reformType, begda, endda);
-        //        }
+//        this.teacherEmploymentHoursService.saveAll(teacherEmploymentDetails);
 
         this.updateMossadHours(mossadId, year, (float) (newHours - oldHours));
         return teacherEmploymentDetails;
@@ -130,7 +130,7 @@ public class TeacherEmploymentDetailsService {
 
     // Set some values
     public void setRecordForSave(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
-        List<convertHours> localConvertHours = this.convertHoursService.findAll();
+        List<ConvertHours> localConvertHours = this.convertHoursService.findAll();
         int reformType = localConvertHours.stream()
                 .filter(e -> e.getCode() == teacherEmploymentDetails.get(0)
                         .getEmpCode()).findFirst().get().getReformType();
@@ -284,7 +284,7 @@ public class TeacherEmploymentDetailsService {
     private void checkHoursMatch(List<TeacherEmploymentDetails> teacherEmploymentDetails, String empId,
                                  boolean isMother, int ageHours, int currReformType) {
         float frontalHours, privateHours, pauseHours;
-        calcHours calcHours;
+        CalcHours calcHours;
         // check if right reform else get out
         if (currReformType != 2 && currReformType != 5) {
             return;

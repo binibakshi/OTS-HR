@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import teachers.biniProject.Entity.Employee;
-import teachers.biniProject.Entity.calcHours;
+import teachers.biniProject.Entity.CalcHours;
 import teachers.biniProject.Service.CalcHoursService;
 import teachers.biniProject.Service.EmployeeService;
 
@@ -23,12 +23,12 @@ public class CalcHoursController {
     private EmployeeService employeeService;
 
     @GetMapping("/all")
-    public List<calcHours> getAll() {
+    public List<CalcHours> getAll() {
         return calcHoursService.findAll();
     }
 
     @GetMapping("/options")
-    public List<calcHours> getEmpOptions(@RequestParam(name = "reformType") int reformType,
+    public List<CalcHours> getEmpOptions(@RequestParam(name = "reformType") int reformType,
                                          @RequestParam(name = "empId") String tz) {
 
         Employee emp = employeeService.findById(tz);
@@ -37,7 +37,7 @@ public class CalcHoursController {
     }
 
     @GetMapping("/byId")
-    public calcHours getByFrontal(@RequestParam(name = "empId") String tz,
+    public CalcHours getByFrontal(@RequestParam(name = "empId") String tz,
                                   @RequestParam(name = "reformType") int employmentCode,
                                   @RequestParam(name = "frontalHours") float frontalHours) {
 
