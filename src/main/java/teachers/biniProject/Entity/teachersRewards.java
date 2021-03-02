@@ -18,6 +18,10 @@ public class TeachersRewards {
     private int rewardId;
 
     @Id
+    @Column(name = "reward_type") //1 = Bagrut, 2 = Job
+    private int rewardType;
+
+    @Id
     @Column(name = "mossad_id")
     private int mossadId;
 
@@ -26,7 +30,7 @@ public class TeachersRewards {
     private int year;
 
     @Id
-    @Column(name = "class")
+    @Column(name = "class", nullable = true)
     private int teachingClass;
 
     @Column(name = "reform_id")
@@ -41,19 +45,20 @@ public class TeachersRewards {
     @Column(name = "students")
     private int students;
 
-    @Column(name = "hours")
+    @Column(name = "hours", nullable = false)
     private float hours;
 
-    @Column(name = "percent")
+    @Column(name = "percent", nullable = false)
     private float percent;
 
     public TeachersRewards() {
         super();
     }
 
-    public TeachersRewards(int empId, int rewardId, int mossadId, int year, int teachingClass, int reformId, boolean isExternal, boolean isSplit, int students, float hours, float percent) {
+    public TeachersRewards(int empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass, int reformId, boolean isExternal, boolean isSplit, int students, float hours, float percent) {
         this.empId = empId;
         this.rewardId = rewardId;
+        this.rewardType = rewardType;
         this.mossadId = mossadId;
         this.year = year;
         this.teachingClass = teachingClass;
@@ -80,6 +85,8 @@ public class TeachersRewards {
     public void setRewardId(int rewardId) {
         this.rewardId = rewardId;
     }
+
+
 
     public int getMossadId() {
         return mossadId;

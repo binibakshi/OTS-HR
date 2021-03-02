@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface TeachersRewardsRepository extends JpaRepository<TeachersRewards, teachersRewardsCompositeKey> {
 
-    List<TeachersRewards> findAllByEmpIdAndMossadIdAndYear(int empId, int mossadId, int year);
+    List<TeachersRewards> findAllByEmpIdAndMossadIdAndYearAndRewardType(int empId, int mossadId, int year, int rewardType);
 
-    List<TeachersRewards> findAllByYear(int year);
+    List<TeachersRewards> findAllByYearAndRewardType(int year, int rewardType);
 
-    List<TeachersRewards> findAllByMossadIdAndYear(int mossadId, int year);
+    List<TeachersRewards> findAllByMossadIdAndYearAndRewardType(int mossadId, int year, int rewardType);
 
     @Query(value = "select distinct rewards.emp_id as empId, " +
             "sum(rewards.hours) as hours, " +
@@ -30,15 +30,16 @@ public interface TeachersRewardsRepository extends JpaRepository<TeachersRewards
             "from teachers_rewards as rewards " +
             "left join employees e on rewards.emp_id = e.emp_id " +
             "where year = :year AND reform_id = :reformId " +
-            "AND mossad_Id = :mossadId " +
+            "AND reward_type = :rewardType AND mossad_Id = :mossadId " +
             "group by rewards.emp_id",
             nativeQuery = true)
     List<Object[]> findAllGaps(@Param("year") int year,
                                @Param("mossadId") int mossadId,
                                @Param("reformId") int reformId,
+                               @Param("rewardType") int rewardType,
                                @Param("empCode") int empCode);
 
-    void deleteAllByReformId(int rewardId);
+    void deleteAllByReformIdAndRewardType(int rewardId, int rewardType);
 
 
 }

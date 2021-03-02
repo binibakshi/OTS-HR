@@ -37,7 +37,7 @@ public class BagrutRewardsController {
     @DeleteMapping("/delete")
     public void delete(@RequestBody BagrutRewards bagrutRewerds) {
         this.bagrutRewardsRepository.delete(bagrutRewerds);
-        this.teachersRewardsRepository.deleteAllByReformId(bagrutRewerds.getRecordkey());
+        this.teachersRewardsRepository.deleteAllByReformIdAndRewardType(bagrutRewerds.getRecordkey(), 1);
     }
 
     @DeleteMapping("/deleteAll")

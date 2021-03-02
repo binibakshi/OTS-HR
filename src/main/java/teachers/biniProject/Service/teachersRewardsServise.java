@@ -30,26 +30,26 @@ public class TeachersRewardsServise {
     }
 
     public List<TeachersRewards> findAllByEmpIdAndMossadIdAndYear(int empId, int mossadId, int year) {
-        return this.teachersRewardsRepository.findAllByEmpIdAndMossadIdAndYear(empId, mossadId, year);
+        return this.teachersRewardsRepository.findAllByEmpIdAndMossadIdAndYearAndRewardType(empId, mossadId, year, 1);
     }
 
     public List<TeachersRewards> findAllByMossadIdAndYear(int mossadId, int year) {
-        return this.teachersRewardsRepository.findAllByMossadIdAndYear(mossadId, year);
+        return this.teachersRewardsRepository.findAllByMossadIdAndYearAndRewardType(mossadId, year, 1);
     }
 
     public List<TeachersRewards> findAllByYear(int year) {
-        return this.teachersRewardsRepository.findAllByYear(year);
+        return this.teachersRewardsRepository.findAllByYearAndRewardType(year, 1);
     }
 
     public void delete(int empId, int rewardId, int mossadId, int year, int teachingClass) {
-        teachersRewardsCompositeKey teachersRewardsCompositeKey = new teachersRewardsCompositeKey(empId, rewardId, mossadId, year, teachingClass);
+        teachersRewardsCompositeKey teachersRewardsCompositeKey = new teachersRewardsCompositeKey(empId, rewardId, 1, mossadId, year, teachingClass);
         this.teachersRewardsRepository.deleteById(teachersRewardsCompositeKey);
     }
 
     public List<GapsRewardHours> findAllGaps(int year, int mossadId, int reformId) {
         List<GapsRewardHours> gapsRewardHours = new ArrayList<>();
         int empCode = (reformId == 5) ? 9671 : 2598;
-        List<Object[]> tempList = this.teachersRewardsRepository.findAllGaps(year, mossadId, reformId, empCode);
+        List<Object[]> tempList = this.teachersRewardsRepository.findAllGaps(year, mossadId, reformId, 1, empCode);
         tempList.stream().filter(el -> el[2] == null || el[1] != el[2]).forEach(el -> {
             gapsRewardHours.add(new GapsRewardHours(String.valueOf(el[0]),
                     (Double) el[1], (Double) el[2], (String) el[3], (String) el[4]));
