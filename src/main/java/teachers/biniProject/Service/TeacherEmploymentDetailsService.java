@@ -2,6 +2,7 @@ package teachers.biniProject.Service;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.*;
 import teachers.biniProject.Exeption.GenericException;
@@ -9,6 +10,7 @@ import teachers.biniProject.HelperClasses.MossadHoursComositeKey;
 import teachers.biniProject.Repository.MossadHoursRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 import teachers.biniProject.Repository.TeacherReformsRepository;
+import teachers.biniProject.Security.MyUserDetailsService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,19 +24,17 @@ public class TeacherEmploymentDetailsService {
     @Autowired
     TeacherEmploymentHoursService teacherEmploymentHoursService;
     @Autowired
+    MyUserDetailsService myUserDetailsService;
+    @Autowired
     private TeacherEmploymentDetailsRepository teacherEmploymentDetailsRepository;
     @Autowired
     private EmployeeService employeeService;
-
     @Autowired
     private ConvertHoursService convertHoursService;
-
     @Autowired
     private CalcHoursService calcHourService;
-
     @Autowired
     private MossadHoursRepository mossadHoursRepository;
-
     @Autowired
     private TeacherReformsRepository teacherReformsRepository;
 
@@ -63,6 +63,23 @@ public class TeacherEmploymentDetailsService {
 
     public void deleteByEmpId(String empId) {
         this.teacherEmploymentDetailsRepository.deleteByEmpId(empId);
+    }
+
+    public void deleteByEmpIdAndMossadIdAndEmpCode(String empId, int mossadId, Date begda, Date endda, int empCode) {
+        float deletedHours;
+        List<TeacherEmploymentDetails> teacherEmploymentDetails = this.teacherEmploymentDetailsRepository.findByEmpIdAndMossadIdAndEmpCode(empId, mossadId, empCode, begda, endda).
+                stream().collect(Collectors.toList());
+
+        if (teacherEmploymentDetails.isEmpty()) {
+            return;
+        }
+        this.teacherEmploymentDetailsRepository.deleteAll(teacherEmploymentDetails);
+
+        // update mossad hours after delete hours
+        deletedHours = (float) teacherEmploymentDetails.stream().mapToDouble(el -> el.getHours()).sum();
+        MossadHours currMossadHours = mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, endda.getYear() + 1900)).get();
+        mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, currMossadHours.getYear())).get().
+                setCurrHours((currMossadHours.getCurrHours() - deletedHours));
     }
 
     public void deleteByEmpIdAndMossadId(String empId, int mossadId, Date begda, Date endda) {
@@ -186,7 +203,7 @@ public class TeacherEmploymentDetailsService {
     // validate checks raise exceptions if needed
     private void checkNewHoursValidation(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails, Date begda, Date endda) {
         int currReformType, year = 0;
-        String empId;
+        String empId, userName;
         Calendar cal = Calendar.getInstance();
         Employee employee;
 
@@ -199,11 +216,15 @@ public class TeacherEmploymentDetailsService {
         }
 
         empId = teacherEmploymentDetails.get(0).getEmpId();
+        userName = teacherEmploymentDetails.get(0).getChangedBy();
         employee = this.employeeService.findById(empId);
         this.checkHoursMatch(teacherEmploymentDetails, empId, employee.isMother(),
                 employeeService.getAgeHours(employee.getBirthDate()), currReformType);
 
-        // TODO when Authorization is up check if administration skip those checks
+        UserDetails user = myUserDetailsService.loadUserByUsername(userName);
+        if (user.getAuthorities().stream().anyMatch(el -> el.getAuthority().equals("ROLE_ADMIN"))) {
+            return;
+        }
         this.checkMaxHoursInDay(teacherEmploymentDetails, empId, currReformType, begda, endda);
         this.checkMaxJobPercent(teacherEmploymentDetails, empId, currReformType, begda, endda);
         this.checkMaxHoursPerMossad(teacherEmploymentDetails, year);

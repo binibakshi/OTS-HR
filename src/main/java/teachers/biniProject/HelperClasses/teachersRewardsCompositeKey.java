@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class teachersRewardsCompositeKey implements Serializable {
 
-    private int empId;
+    private String empId;
     private int rewardId;
     private int rewardType;
     private int mossadId;
@@ -15,7 +15,7 @@ public class teachersRewardsCompositeKey implements Serializable {
         super();
     }
 
-    public teachersRewardsCompositeKey(int empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass) {
+    public teachersRewardsCompositeKey(String empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass) {
         this.empId = empId;
         this.rewardId = rewardId;
         this.rewardType = rewardType;

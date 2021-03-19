@@ -11,7 +11,7 @@ public class TeachersRewards {
 
     @Id
     @Column(name = "emp_id")
-    private int empId;
+    private String empId;
 
     @Id
     @Column(name = "reward_id")
@@ -30,8 +30,11 @@ public class TeachersRewards {
     private int year;
 
     @Id
-    @Column(name = "class", nullable = true)
+    @Column(name = "class", nullable = true) // relevant only for bagrut rewards
     private int teachingClass;
+
+    @Column(name = "employment_code")
+    private int employmentCode;
 
     @Column(name = "reform_id")
     private int reformId;
@@ -51,30 +54,48 @@ public class TeachersRewards {
     @Column(name = "percent", nullable = false)
     private float percent;
 
+    @Column(name = "hours_ots")
+    private float hoursOTS;
+
+    @Column(name = "hours_normal")
+    private float hoursNormal;
+
+    @Column(name = "percent_ots")
+    private float percentOTS;
+
+    @Column(name = "percent_normal")
+    private float percentNormal;
+
+
     public TeachersRewards() {
         super();
     }
 
-    public TeachersRewards(int empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass, int reformId, boolean isExternal, boolean isSplit, int students, float hours, float percent) {
+    public TeachersRewards(String empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass, int employmentCode, int reformId, boolean isExternal, boolean isSplit, int students, float hours, float percent, float hoursOTS, float hoursNormal, float percentOTS, float percentNormal) {
         this.empId = empId;
         this.rewardId = rewardId;
         this.rewardType = rewardType;
         this.mossadId = mossadId;
         this.year = year;
         this.teachingClass = teachingClass;
+        this.employmentCode = employmentCode;
         this.reformId = reformId;
         this.isExternal = isExternal;
         this.isSplit = isSplit;
         this.students = students;
         this.hours = hours;
         this.percent = percent;
+        this.hoursOTS = hoursOTS;
+        this.hoursNormal = hoursNormal;
+        this.percentOTS = percentOTS;
+        this.percentNormal = percentNormal;
     }
 
-    public int getEmpId() {
+    public String getEmpId() {
         return empId;
     }
 
-    public void setEmpId(int empId) {
+    public void setEmpId(String empId) {
         this.empId = empId;
     }
 
@@ -86,7 +107,13 @@ public class TeachersRewards {
         this.rewardId = rewardId;
     }
 
+    public int getRewardType() {
+        return rewardType;
+    }
 
+    public void setRewardType(int rewardType) {
+        this.rewardType = rewardType;
+    }
 
     public int getMossadId() {
         return mossadId;
@@ -110,6 +137,14 @@ public class TeachersRewards {
 
     public void setTeachingClass(int teachingClass) {
         this.teachingClass = teachingClass;
+    }
+
+    public int getEmploymentCode() {
+        return employmentCode;
+    }
+
+    public void setEmploymentCode(int employmentCode) {
+        this.employmentCode = employmentCode;
     }
 
     public int getReformId() {
@@ -158,5 +193,37 @@ public class TeachersRewards {
 
     public void setPercent(float percent) {
         this.percent = percent;
+    }
+
+    public float getHoursOTS() {
+        return hoursOTS;
+    }
+
+    public void setHoursOTS(float hoursOTS) {
+        this.hoursOTS = hoursOTS;
+    }
+
+    public float getHoursNormal() {
+        return hoursNormal;
+    }
+
+    public void setHoursNormal(float hoursNormal) {
+        this.hoursNormal = hoursNormal;
+    }
+
+    public float getPercentOTS() {
+        return percentOTS;
+    }
+
+    public void setPercentOTS(float percentOTS) {
+        this.percentOTS = percentOTS;
+    }
+
+    public float getPercentNormal() {
+        return percentNormal;
+    }
+
+    public void setPercentNormal(float percentNormal) {
+        this.percentNormal = percentNormal;
     }
 }

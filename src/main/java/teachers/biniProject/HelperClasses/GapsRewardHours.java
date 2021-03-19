@@ -7,17 +7,19 @@ public class GapsRewardHours {
     private Double actualHours;
     private String firstName;
     private String lastName;
+    private int rewardType;
 
     public GapsRewardHours() {
         super();
     }
 
-    public GapsRewardHours(String empId, Double hours, Double actualHours, String firstName, String lastName) {
+    public GapsRewardHours(String empId, Double hours, Double actualHours, String firstName, String lastName, int rewardType) {
         this.empId = empId;
         this.hours = hours;
         this.actualHours = actualHours;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.rewardType = rewardType;
     }
 
     public String getEmpId() {
@@ -58,5 +60,13 @@ public class GapsRewardHours {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public int getRewardType() {
+        return rewardType;
+    }
+
+    public void setRewardType(int rewardType) {
+        this.rewardType = rewardType;
     }
 }

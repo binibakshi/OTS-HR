@@ -20,24 +20,38 @@ public class TeachersRewardsController {
         return this.teachersRewardsServise.findAll();
     }
 
+    @GetMapping("/byMossadAndYearAndType")
+    public List<TeachersRewards> findAllByMossadIdAndYear(@RequestParam(name = "mossadId") int mossadId,
+                                                          @RequestParam(name = "year") int year,
+                                                          @RequestParam(name = "rewardType") int rewardType) {
+        return this.teachersRewardsServise.findAllByMossadIdAndYearAndRewardType(mossadId, year, rewardType);
+    }
+
     @GetMapping("/byMossadAndYear")
     public List<TeachersRewards> findAllByMossadIdAndYear(@RequestParam(name = "mossadId") int mossadId,
                                                           @RequestParam(name = "year") int year) {
         return this.teachersRewardsServise.findAllByMossadIdAndYear(mossadId, year);
     }
 
+    @GetMapping("/byEmpIdAndMossadAndYearAndType")
+    public List<TeachersRewards> findAllByEmpIdAndMossadIdAndYearAndRewardType(@RequestParam(name = "empId") String empId,
+                                                                               @RequestParam(name = "mossadId") int mossadId,
+                                                                               @RequestParam(name = "year") int year,
+                                                                               @RequestParam(name = "rewardType") int rewardType) {
+        return this.teachersRewardsServise.findAllByEmpIdAndMossadIdAndYearAndRewardType(empId, mossadId, year, rewardType);
+    }
+
     @GetMapping("/byEmpIdAndMossadAndYear")
-    public List<TeachersRewards> findAllByMossadIdAndYear(@RequestParam(name = "empId") int empId,
-                                                          @RequestParam(name = "mossadId") int mossadId,
-                                                          @RequestParam(name = "year") int year) {
+    public List<TeachersRewards> findAllByEmpIdAndMossadIdAndYear(@RequestParam(name = "empId") String empId,
+                                                                  @RequestParam(name = "mossadId") int mossadId,
+                                                                  @RequestParam(name = "year") int year) {
         return this.teachersRewardsServise.findAllByEmpIdAndMossadIdAndYear(empId, mossadId, year);
     }
 
     @GetMapping("/findGaps")
     public List<GapsRewardHours> findAllGaps(@RequestParam(name = "year") int year,
-                                             @RequestParam(name = "mossadId") int mossadId,
-                                             @RequestParam(name = "reformId") int reformId) {
-        return this.teachersRewardsServise.findAllGaps(year, mossadId, reformId);
+                                             @RequestParam(name = "mossadId") int mossadId) {
+        return this.teachersRewardsServise.findAllGaps(year, mossadId);
     }
 
     @PostMapping("/saveAll")
@@ -51,13 +65,15 @@ public class TeachersRewardsController {
     }
 
     @DeleteMapping("/delete")
-    public void delete(@RequestParam(name = "empId") int empId,
+    public void delete(@RequestParam(name = "empId") String empId,
                        @RequestParam(name = "rewardId") int rewardId,
                        @RequestParam(name = "mossadId") int mossadId,
                        @RequestParam(name = "year") int year,
-                       @RequestParam(name = "class") int teachingClass
+                       @RequestParam(name = "class") int teachingClass,
+                       @RequestParam(name = "rewardType") int rewardType
+
     ) {
-        this.teachersRewardsServise.delete(empId, rewardId, mossadId, year, teachingClass);
+        this.teachersRewardsServise.delete(empId, rewardId, mossadId, year, teachingClass, rewardType);
     }
 
 

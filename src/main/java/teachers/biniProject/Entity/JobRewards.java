@@ -22,26 +22,26 @@ public class JobRewards {
     @Column(name = "max_hours")
     private float maxHours;
 
-    @Column(name = "hours1")
-    private float hours1;
-
-    @Column(name = "hours2")
-    private float hours2;
-
-    @Column(name = "hours3")
-    private float hours3;
-
-    @Column(name = "hours4")
-    private float hours4;
-
-    @Column(name = "hours5")
-    private float hours5;
-
     @Column(name = "min_percent")
     private float minPercent;
 
     @Column(name = "max_percent")
     private float maxPercent;
+
+    @Column(name = "percent1")
+    private float percent1;
+
+    @Column(name = "percent2")
+    private float percent2;
+
+    @Column(name = "percent3")
+    private float percent3;
+
+    @Column(name = "percent4")
+    private float percent4;
+
+    @Column(name = "percent5")
+    private float percent5;
 
     @Column(name = "desc_link")
     private String descLink;
@@ -50,19 +50,19 @@ public class JobRewards {
         super();
     }
 
-    public JobRewards(int recordkey, int employmentCode, String description, float minHours, float maxHours, float hours1, float hours2, float hours3, float hours4, float hours5, float minPercent, float maxPercent, String descLink) {
+    public JobRewards(int recordkey, int employmentCode, String description, float minHours, float maxHours, float minPercent, float maxPercent, float percent1, float percent2, float percent3, float percent4, float percent5, String descLink) {
         this.recordkey = recordkey;
         this.employmentCode = employmentCode;
         this.description = description;
         this.minHours = minHours;
         this.maxHours = maxHours;
-        this.hours1 = hours1;
-        this.hours2 = hours2;
-        this.hours3 = hours3;
-        this.hours4 = hours4;
-        this.hours5 = hours5;
         this.minPercent = minPercent;
         this.maxPercent = maxPercent;
+        this.percent1 = percent1;
+        this.percent2 = percent2;
+        this.percent3 = percent3;
+        this.percent4 = percent4;
+        this.percent5 = percent5;
         this.descLink = descLink;
     }
 
@@ -106,46 +106,6 @@ public class JobRewards {
         this.maxHours = maxHours;
     }
 
-    public float getHours1() {
-        return hours1;
-    }
-
-    public void setHours1(float hours1) {
-        this.hours1 = hours1;
-    }
-
-    public float getHours2() {
-        return hours2;
-    }
-
-    public void setHours2(float hours2) {
-        this.hours2 = hours2;
-    }
-
-    public float getHours3() {
-        return hours3;
-    }
-
-    public void setHours3(float hours3) {
-        this.hours3 = hours3;
-    }
-
-    public float getHours4() {
-        return hours4;
-    }
-
-    public void setHours4(float hours4) {
-        this.hours4 = hours4;
-    }
-
-    public float getHours5() {
-        return hours5;
-    }
-
-    public void setHours5(float hours5) {
-        this.hours5 = hours5;
-    }
-
     public float getMinPercent() {
         return minPercent;
     }
@@ -160,6 +120,46 @@ public class JobRewards {
 
     public void setMaxPercent(float maxPercent) {
         this.maxPercent = maxPercent;
+    }
+
+    public float getPercent1() {
+        return percent1;
+    }
+
+    public void setPercent1(float percent1) {
+        this.percent1 = percent1;
+    }
+
+    public float getPercent2() {
+        return percent2;
+    }
+
+    public void setPercent2(float percent2) {
+        this.percent2 = percent2;
+    }
+
+    public float getPercent3() {
+        return percent3;
+    }
+
+    public void setPercent3(float percent3) {
+        this.percent3 = percent3;
+    }
+
+    public float getPercent4() {
+        return percent4;
+    }
+
+    public void setPercent4(float percent4) {
+        this.percent4 = percent4;
+    }
+
+    public float getPercent5() {
+        return percent5;
+    }
+
+    public void setPercent5(float percent5) {
+        this.percent5 = percent5;
     }
 
     public String getDescLink() {

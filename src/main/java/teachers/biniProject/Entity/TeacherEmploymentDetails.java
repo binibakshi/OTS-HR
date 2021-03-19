@@ -24,7 +24,7 @@ public class TeacherEmploymentDetails {
     @Column(name = "MOSSAD_ID")
     private int mossadId;
 
-    @Column(name = "EMPLOYMENT_CODE")
+    @Column(name = "employment_code")
     private int empCode;
 
     @Column(name = "REFORM_TYPE")
