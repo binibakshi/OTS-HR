@@ -10,17 +10,19 @@ public class teachersRewardsCompositeKey implements Serializable {
     private int mossadId;
     private int year;
     private int teachingClass;
+    private int grade;
 
     public teachersRewardsCompositeKey() {
         super();
     }
 
-    public teachersRewardsCompositeKey(String empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass) {
+    public teachersRewardsCompositeKey(String empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass, int grade) {
         this.empId = empId;
         this.rewardId = rewardId;
         this.rewardType = rewardType;
         this.mossadId = mossadId;
         this.year = year;
         this.teachingClass = teachingClass;
+        this.grade = grade;
     }
 }

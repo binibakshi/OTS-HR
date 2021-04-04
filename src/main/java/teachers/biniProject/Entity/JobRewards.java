@@ -13,6 +13,9 @@ public class JobRewards {
     @Column(name = "employment_code")
     private int employmentCode;
 
+    @Column(name = "job_code")
+    private int jobCode;
+
     @Column(name = "description")
     private String description;
 
@@ -50,9 +53,10 @@ public class JobRewards {
         super();
     }
 
-    public JobRewards(int recordkey, int employmentCode, String description, float minHours, float maxHours, float minPercent, float maxPercent, float percent1, float percent2, float percent3, float percent4, float percent5, String descLink) {
+    public JobRewards(int recordkey, int employmentCode, int jobCode, String description, float minHours, float maxHours, float minPercent, float maxPercent, float percent1, float percent2, float percent3, float percent4, float percent5, String descLink) {
         this.recordkey = recordkey;
         this.employmentCode = employmentCode;
+        this.jobCode = jobCode;
         this.description = description;
         this.minHours = minHours;
         this.maxHours = maxHours;
@@ -80,6 +84,14 @@ public class JobRewards {
 
     public void setEmploymentCode(int employmentCode) {
         this.employmentCode = employmentCode;
+    }
+
+    public int getJobCode() {
+        return jobCode;
+    }
+
+    public void setJobCode(int jobCode) {
+        this.jobCode = jobCode;
     }
 
     public String getDescription() {

@@ -70,10 +70,11 @@ public class TeachersRewardsController {
                        @RequestParam(name = "mossadId") int mossadId,
                        @RequestParam(name = "year") int year,
                        @RequestParam(name = "class") int teachingClass,
+                       @RequestParam(name = "grade") int grade,
                        @RequestParam(name = "rewardType") int rewardType
 
     ) {
-        this.teachersRewardsServise.delete(empId, rewardId, mossadId, year, teachingClass, rewardType);
+        this.teachersRewardsServise.delete(empId, rewardId, mossadId, year, teachingClass, grade, rewardType);
     }
 
 

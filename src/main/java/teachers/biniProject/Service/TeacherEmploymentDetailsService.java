@@ -22,8 +22,6 @@ public class TeacherEmploymentDetailsService {
     private final float MAX_HOURS_PER_DAY = 9;
     private final float MAX_HOURS_FRIDAY = 6;
     @Autowired
-    TeacherEmploymentHoursService teacherEmploymentHoursService;
-    @Autowired
     MyUserDetailsService myUserDetailsService;
     @Autowired
     private TeacherEmploymentDetailsRepository teacherEmploymentDetailsRepository;
@@ -128,9 +126,7 @@ public class TeacherEmploymentDetailsService {
         }
         // TODO: temperary until timeConstraint fix delete and save all
         this.teacherEmploymentDetailsRepository.deleteOverlapps(empId, mossadId, reformType, begda, endda);
-//        this.teacherEmploymentHoursService.deleteOverLappsByEmpCodes(empId, mossadId, reformType, begda, endda);
         this.teacherEmploymentDetailsRepository.saveAll(teacherEmploymentDetails);
-//        this.teacherEmploymentHoursService.saveAll(teacherEmploymentDetails);
 
         this.updateMossadHours(mossadId, year, (float) (newHours - oldHours));
         return teacherEmploymentDetails;

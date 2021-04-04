@@ -24,13 +24,13 @@ public interface TeachersRewardsRepository extends JpaRepository<TeachersRewards
 
     @Query(value = "select distinct rewards.emp_id as empId, " +
             "ROUND(sum(rewards.hours) ,2), " +
-            "ROUND((select sum(hours.hours) " +
+            "IFNULL(ROUND((select sum(hours.hours) " +
             "from teacher_info as hours " +
             "where hours.emp_id = rewards.emp_id " +
             "AND hours.employment_code = rewards.employment_code " +
             "AND YEAR(begda) <= :year " +
             "AND YEAR(endda) >= :year " +
-            "AND hours.mossad_id = :mossadId),2) as actualHours, " +
+            "AND hours.mossad_id = :mossadId),2),0) as actualHours, " +
             "e.first_name as firstName, " +
             "e.last_name as lastName, " +
             "rewards.reward_type as rewardType " +

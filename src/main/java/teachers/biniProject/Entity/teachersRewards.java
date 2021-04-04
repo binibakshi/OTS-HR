@@ -33,6 +33,10 @@ public class TeachersRewards {
     @Column(name = "class", nullable = true) // relevant only for bagrut rewards
     private int teachingClass;
 
+    @Id
+    @Column(name = "grade", nullable = true) // relevant only for bagrut rewards
+    private int grade;
+
     @Column(name = "employment_code")
     private int employmentCode;
 
@@ -66,18 +70,24 @@ public class TeachersRewards {
     @Column(name = "percent_normal")
     private float percentNormal;
 
+    @Column(name = "actual_units")
+    private int actualUnits;
+
+    @Column(name = "second_teacher")
+    private String secondTeacher;
 
     public TeachersRewards() {
         super();
     }
 
-    public TeachersRewards(String empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass, int employmentCode, int reformId, boolean isExternal, boolean isSplit, int students, float hours, float percent, float hoursOTS, float hoursNormal, float percentOTS, float percentNormal) {
+    public TeachersRewards(String empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass, int grade, int employmentCode, int reformId, boolean isExternal, boolean isSplit, int students, float hours, float percent, float hoursOTS, float hoursNormal, float percentOTS, float percentNormal, int actualUnits, String secondTeacher) {
         this.empId = empId;
         this.rewardId = rewardId;
         this.rewardType = rewardType;
         this.mossadId = mossadId;
         this.year = year;
         this.teachingClass = teachingClass;
+        this.grade = grade;
         this.employmentCode = employmentCode;
         this.reformId = reformId;
         this.isExternal = isExternal;
@@ -89,6 +99,8 @@ public class TeachersRewards {
         this.hoursNormal = hoursNormal;
         this.percentOTS = percentOTS;
         this.percentNormal = percentNormal;
+        this.actualUnits = actualUnits;
+        this.secondTeacher = secondTeacher;
     }
 
     public String getEmpId() {
@@ -137,6 +149,14 @@ public class TeachersRewards {
 
     public void setTeachingClass(int teachingClass) {
         this.teachingClass = teachingClass;
+    }
+
+    public int getGrade() {
+        return grade;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
     }
 
     public int getEmploymentCode() {
@@ -225,5 +245,21 @@ public class TeachersRewards {
 
     public void setPercentNormal(float percentNormal) {
         this.percentNormal = percentNormal;
+    }
+
+    public int getActualUnits() {
+        return actualUnits;
+    }
+
+    public void setActualUnits(int actualUnits) {
+        this.actualUnits = actualUnits;
+    }
+
+    public String getSecondTeacher() {
+        return secondTeacher;
+    }
+
+    public void setSecondTeacher(String secondTeacher) {
+        this.secondTeacher = secondTeacher;
     }
 }
