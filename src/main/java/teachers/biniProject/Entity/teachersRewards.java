@@ -76,11 +76,19 @@ public class TeachersRewards {
     @Column(name = "second_teacher")
     private String secondTeacher;
 
+    @Column(name = "teacher_percent")
+    private int teacherPercent;
+
     public TeachersRewards() {
         super();
     }
 
-    public TeachersRewards(String empId, int rewardId, int rewardType, int mossadId, int year, int teachingClass, int grade, int employmentCode, int reformId, boolean isExternal, boolean isSplit, int students, float hours, float percent, float hoursOTS, float hoursNormal, float percentOTS, float percentNormal, int actualUnits, String secondTeacher) {
+    public TeachersRewards(String empId, int rewardId, int rewardType,
+                           int mossadId, int year, int teachingClass,
+                           int grade, int employmentCode, int reformId,
+                           boolean isExternal, boolean isSplit, int students,
+                           float hours, float percent, float hoursOTS, float hoursNormal,
+                           float percentOTS, float percentNormal, int actualUnits, String secondTeacher, int teacherPercent) {
         this.empId = empId;
         this.rewardId = rewardId;
         this.rewardType = rewardType;
@@ -101,6 +109,7 @@ public class TeachersRewards {
         this.percentNormal = percentNormal;
         this.actualUnits = actualUnits;
         this.secondTeacher = secondTeacher;
+        this.teacherPercent = teacherPercent;
     }
 
     public String getEmpId() {
@@ -261,5 +270,13 @@ public class TeachersRewards {
 
     public void setSecondTeacher(String secondTeacher) {
         this.secondTeacher = secondTeacher;
+    }
+
+    public int getTeacherPercent() {
+        return teacherPercent;
+    }
+
+    public void setTeacherPercant(int teacherPercant) {
+        this.teacherPercent = teacherPercent;
     }
 }

@@ -6,10 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.*;
 import teachers.biniProject.Exeption.GenericException;
+import teachers.biniProject.HelperClasses.EmpIdYearComositeKey;
 import teachers.biniProject.HelperClasses.MossadHoursComositeKey;
 import teachers.biniProject.Repository.MossadHoursRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
-import teachers.biniProject.Repository.TeacherReformsRepository;
 import teachers.biniProject.Security.MyUserDetailsService;
 
 import java.util.*;
@@ -34,7 +34,8 @@ public class TeacherEmploymentDetailsService {
     @Autowired
     private MossadHoursRepository mossadHoursRepository;
     @Autowired
-    private TeacherReformsRepository teacherReformsRepository;
+    private TeacherJobPercentService teacherJobPercentService;
+
 
     public List<TeacherEmploymentDetails> getReportSelection(Date begda, Date endda, List<Integer> mossadId, List<Integer> reformType,
                                                              List<Integer> empCode, List<Character> status) {
@@ -85,13 +86,13 @@ public class TeacherEmploymentDetailsService {
     }
 
     public List<TeacherEmploymentDetails> saveAll(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
-        int mossadId = 0, reformType = 0, year = 0;
-        double oldHours = 0, newHours = 0;
-        String empId = "";
-        Date begda = new Date(), endda = new Date();
+        int mossadId, reformType, year;
+        double oldHours, newHours = 0;
+        String empId;
+        Date begda, endda;
         Calendar cal = Calendar.getInstance();
+        TeacherJobPercent teacherJobPercent;
         List<Integer> frontalCodes = this.convertHoursService.getAllFrontal();
-        List<Integer> currEmpCodes = teacherEmploymentDetails.stream().map(el -> el.getEmpCode()).collect(Collectors.toList());
 
         if (teacherEmploymentDetails.isEmpty()) {
             throw new GenericException("לא נמצאו נתונים");
@@ -108,12 +109,25 @@ public class TeacherEmploymentDetailsService {
         if (cal.get(Calendar.MONTH) >= 8) {
             year++;
         }
-
-        // check validation raise exception if needed
-        this.checkNewHoursValidation(teacherEmploymentDetails, begda, endda);
-
+        teacherJobPercent = this.teacherJobPercentService.getById(new EmpIdYearComositeKey(empId, mossadId, year));
+        if (teacherJobPercent == null) {
+            teacherJobPercent = new TeacherJobPercent(empId, mossadId, year, 0, 0);
+        }
         // remove unnecessary items
         teacherEmploymentDetails = teacherEmploymentDetails.stream().filter(el -> el.getHours() != 0).collect(Collectors.toList());
+
+        if (!teacherEmploymentDetails.isEmpty()) {
+            // do checks only in insert aviod delete
+            // check validation raise exception if needed (set teacherJobPercent with value)
+            this.checkNewHoursValidation(teacherEmploymentDetails, begda, endda, teacherJobPercent);
+            // Check if there is estimateJobPercent
+            if (teacherJobPercent.getEstimateJobPercent() == 0) {
+                throw new GenericException("יש ליצור אחוז קביעות לעובד זה");
+            }
+        } else {
+            // when delete all set job percent to 0
+            teacherJobPercent.setJobPercent(0);
+        }
 
         // TODO check usage of findOverlapping method
         oldHours = this.teacherEmploymentDetailsRepository.findOverlapping(empId, mossadId, reformType, begda, endda)
@@ -123,22 +137,37 @@ public class TeacherEmploymentDetailsService {
         if (!teacherEmploymentDetails.isEmpty()) {
             newHours = teacherEmploymentDetails.stream().filter(el -> frontalCodes.contains(el.getEmpCode()))
                     .mapToDouble(TeacherEmploymentDetails::getHours).sum();
+
         }
         // TODO: temperary until timeConstraint fix delete and save all
         this.teacherEmploymentDetailsRepository.deleteOverlapps(empId, mossadId, reformType, begda, endda);
         this.teacherEmploymentDetailsRepository.saveAll(teacherEmploymentDetails);
 
+        this.teacherJobPercentService.save(teacherJobPercent);
         this.updateMossadHours(mossadId, year, (float) (newHours - oldHours));
         return teacherEmploymentDetails;
     }
 
-    public void simulateSave(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails) {
-        this.setRecordForSave(teacherEmploymentDetails);
-        Date begda = teacherEmploymentDetails.get(0).getBegda();
-        Date endda = teacherEmploymentDetails.get(0).getEndda();
+    public void simulateSave(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetailsList) {
+
+        Calendar cal = Calendar.getInstance();
+        this.setRecordForSave(teacherEmploymentDetailsList);
+        TeacherEmploymentDetails teacherEmploymentDetails = teacherEmploymentDetailsList.get(0);
+        cal.setTime(teacherEmploymentDetails.getBegda());
+        int year = cal.get(Calendar.YEAR);
+        if (cal.get(Calendar.MONTH) >= 8) {
+            year++;
+        }
+
+        TeacherJobPercent teacherJobPercent = this.teacherJobPercentService.getById(new EmpIdYearComositeKey(teacherEmploymentDetails.getEmpId(),
+                teacherEmploymentDetails.getMossadId(), year));
+        if (teacherJobPercent == null) {
+            teacherJobPercent = new TeacherJobPercent(teacherEmploymentDetails.getEmpId(), teacherEmploymentDetails.getMossadId(), year, 0, 0);
+        }
 
         // check validation raise exception if needed
-        this.checkNewHoursValidation(teacherEmploymentDetails, begda, endda);
+        this.checkNewHoursValidation(teacherEmploymentDetailsList, teacherEmploymentDetails.getBegda(),
+                teacherEmploymentDetails.getEndda(), teacherJobPercent);
     }
 
     // Set some values
@@ -197,8 +226,9 @@ public class TeacherEmploymentDetailsService {
     }
 
     // validate checks raise exceptions if needed
-    private void checkNewHoursValidation(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails, Date begda, Date endda) {
-        int currReformType, year = 0;
+    private void checkNewHoursValidation(@NotNull List<TeacherEmploymentDetails> teacherEmploymentDetails,
+                                         Date begda, Date endda, @NotNull TeacherJobPercent teacherJobPercent) {
+        int currReformType, year;
         String empId, userName;
         Calendar cal = Calendar.getInstance();
         Employee employee;
@@ -214,15 +244,17 @@ public class TeacherEmploymentDetailsService {
         empId = teacherEmploymentDetails.get(0).getEmpId();
         userName = teacherEmploymentDetails.get(0).getChangedBy();
         employee = this.employeeService.findById(empId);
+
         this.checkHoursMatch(teacherEmploymentDetails, empId, employee.isMother(),
                 employeeService.getAgeHours(employee.getBirthDate()), currReformType);
 
+        // Get the current userName if is admin user skip these checks
         UserDetails user = myUserDetailsService.loadUserByUsername(userName);
         if (user.getAuthorities().stream().anyMatch(el -> el.getAuthority().equals("ROLE_ADMIN"))) {
             return;
         }
         this.checkMaxHoursInDay(teacherEmploymentDetails, empId, currReformType, begda, endda);
-        this.checkMaxJobPercent(teacherEmploymentDetails, empId, currReformType, begda, endda);
+        this.checkMaxJobPercent(teacherEmploymentDetails, empId, currReformType, begda, endda, teacherJobPercent);
         this.checkMaxHoursPerMossad(teacherEmploymentDetails, year);
     }
 
@@ -245,7 +277,9 @@ public class TeacherEmploymentDetailsService {
     }
 
     // check for max job percent
-    private void checkMaxJobPercent(@NotNull List<TeacherEmploymentDetails> employmentDetails, String empId, int currReformType, Date begda, Date endda) {
+    private void checkMaxJobPercent(@NotNull List<TeacherEmploymentDetails> employmentDetails,
+                                    String empId, int currReformType, Date begda, Date endda,
+                                    @NotNull TeacherJobPercent teacherJobPercent) {
         int mossadId;
         float maxJobPercet = 0;
         final float[] jobPercentSum = {0};
@@ -272,7 +306,7 @@ public class TeacherEmploymentDetailsService {
         hoursSum.forEach((k, v) ->
                 jobPercentSum[0] += this.calcHourService.getJobPercent(k, empId, v));
 
-
+        teacherJobPercent.setJobPercent(jobPercentSum[0]);
         if (jobPercentSum[0] > maxJobPercet) {
             throw new GenericException("לעובד יש מגבלת מגבלת אחוז משרה של " + maxJobPercet + "כעת יש %" + jobPercentSum[0] + "%");
         }

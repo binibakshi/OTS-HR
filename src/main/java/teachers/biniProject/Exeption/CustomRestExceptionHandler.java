@@ -88,7 +88,6 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
 		ExceptionResponse error = new ExceptionResponse();
 		error.setErrorMessage(exception.getMessage());
 		error.callerURL(request.getRequestURI());
-
 		return error;
 	}
 	

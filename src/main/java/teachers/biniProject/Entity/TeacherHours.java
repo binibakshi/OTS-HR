@@ -5,10 +5,10 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "TEACHER_HOURS")
-public class TeacherEmploymentHours {
+@Table(name = "teacher_hours")
+public class TeacherHours {
 
-    @javax.persistence.Id
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "record_key")
     private int Id;
@@ -25,7 +25,7 @@ public class TeacherEmploymentHours {
     @Column(name = "MOSSAD_ID")
     private int mossadId;
 
-    @Column(name = "EMPLOYMENT_CODE")
+    @Column(name = "employment_code")
     private int empCode;
 
     @Column(name = "REFORM_TYPE")
@@ -37,11 +37,11 @@ public class TeacherEmploymentHours {
     @Column(name = "CHANGED_BY", length = 55)
     private String changedBy;
 
-    public TeacherEmploymentHours() {
+    public TeacherHours() {
         super();
     }
 
-    public TeacherEmploymentHours(int id, String empId, Date begda, Date endda, int mossadId, int empCode, int reformType, char status, float hours, String changedBy) {
+    public TeacherHours(int id, String empId, Date begda, Date endda, int mossadId, int empCode, int reformType, float hours, String changedBy) {
         Id = id;
         this.empId = empId;
         this.begda = begda;

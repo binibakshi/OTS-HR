@@ -4,6 +4,7 @@ package teachers.biniProject.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import teachers.biniProject.Entity.JobRewards;
+import teachers.biniProject.Exeption.GenericException;
 import teachers.biniProject.Repository.JobRewardsRepository;
 import teachers.biniProject.Repository.TeachersRewardsRepository;
 
@@ -36,8 +37,14 @@ public class JobRewardsController {
 
     @DeleteMapping("/delete")
     public void delete(@RequestBody JobRewards jobRewerds) {
-        this.jobRewardsRepository.delete(jobRewerds);
-        this.teachersRewardsRepository.deleteAllByReformIdAndRewardType(jobRewerds.getRecordkey(), 1);
+        // check there is no active records
+        if (teachersRewardsRepository.findAllByRewardId(jobRewerds.getRecordkey()).isEmpty()){
+            this.jobRewardsRepository.delete(jobRewerds);
+        }else{
+            throw new GenericException("אי אפשר למחוק קוד זה מכיוון שקיימים שעות פעילות");
+        }
+//        this.jobRewardsRepository.delete(jobRewerds);
+//        this.teachersRewardsRepository.deleteAllByReformIdAndRewardType(jobRewerds.getRecordkey(), 1);
     }
 
     @DeleteMapping("/deleteAll")

@@ -43,6 +43,8 @@ public interface TeachersRewardsRepository extends JpaRepository<TeachersRewards
     List<Object[]> findAllGaps(@Param("year") int year,
                                @Param("mossadId") int mossadId);
 
+    List<TeachersRewards> findAllByRewardId(int rewardId);
+
     void deleteAllByReformIdAndRewardType(int rewardId, int rewardType);
 
 

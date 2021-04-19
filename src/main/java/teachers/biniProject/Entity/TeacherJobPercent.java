@@ -15,17 +15,28 @@ public class TeacherJobPercent {
 
     @Id
     @Column(name = "mossad_id")
-    private String mossadId;
+    private int mossadId;
 
     @Id
     @Column(name = "year")
     private int year;
 
-    @Column(name = "job_percent")
+    @Column(name = "job_percent" ,nullable = false)
     private float jobPercent;
+
+    @Column(name = "estimate_job_percent",nullable = false)
+    private float estimateJobPercent;
 
     public TeacherJobPercent() {
         super();
+    }
+
+    public TeacherJobPercent(String empId, int mossadId, int year, float jobPercent, float estimateJobPercent) {
+        this.empId = empId;
+        this.mossadId = mossadId;
+        this.year = year;
+        this.jobPercent = jobPercent;
+        this.estimateJobPercent = estimateJobPercent;
     }
 
     public String getEmpId() {
@@ -36,11 +47,11 @@ public class TeacherJobPercent {
         this.empId = empId;
     }
 
-    public String getMossadId() {
+    public int getMossadId() {
         return mossadId;
     }
 
-    public void setMossadId(String mossadId) {
+    public void setMossadId(int mossadId) {
         this.mossadId = mossadId;
     }
 
@@ -58,5 +69,13 @@ public class TeacherJobPercent {
 
     public void setJobPercent(float jobPercent) {
         this.jobPercent = jobPercent;
+    }
+
+    public float getEstimateJobPercent() {
+        return estimateJobPercent;
+    }
+
+    public void setEstimateJobPercent(float estimateJobPercent) {
+        this.estimateJobPercent = estimateJobPercent;
     }
 }

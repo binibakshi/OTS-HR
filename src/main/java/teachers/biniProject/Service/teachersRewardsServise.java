@@ -9,7 +9,6 @@ import teachers.biniProject.HelperClasses.teachersRewardsCompositeKey;
 import teachers.biniProject.Repository.TeachersRewardsRepository;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +21,6 @@ public class TeachersRewardsServise {
     @Autowired
     private ConvertHoursService convertHoursService;
 
-    @Autowired
-    private TeacherEmploymentDetailsService teacherEmploymentDetailsService;
-
     public TeachersRewards save(TeachersRewards teachersRewards) {
         return this.teachersRewardsRepository.save(teachersRewards);
     }
@@ -32,8 +28,14 @@ public class TeachersRewardsServise {
     public List<TeachersRewards> saveAll(List<TeachersRewards> teachersRewards) {
         teachersRewards.removeIf(el -> el.getRewardId() == 0);
         List<ConvertHours> employmentCodes = this.convertHoursService.findAll();
-        teachersRewards.stream().forEach(el -> el.setReformId(employmentCodes.stream().
-                filter(e -> e.getCode() == el.getEmploymentCode()).findFirst().get().getReformType()));
+        teachersRewards.forEach(el -> {
+            if (el.getEmploymentCode() == 0) {
+                el.setReformId(8); // administraion
+            } else {
+                el.setReformId(employmentCodes.stream().
+                        filter(e -> e.getCode() == el.getEmploymentCode()).findFirst().get().getReformType());
+            }
+        });
         return this.teachersRewardsRepository.saveAll(teachersRewards);
     }
 

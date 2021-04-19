@@ -22,12 +22,13 @@ public class TeacherJobPercentController {
     }
 
     @GetMapping("/byYear")
-    public List<TeacherJobPercent> getAllByYear(int year) {
+    public List<TeacherJobPercent> getAllByYear(@RequestParam(name = "year") int year) {
         return this.teacherJobPercentService.getAllByYear(year);
     }
 
     @GetMapping("/byYearAndMossad")
-    public List<TeacherJobPercent> getAllByYearAndMossadId(int year, int mossadId) {
+    public List<TeacherJobPercent> getAllByYearAndMossadId(@RequestParam(name = "mossadId") int mossadId,
+                                                           @RequestParam(name = "year") int year) {
         return this.teacherJobPercentService.getAllByYearAndMossadId(year, mossadId);
     }
 
