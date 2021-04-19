@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TeacherHoursService {
@@ -57,7 +58,7 @@ public class TeacherHoursService {
         }
         teacherHours = teacherHoursList.get(0);
         this.teacherHoursRepository.deleteOverlapps(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getReformType(), teacherHours.getBegda(), teacherHours.getEndda());
-        return this.teacherHoursRepository.saveAll(teacherHoursList);
+        return this.teacherHoursRepository.saveAll(teacherHoursList.stream().filter(el -> el.getHours() != 0).collect(Collectors.toList()));
     }
 
     public void deleteByEmpCode(String empId, int mossadId, int empCode, Date begda, Date endda) {
