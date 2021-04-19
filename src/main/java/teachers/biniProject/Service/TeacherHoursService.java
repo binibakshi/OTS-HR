@@ -32,9 +32,9 @@ public class TeacherHoursService {
     public TeacherHours save(TeacherHours teacherHours) {
         this.deleteByEmpCode(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(), teacherHours.getBegda(), teacherHours.getEndda());
         if (teacherHours.getHours() != 0) {
-            this.teacherHoursRepository.save(teacherHours);
+            return this.teacherHoursRepository.save(teacherHours);
         }
-        return this.teacherHoursRepository.save(teacherHours);
+        return null;
     }
 
     public void updateTeacherHours(List<TeacherHours> teacherHoursList) {
