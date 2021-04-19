@@ -3,7 +3,6 @@ package teachers.biniProject.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.TeacherHours;
-import teachers.biniProject.HelperClasses.GapsRewardHours;
 import teachers.biniProject.HelperClasses.GapsTeacherHours;
 import teachers.biniProject.Repository.TeacherHoursRepository;
 
@@ -31,6 +30,10 @@ public class TeacherHoursService {
     }
 
     public TeacherHours save(TeacherHours teacherHours) {
+        this.deleteByEmpCode(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(), teacherHours.getBegda(), teacherHours.getEndda());
+        if (teacherHours.getHours() != 0) {
+            this.teacherHoursRepository.save(teacherHours);
+        }
         return this.teacherHoursRepository.save(teacherHours);
     }
 
@@ -38,8 +41,7 @@ public class TeacherHoursService {
         // Delete old hours of same empCode and insert
         // (in order to be abke to update begda endda if nedded)
         teacherHoursList.forEach(el -> {
-            this.deleteByEmpCode(el.getEmpId(), el.getMossadId(), el.getEmpCode(), el.getBegda(), el.getEndda());
-            this.teacherHoursRepository.save(el);
+            this.save(el);
         });
     }
 
