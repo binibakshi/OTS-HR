@@ -76,7 +76,7 @@ public class TeacherHoursService {
                     filter(e -> e.getEmpId().equals(String.valueOf(el[0]))).findFirst();
 
             if (prevReward.isPresent()) {
-                prevReward.get().setActualHours(prevReward.get().getActualHours() + (Double) el[1]);
+                prevReward.get().setEstimateHours(prevReward.get().getEstimateHours() + (Double) el[1]);
                 prevReward.get().setActualHours(prevReward.get().getActualHours() + (Double) el[2]);
             } else {
                 gapsRewardHours.add(new GapsTeacherHours(String.valueOf(el[0]),
