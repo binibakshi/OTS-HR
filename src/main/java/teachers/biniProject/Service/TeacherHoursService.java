@@ -39,6 +39,7 @@ public class TeacherHoursService {
     }
 
     public void updateTeacherHours(List<TeacherHours> teacherHoursList) {
+
         // Delete old hours of same empCode and insert
         // (in order to be abke to update begda endda if nedded)
         teacherHoursList.forEach(el -> {

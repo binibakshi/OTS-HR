@@ -22,8 +22,8 @@ public class TeacherHoursController {
 
     @PostMapping("/updateTeacherHours")
     @Transactional
-    public void saveAll(List<TeacherHours> teacherHoursList) {
-        this.teacherHoursService.updateTeacherHours(teacherHoursList);
+    public List<TeacherHours> saveAll(List<TeacherHours> teacherHoursList) {
+        return this.teacherHoursService.cleanSave(teacherHoursList);
     }
 
     @PostMapping("/save")
