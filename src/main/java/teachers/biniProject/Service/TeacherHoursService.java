@@ -2,8 +2,11 @@ package teachers.biniProject.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import teachers.biniProject.Entity.JobRewards;
 import teachers.biniProject.Entity.TeacherHours;
 import teachers.biniProject.HelperClasses.GapsTeacherHours;
+import teachers.biniProject.Repository.ConvertHoursRepository;
+import teachers.biniProject.Repository.JobRewardsRepository;
 import teachers.biniProject.Repository.TeacherHoursRepository;
 
 import java.util.ArrayList;
@@ -17,6 +20,12 @@ public class TeacherHoursService {
 
     @Autowired
     private TeacherHoursRepository teacherHoursRepository;
+
+    @Autowired
+    private JobRewardsRepository jobRewardsRepository;
+
+    @Autowired
+    private ConvertHoursRepository convertHoursRepository;
 
     public TeacherHours findById(int recordkey) {
         return teacherHoursRepository.findById(recordkey).get();
@@ -38,15 +47,6 @@ public class TeacherHoursService {
         return null;
     }
 
-    public void updateTeacherHours(List<TeacherHours> teacherHoursList) {
-
-        // Delete old hours of same empCode and insert
-        // (in order to be abke to update begda endda if nedded)
-        teacherHoursList.forEach(el -> {
-            this.save(el);
-        });
-    }
-
     public List<TeacherHours> saveAll(List<TeacherHours> teacherHoursList) {
         return this.teacherHoursRepository.saveAll(teacherHoursList);
     }
@@ -54,6 +54,18 @@ public class TeacherHoursService {
     // Delete exist reform data and insert
     public List<TeacherHours> cleanSave(List<TeacherHours> teacherHoursList) {
         TeacherHours teacherHours;
+        List<Integer> existCodes = this.convertHoursRepository.findAll().stream().
+                map(el -> el.getCode()).collect(Collectors.toList());
+        List<Integer> distinctRewardsCodes = this.jobRewardsRepository.findAll().stream().
+                filter(el -> el.getMinHours() != 0 || el.getMaxHours() != 0).
+                distinct().
+                map(JobRewards::getJobCode).collect(Collectors.toList());
+        // add Bagrut rewards
+        distinctRewardsCodes.add(2598);
+        distinctRewardsCodes.add(9671);
+        //Remove codes in rewards codes or not exist in convertHours table
+        teacherHoursList.removeIf(el -> distinctRewardsCodes.contains(el.getEmpCode()) || !existCodes.contains(el.getEmpCode()));
+
         if (teacherHoursList.isEmpty()) {
             return null;
         }

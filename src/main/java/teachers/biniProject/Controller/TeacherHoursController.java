@@ -20,12 +20,6 @@ public class TeacherHoursController {
     @Autowired
     private TeacherHoursService teacherHoursService;
 
-    @PostMapping("/updateTeacherHours")
-    @Transactional
-    public List<TeacherHours> saveAll(List<TeacherHours> teacherHoursList) {
-        return this.teacherHoursService.cleanSave(teacherHoursList);
-    }
-
     @PostMapping("/save")
     public List<TeacherHours> save(@RequestBody TeacherHours teacherHours) {
         List<TeacherHours> teacherHoursList = new ArrayList<>();
