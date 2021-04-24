@@ -91,14 +91,15 @@ public interface TeacherHoursRepository extends JpaRepository<TeacherHours, Inte
             "            AND YEAR(begda) <= :year" +
             "            AND YEAR(endda) >= :year" +
             "            AND hours.mossad_id = :mossadId),2),0) as actualHours," +
-            "            e.first_name as firstName," +
-            "            e.last_name as lastName" +
+            "            e.first_name as firstName, " +
+            "            e.last_name as lastName, " +
+            "            est.employment_code as empCode" +
             "            from teacher_hours as est" +
             "            left join employees e on est.emp_id = e.emp_id" +
             "            where YEAR(est.begda) <= :year" +
             "              AND YEAR(est.endda) >= :year AND est.hours <> 0" +
             "            AND est.mossad_Id = :mossadId" +
-            "            group by est.emp_id,e.first_name, e.last_name, actualHours",
+            "            group by est.emp_id,e.first_name, e.last_name, actualHours,employment_code",
             nativeQuery = true)
     List<Object[]> findAllGaps(@Param("year") int year,
                                @Param("mossadId") int mossadId);
