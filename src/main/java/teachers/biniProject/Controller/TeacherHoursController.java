@@ -1,6 +1,5 @@
 package teachers.biniProject.Controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +23,19 @@ public class TeacherHoursController {
     public List<TeacherHours> save(@RequestBody TeacherHours teacherHours) {
         List<TeacherHours> teacherHoursList = new ArrayList<>();
         teacherHoursList.add(teacherHours);
-        return this.teacherHoursService.cleanSave(teacherHoursList);
+        return this.teacherHoursService.saveAll(teacherHoursList);
     }
 
     @PostMapping("/saveAll")
-    public List<TeacherHours> cleanSaveAll(@RequestBody List<TeacherHours> teacherHoursList) {
+    public List<TeacherHours> saveAll(@RequestBody List<TeacherHours> teacherHoursList) {
+        return this.teacherHoursService.saveAll(teacherHoursList);
+    }
+
+    @PostMapping("/cleanSave")
+    public List<TeacherHours> cleanSave(@RequestBody List<TeacherHours> teacherHoursList) {
         return this.teacherHoursService.cleanSave(teacherHoursList);
     }
+
 
     @GetMapping("/byEmpIdAndMossadId")
     @Transactional

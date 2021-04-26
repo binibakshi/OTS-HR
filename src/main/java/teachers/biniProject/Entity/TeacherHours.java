@@ -41,6 +41,16 @@ public class TeacherHours {
         super();
     }
 
+    public TeacherHours(String empId, Date begda, Date endda, int mossadId, int empCode, int reformType, float hours) {
+        this.empId = empId;
+        this.begda = begda;
+        this.endda = endda;
+        this.mossadId = mossadId;
+        this.empCode = empCode;
+        this.reformType = reformType;
+        this.hours = hours;
+    }
+
     public TeacherHours(int id, String empId, Date begda, Date endda, int mossadId, int empCode, int reformType, float hours, String changedBy) {
         Id = id;
         this.empId = empId;

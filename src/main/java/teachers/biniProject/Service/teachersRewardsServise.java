@@ -3,12 +3,14 @@ package teachers.biniProject.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.ConvertHours;
+import teachers.biniProject.Entity.TeacherHours;
 import teachers.biniProject.Entity.TeachersRewards;
 import teachers.biniProject.HelperClasses.GapsRewardHours;
 import teachers.biniProject.HelperClasses.teachersRewardsCompositeKey;
 import teachers.biniProject.Repository.TeachersRewardsRepository;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,13 +23,24 @@ public class TeachersRewardsServise {
     @Autowired
     private ConvertHoursService convertHoursService;
 
+    @Autowired
+    private TeacherHoursService teacherHoursService;
+
     public TeachersRewards save(TeachersRewards teachersRewards) {
-        return this.teachersRewardsRepository.save(teachersRewards);
+        TeachersRewards teachersRewardsReturned = this.teachersRewardsRepository.save(teachersRewards);
+        Date begda = new Date(teachersRewards.getYear() - 1900 - 1, 8, 1),
+                endda = new Date(teachersRewards.getYear() - 1900, 5, 20);
+        TeacherHours teacherHours = new TeacherHours(teachersRewards.getEmpId(), begda, endda,
+                teachersRewards.getMossadId(), teachersRewards.getEmploymentCode(), teachersRewards.getReformId(), teachersRewards.getHours());
+        this.teacherHoursService.save(teacherHours);
+        return teachersRewardsReturned;
     }
 
     public List<TeachersRewards> saveAll(List<TeachersRewards> teachersRewards) {
         teachersRewards.removeIf(el -> el.getRewardId() == 0);
         List<ConvertHours> employmentCodes = this.convertHoursService.findAll();
+        List<TeacherHours> teacherHoursList = new ArrayList<>();
+        List<TeachersRewards> teachersRewardsList;
         teachersRewards.forEach(el -> {
             if (el.getEmploymentCode() == 0) {
                 el.setReformId(8); // administraion
@@ -35,8 +48,13 @@ public class TeachersRewardsServise {
                 el.setReformId(employmentCodes.stream().
                         filter(e -> e.getCode() == el.getEmploymentCode()).findFirst().get().getReformType());
             }
+            teacherHoursList.add(new TeacherHours(el.getEmpId(), new Date(el.getYear() - 1900 - 1, 8, 1), new Date(el.getYear() - 1900, 5, 20),
+                    el.getMossadId(), el.getEmploymentCode(), el.getReformId(), el.getHours()));
         });
-        return this.teachersRewardsRepository.saveAll(teachersRewards);
+
+        teachersRewardsList = this.teachersRewardsRepository.saveAll(teachersRewards);
+        this.teacherHoursService.saveAll(teacherHoursList);
+        return teachersRewardsList;
     }
 
     public List<TeachersRewards> findAll() {

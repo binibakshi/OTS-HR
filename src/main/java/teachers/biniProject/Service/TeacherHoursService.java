@@ -48,7 +48,11 @@ public class TeacherHoursService {
     }
 
     public List<TeacherHours> saveAll(List<TeacherHours> teacherHoursList) {
-        return this.teacherHoursRepository.saveAll(teacherHoursList);
+        List<TeacherHours> teacherHoursReturn = new ArrayList<>();
+        for (TeacherHours el : teacherHoursList) {
+            teacherHoursReturn.add(this.save(el));
+        }
+        return teacherHoursReturn;
     }
 
     // Delete exist reform data and insert
@@ -79,8 +83,9 @@ public class TeacherHoursService {
     }
 
     public List<GapsTeacherHours> findAllGaps(int year, int mossadId) {
+        Date begda = new Date(year - 1900 - 1, 7, 30), endda = new Date(year - 1900, 5, 21);
         List<GapsTeacherHours> gapsRewardHours = new ArrayList<>();
-        List<Object[]> tempList = this.teacherHoursRepository.findAllGaps(year, mossadId);
+        List<Object[]> tempList = this.teacherHoursRepository.findAllGaps(begda, endda, mossadId);
 //        GapsRewardHours prevReward = new GapsRewardHours();
         tempList.stream().forEach(el -> {
 
