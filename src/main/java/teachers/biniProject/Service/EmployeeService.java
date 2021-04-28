@@ -70,6 +70,23 @@ public class EmployeeService {
         }
     }
 
+    public int getAgeHours(Date birthdate, int year) {
+        @SuppressWarnings("deprecation")
+        Date currDate = new Date(year - 1900, Calendar.SEPTEMBER, 1);
+        int yearsDiff = currDate.getYear() - birthdate.getYear();
+
+        if (currDate.getMonth() >= 8) {
+            yearsDiff += 1;
+        }
+        if (yearsDiff >= 55) {
+            return 4;
+        } else if (yearsDiff < 50) {
+            return 0;
+        } else {
+            return 2;
+        }
+    }
+
     public Employee findById(String id) {
         return emplyeeReposiroty.findById(id).orElseThrow(() -> new DataNotFoundExeption(id));
     }

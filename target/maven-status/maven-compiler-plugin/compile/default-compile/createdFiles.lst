@@ -80,4 +80,5 @@ teachers\biniProject\HelperClasses\GapsRewardHours.class
 teachers\biniProject\Entity\TeacherEmploymentDetails.class
 teachers\biniProject\HelperClasses\MossadHoursComositeKey.class
 teachers\biniProject\Service\TeachersRewardsServise.class
+teachers\biniProject\HelperClasses\HoursByEmpIdAndReform.class
 teachers\biniProject\HelperClasses\GapsTeacherHours.class

@@ -9,10 +9,7 @@ import teachers.biniProject.HelperClasses.GapsRewardHours;
 import teachers.biniProject.HelperClasses.teachersRewardsCompositeKey;
 import teachers.biniProject.Repository.TeachersRewardsRepository;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TeachersRewardsServise {
@@ -28,8 +25,8 @@ public class TeachersRewardsServise {
 
     public TeachersRewards save(TeachersRewards teachersRewards) {
         TeachersRewards teachersRewardsReturned = this.teachersRewardsRepository.save(teachersRewards);
-        Date begda = new Date(teachersRewards.getYear() - 1900 - 1, 8, 1),
-                endda = new Date(teachersRewards.getYear() - 1900, 5, 20);
+        Date begda = new Date(teachersRewards.getYear() - 1900 - 1, Calendar.SEPTEMBER, 1),
+                endda = new Date(teachersRewards.getYear() - 1900, Calendar.JUNE, 20);
         TeacherHours teacherHours = new TeacherHours(teachersRewards.getEmpId(), begda, endda,
                 teachersRewards.getMossadId(), teachersRewards.getEmploymentCode(), teachersRewards.getReformId(), teachersRewards.getHours());
         this.teacherHoursService.save(teacherHours);
@@ -48,7 +45,8 @@ public class TeachersRewardsServise {
                 el.setReformId(employmentCodes.stream().
                         filter(e -> e.getCode() == el.getEmploymentCode()).findFirst().get().getReformType());
             }
-            teacherHoursList.add(new TeacherHours(el.getEmpId(), new Date(el.getYear() - 1900 - 1, 8, 1), new Date(el.getYear() - 1900, 5, 20),
+            teacherHoursList.add(new TeacherHours(el.getEmpId(), new Date(el.getYear() - 1900 - 1, Calendar.SEPTEMBER, 1, 12, 0, 0),
+                    new Date(el.getYear() - 1900, Calendar.JUNE, 20, 12, 0, 0),
                     el.getMossadId(), el.getEmploymentCode(), el.getReformId(), el.getHours()));
         });
 

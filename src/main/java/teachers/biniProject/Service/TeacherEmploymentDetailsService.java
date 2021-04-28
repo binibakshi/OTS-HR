@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import teachers.biniProject.Entity.*;
 import teachers.biniProject.Exeption.GenericException;
 import teachers.biniProject.HelperClasses.EmpIdYearComositeKey;
+import teachers.biniProject.HelperClasses.HoursByEmpIdAndReform;
 import teachers.biniProject.HelperClasses.MossadHoursComositeKey;
 import teachers.biniProject.Repository.MossadHoursRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
@@ -222,8 +223,12 @@ public class TeacherEmploymentDetailsService {
 
     public List<TeacherEmploymentDetails> getAllByMossad(int mossadId, Date begda, Date endda) {
         return this.teacherEmploymentDetailsRepository
-                .findByMossadId(mossadId, begda, endda).stream()
-                .collect(Collectors.toList());
+                .findByMossadId(mossadId, begda, endda);
+    }
+
+    public List<Object[]> empHoursSumByMossadId(int mossadId, Date begda, Date endda) {
+        return this.teacherEmploymentDetailsRepository
+                .empHoursSumByMossadId(mossadId, begda, endda);
     }
 
     // validate checks raise exceptions if needed
@@ -362,7 +367,7 @@ public class TeacherEmploymentDetailsService {
                 mapToDouble(TeacherEmploymentDetails::getHours).
                 sum();
 
-        calcHours = this.calcHourService.getByFrontalHours(Math.round(currReformType), isMother, ageHours, frontalHours);
+        calcHours = this.calcHourService.getByFrontalHours(currReformType, isMother, ageHours, frontalHours);
 
         if (calcHours == null) {
             throw new GenericException("לא קיים פיצול שעות עבור נתונים שהוזנו");

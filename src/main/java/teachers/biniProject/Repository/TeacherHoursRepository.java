@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import teachers.biniProject.Entity.TeacherHours;
+import teachers.biniProject.HelperClasses.HoursByEmpIdAndReform;
 
 import javax.transaction.Transactional;
 import java.util.Date;
@@ -40,6 +41,16 @@ public interface TeacherHoursRepository extends JpaRepository<TeacherHours, Inte
     List<TeacherHours> findByMossadId(@Param("mossadId") int mossadId,
                                       @Param("begda") Date begda,
                                       @Param("endda") Date endda);
+
+    @Query(value = "select emp_id as empId, sum(hours) as hours, reform_type as reformType " +
+            "from teacher_hours where mossad_id =:mossadId AND " +
+            "begda >= :begda AND endda <= :endda " +
+            "group by emp_id, reform_type",
+            nativeQuery = true)
+    List<Object[]> empHoursSumByMossadId(@Param("mossadId") int mossadId,
+                                                      @Param("begda") Date begda,
+                                                      @Param("endda") Date endda);
+
 
     @Query(value = "select * from teacher_hours where emp_id = :empId AND mossad_id =:mossadId AND  " +
             "begda >= :begda AND endda <= :endda",
@@ -81,6 +92,7 @@ public interface TeacherHoursRepository extends JpaRepository<TeacherHours, Inte
                                        @Param("endda") Date endda);
 
     void deleteByEmpId(String empId);
+
 
     @Query(value = "select distinct est.emp_id as empId," +
             "            ROUND(sum(est.hours) ,2) as estemateHours," +

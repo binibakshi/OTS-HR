@@ -49,7 +49,7 @@ public class TeacherHoursController {
     @GetMapping("/findGaps")
     public List<GapsTeacherHours> findAllGaps(@RequestParam(name = "year") int year,
                                               @RequestParam(name = "mossadId") int mossadId) {
-        return this.teacherHoursService.findAllGaps(year, mossadId);
+        return this.teacherHoursService.findAllGaps(mossadId, year);
     }
 
 }

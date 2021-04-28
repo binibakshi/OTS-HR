@@ -2,17 +2,16 @@ package teachers.biniProject.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import teachers.biniProject.Entity.JobRewards;
-import teachers.biniProject.Entity.TeacherHours;
+import teachers.biniProject.Entity.*;
 import teachers.biniProject.HelperClasses.GapsTeacherHours;
+import teachers.biniProject.HelperClasses.HoursByEmpIdAndReform;
 import teachers.biniProject.Repository.ConvertHoursRepository;
 import teachers.biniProject.Repository.JobRewardsRepository;
+import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 import teachers.biniProject.Repository.TeacherHoursRepository;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigInteger;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +25,15 @@ public class TeacherHoursService {
 
     @Autowired
     private ConvertHoursRepository convertHoursRepository;
+
+    @Autowired
+    private TeacherEmploymentDetailsRepository teacherEmploymentDetailsRepository;
+
+    @Autowired
+    private CalcHoursService calcHoursService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     public TeacherHours findById(int recordkey) {
         return teacherHoursRepository.findById(recordkey).get();
@@ -82,26 +90,86 @@ public class TeacherHoursService {
         this.teacherHoursRepository.deleteByEmpIdAndMossadIdAndEmpCode(empId, mossadId, empCode, begda, endda);
     }
 
-    public List<GapsTeacherHours> findAllGaps(int year, int mossadId) {
-        Date begda = new Date(year - 1900 - 1, 7, 30), endda = new Date(year - 1900, 5, 21);
-        List<GapsTeacherHours> gapsRewardHours = new ArrayList<>();
-        List<Object[]> tempList = this.teacherHoursRepository.findAllGaps(begda, endda, mossadId);
-//        GapsRewardHours prevReward = new GapsRewardHours();
-        tempList.stream().forEach(el -> {
+//    public List<GapsTeacherHours> findAllGaps(int year, int mossadId) {
+//        Date begda = new Date(year - 1900 - 1, 7, 30), endda = new Date(year - 1900, 5, 21);
+//        List<GapsTeacherHours> gapsRewardHours = new ArrayList<>();
+//        List<Object[]> tempList = this.teacherHoursRepository.findAllGaps(begda, endda, mossadId);
+////        GapsRewardHours prevReward = new GapsRewardHours();
+//        tempList.stream().forEach(el -> {
+//
+//            // check if aleady exist empid with same reward type than add to exist hours
+//            Optional<GapsTeacherHours> prevReward = gapsRewardHours.stream().
+//                    filter(e -> e.getEmpId().equals(String.valueOf(el[0]))).findFirst();
+//
+//            if (prevReward.isPresent()) {
+//                prevReward.get().setEstimateHours(prevReward.get().getEstimateHours() + (Double) el[1]);
+//                prevReward.get().setActualHours(prevReward.get().getActualHours() + (Double) el[2]);
+//            } else {
+//                gapsRewardHours.add(new GapsTeacherHours(String.valueOf(el[0]),
+//                        (Double) el[1], (Double) el[2], (String) el[3], (String) el[4]));
+//            }
+//        });
+//
+//        return gapsRewardHours;
+//    }
 
-            // check if aleady exist empid with same reward type than add to exist hours
-            Optional<GapsTeacherHours> prevReward = gapsRewardHours.stream().
-                    filter(e -> e.getEmpId().equals(String.valueOf(el[0]))).findFirst();
+    public List<GapsTeacherHours> findAllGaps(int mossadId, int year) {
+        CalcHours calcHours;
+        List<Employee> employeeList = null;
+        Employee employee = null;
+        List<Object[]> tempHoursByEmpIdAndReformList;
+        List<HoursByEmpIdAndReform> estimateHoursList = new ArrayList<>();
+        List<HoursByEmpIdAndReform> actualHoursList = new ArrayList<>();
+        GapsTeacherHours gapsTeacherHours;
+        float totalHours = 0;
+        List<GapsTeacherHours> gapsTeacherHoursList = new ArrayList<>();
+        employeeList = this.employeeService.findAll();
 
-            if (prevReward.isPresent()) {
-                prevReward.get().setEstimateHours(prevReward.get().getEstimateHours() + (Double) el[1]);
-                prevReward.get().setActualHours(prevReward.get().getActualHours() + (Double) el[2]);
-            } else {
-                gapsRewardHours.add(new GapsTeacherHours(String.valueOf(el[0]),
-                        (Double) el[1], (Double) el[2], (String) el[3], (String) el[4]));
+        tempHoursByEmpIdAndReformList = this.teacherHoursRepository.empHoursSumByMossadId(mossadId,
+                new Date(year - 1900 - 1, Calendar.AUGUST, 30),
+                new Date(year - 1900, Calendar.JUNE, 21));
+        // cannot get directly from repository so convert it like that
+        for (Object[] el : tempHoursByEmpIdAndReformList) {
+            estimateHoursList.add(new HoursByEmpIdAndReform((String) el[0], (Double) el[1], (int) el[2]));
+        }
+        // cannot get directly from repository so convert it like that
+        tempHoursByEmpIdAndReformList = teacherEmploymentDetailsRepository.empHoursSumByMossadId(mossadId,
+                new Date(year - 1900 - 1, Calendar.AUGUST, 30),
+                new Date(year - 1900, Calendar.JUNE, 21));
+
+        for (Object[] el : tempHoursByEmpIdAndReformList) {
+            actualHoursList.add(new HoursByEmpIdAndReform((String) el[0], (Double) el[1], (int) el[2]));
+        }
+
+        for (HoursByEmpIdAndReform el : estimateHoursList) {
+            if (employee == null || employee.getEmpId() != el.getEmpId()) {
+                employee = employeeList.stream().filter(e -> e.getEmpId().equals(el.getEmpId())).findFirst().orElse(null);
             }
-        });
+            calcHours = this.calcHoursService.getByFrontalHours(el.getReformType(), employee.isMother(),
+                    this.employeeService.getAgeHours(employee.getBirthDate(), year), Math.round(el.getHours().floatValue()));
+            totalHours = (el.getHours().floatValue() + calcHours.getPrivateHours() + calcHours.getPauseHours());
+            gapsTeacherHours = gapsTeacherHoursList.stream().filter(e -> e.getEmpId() == el.getEmpId()).
+                    findFirst().orElse(null);
+            if (gapsTeacherHours == null) {
+                gapsTeacherHoursList.add(new GapsTeacherHours(el.getEmpId(), Double.valueOf(totalHours),
+                        0.0, employee.getFirstName(), employee.getLastName()));
+            } else {
+                gapsTeacherHours.setEstimateHours(gapsTeacherHours.getEstimateHours() + el.getHours());
+            }
+        }
 
-        return gapsRewardHours;
+        // not supposed to be null empId record but catch it any way inside if to avoid performance issues
+        for (HoursByEmpIdAndReform el : actualHoursList) {
+            gapsTeacherHours = gapsTeacherHoursList.stream().filter(e -> e.getEmpId().equals(el.getEmpId())).
+                    findFirst().orElse(null);
+            if (gapsTeacherHours == null) {
+                employee = employeeList.stream().filter(e -> e.equals(el.getEmpId())).findFirst().orElse(null);
+                gapsTeacherHoursList.add(new GapsTeacherHours(el.getEmpId(), el.getHours(),
+                        0.0, employee.getFirstName(), employee.getLastName()));
+            } else {
+                gapsTeacherHours.setActualHours(gapsTeacherHours.getActualHours() + el.getHours());
+            }
+        }
+        return gapsTeacherHoursList;
     }
 }
