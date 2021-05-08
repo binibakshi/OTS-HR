@@ -37,18 +37,25 @@ public class TeachersRewardsServise {
         teachersRewards.removeIf(el -> el.getRewardId() == 0);
         List<ConvertHours> employmentCodes = this.convertHoursService.findAll();
         List<TeacherHours> teacherHoursList = new ArrayList<>();
+        TeacherHours teacherHours;
         List<TeachersRewards> teachersRewardsList;
-        teachersRewards.forEach(el -> {
+        for (TeachersRewards el : teachersRewards) {
             if (el.getEmploymentCode() == 0) {
                 el.setReformId(8); // administraion
             } else {
                 el.setReformId(employmentCodes.stream().
                         filter(e -> e.getCode() == el.getEmploymentCode()).findFirst().get().getReformType());
             }
-            teacherHoursList.add(new TeacherHours(el.getEmpId(), new Date(el.getYear() - 1900 - 1, Calendar.SEPTEMBER, 1, 12, 0, 0),
-                    new Date(el.getYear() - 1900, Calendar.JUNE, 20, 12, 0, 0),
-                    el.getMossadId(), el.getEmploymentCode(), el.getReformId(), el.getHours()));
-        });
+            teacherHours = teacherHoursList.stream().filter(e -> e.getEmpCode() == el.getEmploymentCode()).findFirst().orElse(null);
+            if (teacherHours != null) {
+                teacherHours.setHours(teacherHours.getHours() + el.getHours());
+            } else {
+                // sum all hours by same code
+                teacherHoursList.add(new TeacherHours(el.getEmpId(), new Date(el.getYear() - 1900 - 1, Calendar.SEPTEMBER, 1, 12, 0, 0),
+                        new Date(el.getYear() - 1900, Calendar.JUNE, 20, 12, 0, 0),
+                        el.getMossadId(), el.getEmploymentCode(), el.getReformId(), el.getHours()));
+            }
+        }
 
         teachersRewardsList = this.teachersRewardsRepository.saveAll(teachersRewards);
         this.teacherHoursService.saveAll(teacherHoursList);
@@ -84,13 +91,12 @@ public class TeachersRewardsServise {
     }
 
     public void delete(String empId, int rewardId, int mossadId, int year, int teachingClass, int grade, int rewardType) {
-//        Date begda, endda;
-//        begda = new Date(year - 1 - 1900, 8, 1);
-//        endda = new Date((year - 1900), 6, 20);
 
         teachersRewardsCompositeKey teachersRewardsCompositeKey = new teachersRewardsCompositeKey(empId, rewardId, rewardType, mossadId, year, teachingClass, grade);
         TeachersRewards teacherRewards = this.teachersRewardsRepository.findById(teachersRewardsCompositeKey).get();
         this.teachersRewardsRepository.delete(teacherRewards);
+        this.teacherHoursService.updateHours(empId, mossadId, teacherRewards.getEmploymentCode(),
+                teacherRewards.getReformId(), year, teacherRewards.getHours());
         // update teacher hours after delete co-responding reward
 //        this.teacherEmploymentDetailsService.deleteByEmpIdAndMossadIdAndEmpCode(empId, mossadId, begda, endda, teacherRewards.getEmploymentCode());
     }
@@ -99,9 +105,7 @@ public class TeachersRewardsServise {
         List<GapsRewardHours> gapsRewardHours = new ArrayList<>();
         List<Object[]> tempList = this.teachersRewardsRepository.findAllGaps(year, mossadId);
 //        GapsRewardHours prevReward = new GapsRewardHours();
-        tempList.stream().forEach(el -> {
-
-            // check if aleady exist empid with same reward type than add to exist hours
+        for (Object[] el : tempList) {// check if aleady exist empid with same reward type than add to exist hours
             Optional<GapsRewardHours> prevReward = gapsRewardHours.stream().filter(e -> e.getEmpId().equals(String.valueOf(el[0]))
                     && e.getRewardType() == (Integer) el[5]).findFirst();
             if (prevReward.isPresent()) {
@@ -111,7 +115,7 @@ public class TeachersRewardsServise {
                 gapsRewardHours.add(new GapsRewardHours(String.valueOf(el[0]),
                         (Double) el[1], (Double) el[2], (String) el[3], (String) el[4], (int) el[5]));
             }
-        });
+        }
 
         return gapsRewardHours;
     }

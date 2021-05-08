@@ -48,17 +48,17 @@ public class TeacherHoursService {
     }
 
     public TeacherHours save(TeacherHours teacherHours) {
-        this.deleteByEmpCode(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(), teacherHours.getBegda(), teacherHours.getEndda());
-        if (teacherHours.getHours() != 0) {
-            return this.teacherHoursRepository.save(teacherHours);
-        }
-        return null;
+        this.updateHours(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(),
+                teacherHours.getReformType(), teacherHours.getBegda().getYear() + 1900 + 1, teacherHours.getHours());
+        return teacherHours;
     }
 
     public List<TeacherHours> saveAll(List<TeacherHours> teacherHoursList) {
         List<TeacherHours> teacherHoursReturn = new ArrayList<>();
+        TeacherHours teacherHours;
         for (TeacherHours el : teacherHoursList) {
-            teacherHoursReturn.add(this.save(el));
+            teacherHours = this.save(el);
+            teacherHoursReturn.add(teacherHours);
         }
         return teacherHoursReturn;
     }
@@ -90,28 +90,32 @@ public class TeacherHoursService {
         this.teacherHoursRepository.deleteByEmpIdAndMossadIdAndEmpCode(empId, mossadId, empCode, begda, endda);
     }
 
-//    public List<GapsTeacherHours> findAllGaps(int year, int mossadId) {
-//        Date begda = new Date(year - 1900 - 1, 7, 30), endda = new Date(year - 1900, 5, 21);
-//        List<GapsTeacherHours> gapsRewardHours = new ArrayList<>();
-//        List<Object[]> tempList = this.teacherHoursRepository.findAllGaps(begda, endda, mossadId);
-////        GapsRewardHours prevReward = new GapsRewardHours();
-//        tempList.stream().forEach(el -> {
-//
-//            // check if aleady exist empid with same reward type than add to exist hours
-//            Optional<GapsTeacherHours> prevReward = gapsRewardHours.stream().
-//                    filter(e -> e.getEmpId().equals(String.valueOf(el[0]))).findFirst();
-//
-//            if (prevReward.isPresent()) {
-//                prevReward.get().setEstimateHours(prevReward.get().getEstimateHours() + (Double) el[1]);
-//                prevReward.get().setActualHours(prevReward.get().getActualHours() + (Double) el[2]);
-//            } else {
-//                gapsRewardHours.add(new GapsTeacherHours(String.valueOf(el[0]),
-//                        (Double) el[1], (Double) el[2], (String) el[3], (String) el[4]));
-//            }
-//        });
-//
-//        return gapsRewardHours;
-//    }
+    //TODO fex this spagetei code
+    // error with date i did some fixes
+    public void updateHours(String empId, int mossadId, int empCode, int reformType,
+                            int year, float hours) {
+        Date begda, endda, minBegda, maxEndda;
+        begda = new Date(year - 1900 - 1, Calendar.SEPTEMBER, 1, 12, 0, 0);
+        endda = new Date(year - 1900, Calendar.JUNE, 20, 12, 0, 0);
+        minBegda = new Date(year - 1900 - 1, Calendar.SEPTEMBER, 1, 0, 0, 0);
+        maxEndda = new Date(year - 1900, Calendar.JUNE, 21, 12, 0, 0);
+
+        TeacherHours existTeacherHours = this.teacherHoursRepository.
+                findByEmpIdAndMossadIdAndEmpCode(empId, mossadId, empCode,
+                        minBegda, maxEndda).
+                stream().findFirst().orElse(null);
+
+        if (existTeacherHours != null) {
+            existTeacherHours.setHours(hours);
+            if (existTeacherHours.getHours() == 0) {
+                this.deleteByEmpCode(empId, mossadId, empCode, minBegda, maxEndda);
+            } else {
+                this.teacherHoursRepository.save(existTeacherHours);
+            }
+        } else {
+            this.teacherHoursRepository.save(new TeacherHours(empId, begda, endda, mossadId, empCode, reformType, hours));
+        }
+    }
 
     public List<GapsTeacherHours> findAllGaps(int mossadId, int year) {
         CalcHours calcHours;
@@ -148,13 +152,13 @@ public class TeacherHoursService {
             calcHours = this.calcHoursService.getByFrontalHours(el.getReformType(), employee.isMother(),
                     this.employeeService.getAgeHours(employee.getBirthDate(), year), Math.round(el.getHours().floatValue()));
             totalHours = (el.getHours().floatValue() + calcHours.getPrivateHours() + calcHours.getPauseHours());
-            gapsTeacherHours = gapsTeacherHoursList.stream().filter(e -> e.getEmpId() == el.getEmpId()).
+            gapsTeacherHours = gapsTeacherHoursList.stream().filter(e ->  e.getEmpId().equals(el.getEmpId())).
                     findFirst().orElse(null);
             if (gapsTeacherHours == null) {
                 gapsTeacherHoursList.add(new GapsTeacherHours(el.getEmpId(), Double.valueOf(totalHours),
                         0.0, employee.getFirstName(), employee.getLastName()));
             } else {
-                gapsTeacherHours.setEstimateHours(gapsTeacherHours.getEstimateHours() + el.getHours());
+                gapsTeacherHours.setEstimateHours(gapsTeacherHours.getEstimateHours() + totalHours);
             }
         }
 

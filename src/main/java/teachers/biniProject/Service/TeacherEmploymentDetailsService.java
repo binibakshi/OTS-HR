@@ -111,6 +111,10 @@ public class TeacherEmploymentDetailsService {
         if (cal.get(Calendar.MONTH) >= 8) {
             year++;
         }
+        //Admin hours
+        if (reformType == 8) {
+            //TODO:return
+        }
         teacherJobPercent = this.teacherJobPercentService.getById(new EmpIdYearComositeKey(empId, mossadId, year));
         if (teacherJobPercent == null) {
             teacherJobPercent = new TeacherJobPercent(empId, mossadId, year, 0, 0);

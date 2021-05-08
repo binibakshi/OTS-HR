@@ -33,6 +33,13 @@ public class TeacherJobPercentService {
 
 
     public TeacherJobPercent save(TeacherJobPercent teacherJobPercent) {
+        EmpIdYearComositeKey empIdYearComositeKey = new EmpIdYearComositeKey(teacherJobPercent.getEmpId(),
+                teacherJobPercent.getMossadId(), teacherJobPercent.getYear());
+        if (teacherJobPercent.getJobPercent() == 0) {
+            if (this.teacherJobPercentRepository.existsById(empIdYearComositeKey)) {
+                this.teacherJobPercentRepository.deleteById(empIdYearComositeKey);
+            }
+        }
         return this.teacherJobPercentRepository.save(teacherJobPercent);
     }
 
