@@ -18,4 +18,7 @@ public interface CalcHoursRepository extends JpaRepository<CalcHours, Integer> {
     List<CalcHours> option(@Param("isMother") boolean isMother,
                            @Param("ageHours") int ageHours,
                            @Param("reformType") int reformType);
+
+    CalcHours findByReformTypeAndIsMotherAndAgeHoursAndFrontalHours(int reformType, boolean isMother, int ageHours, float frontalHours);
+
 }

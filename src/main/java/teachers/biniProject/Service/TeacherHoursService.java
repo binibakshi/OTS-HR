@@ -134,6 +134,10 @@ public class TeacherHoursService {
                 new Date(year - 1900, Calendar.JUNE, 21));
         // cannot get directly from repository so convert it like that
         for (Object[] el : tempHoursByEmpIdAndReformList) {
+            //TODO : remove wuen fix AdminHours
+            if ((int) el[2] == 8) { //skip Admin hours
+                continue;
+            }
             estimateHoursList.add(new HoursByEmpIdAndReform((String) el[0], (Double) el[1], (int) el[2]));
         }
         // cannot get directly from repository so convert it like that
@@ -142,9 +146,14 @@ public class TeacherHoursService {
                 new Date(year - 1900, Calendar.JUNE, 21));
 
         for (Object[] el : tempHoursByEmpIdAndReformList) {
+            //TODO : remove wuen fix AdminHours
+            if ((int) el[2] == 8) { //skip Admin hours
+                continue;
+            }
             actualHoursList.add(new HoursByEmpIdAndReform((String) el[0], (Double) el[1], (int) el[2]));
         }
 
+        // Calc estimate hours with private and pause
         for (HoursByEmpIdAndReform el : estimateHoursList) {
             if (employee == null || employee.getEmpId() != el.getEmpId()) {
                 employee = employeeList.stream().filter(e -> e.getEmpId().equals(el.getEmpId())).findFirst().orElse(null);
@@ -152,7 +161,7 @@ public class TeacherHoursService {
             calcHours = this.calcHoursService.getByFrontalHours(el.getReformType(), employee.isMother(),
                     this.employeeService.getAgeHours(employee.getBirthDate(), year), Math.round(el.getHours().floatValue()));
             totalHours = (el.getHours().floatValue() + calcHours.getPrivateHours() + calcHours.getPauseHours());
-            gapsTeacherHours = gapsTeacherHoursList.stream().filter(e ->  e.getEmpId().equals(el.getEmpId())).
+            gapsTeacherHours = gapsTeacherHoursList.stream().filter(e -> e.getEmpId().equals(el.getEmpId())).
                     findFirst().orElse(null);
             if (gapsTeacherHours == null) {
                 gapsTeacherHoursList.add(new GapsTeacherHours(el.getEmpId(), Double.valueOf(totalHours),

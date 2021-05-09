@@ -29,23 +29,12 @@ public class CalcHoursController {
 
     @GetMapping("/options")
     public List<CalcHours> getEmpOptions(@RequestParam(name = "reformType") int reformType,
-                                         @RequestParam(name = "empId") String tz) {
+                                         @RequestParam(name = "empId") String tz,
+                                         @RequestParam(name = "year") int year) {
 
         Employee emp = employeeService.findById(tz);
 
-        return this.calcHoursService.getEmployeeByReform(reformType, emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()));
-    }
-
-    @GetMapping("/byId")
-    public CalcHours getByFrontal(@RequestParam(name = "empId") String tz,
-                                  @RequestParam(name = "reformType") int employmentCode,
-                                  @RequestParam(name = "frontalHours") float frontalHours) {
-
-        Employee emp = employeeService.findById(tz);
-        return calcHoursService.getByFrontalHours(employmentCode,
-                emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()),
-                frontalHours);
-
-
+        return this.calcHoursService.getEmployeeByReform(reformType, emp.isMother(),
+                employeeService.getAgeHours(emp.getBirthDate(),year));
     }
 }

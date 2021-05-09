@@ -42,28 +42,22 @@ public class CalcHoursService {
     }
 
     public CalcHours getByFrontalHours(int reformType, boolean isMother, int ageHours, float frontalHours) {
-
-        List<CalcHours> calcHours = CalcHoursRepository.findAll().stream()
-                .filter(record -> record.getReformType() == reformType &&
-                        record.getAgeHours() == ageHours &&
-                        record.isMother() == isMother &&
-                        record.getFrontalHours() == frontalHours).collect(Collectors.toList());
-        if (calcHours.isEmpty()) {
-            return null;
-        } else {
-            return calcHours.get(0);
-        }
+        return CalcHoursRepository.findByReformTypeAndIsMotherAndAgeHoursAndFrontalHours(reformType, isMother, ageHours, frontalHours);
+//        List<CalcHours> calcHours = CalcHoursRepository.findAll().stream()
+//                .filter(record -> record.getReformType() == reformType &&
+//                        record.getAgeHours() == ageHours &&
+//                        record.isMother() == isMother &&
+//                        record.getFrontalHours() == frontalHours).collect(Collectors.toList());
+//        if (calcHours.isEmpty()) {
+//            return null;
+//        } else {
+//            return calcHours.get(0);
+//        }
     }
-
-    CalcHours getByFrontalTzReformType(String tz, float frontalHours, int reformType) {
-        Employee emp = employeeService.findById(tz);
-        return this.getByFrontalHours(reformType, emp.isMother(), employeeService.getAgeHours(emp.getBirthDate()), frontalHours);
-    }
-
-    public float getJobPercent(int reformType, String empId, float allHours) {
+    public float getJobPercent(int reformType, String empId, float allHours,int year) {
         int ageHours = 0;
         Employee emp = employeeService.findById(empId);
-        ageHours = employeeService.getAgeHours(emp.getBirthDate());
+        ageHours = employeeService.getAgeHours(emp.getBirthDate(),year);
         emp = employeeService.findById(empId);
 
         float jobPercent = 0;
