@@ -2,8 +2,8 @@ package teachers.biniProject.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Entity.CalcHours;
+import teachers.biniProject.Entity.Employee;
 import teachers.biniProject.Repository.CalcHoursRepository;
 
 import java.util.List;
@@ -42,7 +42,8 @@ public class CalcHoursService {
     }
 
     public CalcHours getByFrontalHours(int reformType, boolean isMother, int ageHours, float frontalHours) {
-        return CalcHoursRepository.findByReformTypeAndIsMotherAndAgeHoursAndFrontalHours(reformType, isMother, ageHours, frontalHours);
+        int currReform = (reformType != 7) ? reformType : 1;
+        return CalcHoursRepository.findByReformTypeAndIsMotherAndAgeHoursAndFrontalHours(currReform, isMother, ageHours, frontalHours);
 //        List<CalcHours> calcHours = CalcHoursRepository.findAll().stream()
 //                .filter(record -> record.getReformType() == reformType &&
 //                        record.getAgeHours() == ageHours &&
@@ -54,10 +55,11 @@ public class CalcHoursService {
 //            return calcHours.get(0);
 //        }
     }
-    public float getJobPercent(int reformType, String empId, float allHours,int year) {
+
+    public float getJobPercent(int reformType, String empId, float allHours, int year) {
         int ageHours = 0;
         Employee emp = employeeService.findById(empId);
-        ageHours = employeeService.getAgeHours(emp.getBirthDate(),year);
+        ageHours = employeeService.getAgeHours(emp.getBirthDate(), year);
         emp = employeeService.findById(empId);
 
         float jobPercent = 0;

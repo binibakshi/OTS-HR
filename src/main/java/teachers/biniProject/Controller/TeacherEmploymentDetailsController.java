@@ -28,11 +28,6 @@ public class TeacherEmploymentDetailsController {
         return this.teacherEmploymentDetailsService.saveAll(teacherEmploymentDetails);
     }
 
-    @PostMapping("/simulatSave")
-    public void simulatSave(@RequestBody List<TeacherEmploymentDetails> teacherEmploymentDetails) {
-        this.teacherEmploymentDetailsService.simulateSave(teacherEmploymentDetails);
-    }
-
     @GetMapping("/byMossad")
     public List<TeacherEmploymentDetails> getEmpHoursByMossad(@RequestParam(name = "empId") String empId,
                                                               @RequestParam(name = "mossadId") int mossadId,
