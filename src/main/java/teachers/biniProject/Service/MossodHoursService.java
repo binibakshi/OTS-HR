@@ -35,19 +35,20 @@ public class MossodHoursService {
     }
 
     // add or sub the total hours
-    public void updateMossadHours(int mossadId, Date begda, Date endda, float hourToAdd) {
-        int monthDiff = MossodHoursService.getMonthsDifference(begda, endda);
+    public void updateMossadHours(int mossadId, Date begda, Date endda, float newHours, float oldHours) {
+//        double monthDiff = MossodHoursService.getMonthsDifference(begda, endda);
         Calendar cal = Calendar.getInstance();
         cal.setTime(begda);
         int year = cal.get(Calendar.YEAR);
         if (cal.get(Calendar.MONTH) >= 8) {
             year++;
         }
-        float newHours = monthDiff / 10 * hourToAdd;
+//        double currNewHours = monthDiff / 10.00 * newHours - oldHours;
+        double currNewHours = newHours - oldHours;
 
         // set the new hours in total sum hours per mossad
         MossadHours mossadHours = this.mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, year)).get();
-        mossadHours.setCurrHours(mossadHours.getCurrHours() + newHours);
+        mossadHours.setCurrHours(mossadHours.getCurrHours() + (float) currNewHours);
         this.mossadHoursRepository.save(mossadHours);
     }
 

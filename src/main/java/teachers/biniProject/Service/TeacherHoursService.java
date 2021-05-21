@@ -71,7 +71,7 @@ public class TeacherHoursService {
                 teacherHours.getMossadId(), teacherHours.getEmpCode(), teacherHours.getBegda(), teacherHours.getEndda()).
                 stream().mapToDouble(TeacherHours::getHours).sum();
         this.mossodHoursService.updateMossadHours(teacherHours.getMossadId(), teacherHours.getBegda(),
-                teacherHours.getEndda(), (float) (teacherHours.getHours() - oldHours));
+                teacherHours.getEndda(),teacherHours.getHours(), (float)(oldHours));
         return teacherHours;
     }
 

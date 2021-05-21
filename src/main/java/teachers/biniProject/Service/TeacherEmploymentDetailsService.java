@@ -129,7 +129,7 @@ public class TeacherEmploymentDetailsService {
 
         teacherJobPercent.setJobPercent(currjobPercent);
         this.teacherJobPercentService.save(teacherJobPercent);
-        this.mossodHoursService.updateMossadHours(mossadId, begda, endda, (float) (newHours - oldHours));
+        this.mossodHoursService.updateMossadHours(mossadId, begda, endda, (float) newHours, (float) (oldHours));
         return teacherEmploymentDetails;
     }
 
