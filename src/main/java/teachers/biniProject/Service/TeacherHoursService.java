@@ -2,7 +2,10 @@ package teachers.biniProject.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import teachers.biniProject.Entity.*;
+import teachers.biniProject.Entity.CalcHours;
+import teachers.biniProject.Entity.Employee;
+import teachers.biniProject.Entity.JobRewards;
+import teachers.biniProject.Entity.TeacherHours;
 import teachers.biniProject.HelperClasses.GapsTeacherHours;
 import teachers.biniProject.HelperClasses.HoursByEmpIdAndReform;
 import teachers.biniProject.Repository.ConvertHoursRepository;
@@ -10,8 +13,10 @@ import teachers.biniProject.Repository.JobRewardsRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 import teachers.biniProject.Repository.TeacherHoursRepository;
 
-import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +40,9 @@ public class TeacherHoursService {
     @Autowired
     private EmployeeService employeeService;
 
+    @Autowired
+    private MossodHoursService mossodHoursService;
+
     public TeacherHours findById(int recordkey) {
         return teacherHoursRepository.findById(recordkey).get();
     }
@@ -48,8 +56,22 @@ public class TeacherHoursService {
     }
 
     public TeacherHours save(TeacherHours teacherHours) {
-        this.updateHours(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(),
-                teacherHours.getReformType(), teacherHours.getBegda().getYear() + 1900 + 1, teacherHours.getHours());
+        if (teacherHours.getEmpCode() == 71) {
+            return this.savedAdminHours(teacherHours);
+        } else {
+            this.updateHours(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(),
+                    teacherHours.getReformType(), teacherHours.getBegda().getYear() + 1900 + 1, teacherHours.getHours());
+            return teacherHours;
+        }
+    }
+
+    private TeacherHours savedAdminHours(TeacherHours teacherHours) {
+        //Get old hours
+        double oldHours = this.teacherHoursRepository.findByEmpIdAndMossadIdAndEmpCode(teacherHours.getEmpId(),
+                teacherHours.getMossadId(), teacherHours.getEmpCode(), teacherHours.getBegda(), teacherHours.getEndda()).
+                stream().mapToDouble(TeacherHours::getHours).sum();
+        this.mossodHoursService.updateMossadHours(teacherHours.getMossadId(), teacherHours.getBegda(),
+                teacherHours.getEndda(), (float) (teacherHours.getHours() - oldHours));
         return teacherHours;
     }
 
@@ -90,7 +112,7 @@ public class TeacherHoursService {
         this.teacherHoursRepository.deleteByEmpIdAndMossadIdAndEmpCode(empId, mossadId, empCode, begda, endda);
     }
 
-    //TODO fex this spagetei code
+    //TODO fix this spaghetti code
     // error with date i did some fixes
     public void updateHours(String empId, int mossadId, int empCode, int reformType,
                             int year, float hours) {
@@ -146,7 +168,7 @@ public class TeacherHoursService {
                 new Date(year - 1900, Calendar.JUNE, 21));
 
         for (Object[] el : tempHoursByEmpIdAndReformList) {
-            //TODO : remove wuen fix AdminHours
+            //TODO : remove when fix AdminHours
             if ((int) el[2] == 8) { //skip Admin hours
                 continue;
             }

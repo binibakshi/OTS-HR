@@ -8,7 +8,6 @@ import teachers.biniProject.Entity.*;
 import teachers.biniProject.Exeption.GenericException;
 import teachers.biniProject.HelperClasses.EmpIdYearComositeKey;
 import teachers.biniProject.HelperClasses.MossadHoursComositeKey;
-import teachers.biniProject.Repository.MossadHoursRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 import teachers.biniProject.Security.MyUserDetailsService;
 
@@ -32,7 +31,7 @@ public class TeacherEmploymentDetailsService {
     @Autowired
     private CalcHoursService calcHourService;
     @Autowired
-    private MossadHoursRepository mossadHoursRepository;
+    private MossodHoursService mossodHoursService;
     @Autowired
     private TeacherJobPercentService teacherJobPercentService;
 
@@ -89,10 +88,6 @@ public class TeacherEmploymentDetailsService {
         if (cal.get(Calendar.MONTH) >= 8) {
             year++;
         }
-        //Admin hours
-        if (reformType == 8) {
-            //TODO:return
-        }
         // get all exist teacher employment hours per mossad for all reformTypes(0 = all)
         existTeacherEmploymentHours = this.teacherEmploymentDetailsRepository.findOverlapping(empId, mossadId, 0, begda, endda);
         teacherJobPercent = this.teacherJobPercentService.getById(new EmpIdYearComositeKey(empId, mossadId, year));
@@ -118,8 +113,10 @@ public class TeacherEmploymentDetailsService {
         }
 
         // TODO check usage of findOverlapping method
-        oldHours = existTeacherEmploymentHours.stream().filter(el -> el.getMossadId() == mossadId && frontalCodes.contains(el.getEmpCode()))
+        oldHours = existTeacherEmploymentHours.stream().filter(el -> el.getMossadId() == mossadId &&
+                el.getReformType() == reformType && frontalCodes.contains(el.getEmpCode()))
                 .mapToDouble(TeacherEmploymentDetails::getHours).sum();
+
 
         if (!teacherEmploymentDetails.isEmpty()) {
             newHours = teacherEmploymentDetails.stream().filter(el -> frontalCodes.contains(el.getEmpCode()))
@@ -132,7 +129,7 @@ public class TeacherEmploymentDetailsService {
 
         teacherJobPercent.setJobPercent(currjobPercent);
         this.teacherJobPercentService.save(teacherJobPercent);
-        this.updateMossadHours(mossadId, year, (float) (newHours - oldHours));
+        this.mossodHoursService.updateMossadHours(mossadId, begda, endda, (float) (newHours - oldHours));
         return teacherEmploymentDetails;
     }
 
@@ -285,9 +282,9 @@ public class TeacherEmploymentDetailsService {
                 filter(el -> frontalCodes.contains(el.getEmpCode())).
                 mapToDouble(TeacherEmploymentDetails::getHours).
                 sum();
-
-        currHoursPerMossad = mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, year)).get().getCurrHours();
-        maxHoursPerMossad = mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, year)).get().getMaxHours();
+        MossadHours mossadHours = mossodHoursService.findById(new MossadHoursComositeKey(mossadId, year));
+        currHoursPerMossad = mossadHours.getCurrHours();
+        maxHoursPerMossad = mossadHours.getMaxHours();
 
         if ((newHours + currHoursPerMossad) > maxHoursPerMossad) {
             throw new GenericException("למוסד יש מגבלת של" + maxHoursPerMossad + "שעות");
@@ -338,13 +335,6 @@ public class TeacherEmploymentDetailsService {
         }
     }
 
-    // add or sub the total hours
-    private void updateMossadHours(int mossadId, int year, float hourToAdd) {
-        // set the new hours in total sum hours per mossad
-        MossadHours mossadHours = this.mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, year)).get();
-        mossadHours.setCurrHours(mossadHours.getCurrHours() + hourToAdd);
-        this.mossadHoursRepository.save(mossadHours);
-    }
 
     public float getMossadJobPercent(@NotNull List<TeacherEmploymentDetails> employmentDetails,
                                      String empId, int currReformType, int year,

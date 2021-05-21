@@ -8,6 +8,10 @@ import teachers.biniProject.HelperClasses.MossadHoursComositeKey;
 import teachers.biniProject.Repository.MossadHoursRepository;
 import teachers.biniProject.Repository.TeacherEmploymentDetailsRepository;
 
+import java.time.YearMonth;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +26,34 @@ public class MossodHoursService {
 
     @Autowired
     ConvertHoursService convertHoursService;
+
+    public static final int getMonthsDifference(Date date1, Date date2) {
+        YearMonth m1 = YearMonth.from(date1.toInstant().atZone(ZoneOffset.UTC));
+        YearMonth m2 = YearMonth.from(date2.toInstant().atZone(ZoneOffset.UTC));
+
+        return (int) m1.until(m2, ChronoUnit.MONTHS) + 1;
+    }
+
+    // add or sub the total hours
+    public void updateMossadHours(int mossadId, Date begda, Date endda, float hourToAdd) {
+        int monthDiff = MossodHoursService.getMonthsDifference(begda, endda);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(begda);
+        int year = cal.get(Calendar.YEAR);
+        if (cal.get(Calendar.MONTH) >= 8) {
+            year++;
+        }
+        float newHours = monthDiff / 10 * hourToAdd;
+
+        // set the new hours in total sum hours per mossad
+        MossadHours mossadHours = this.mossadHoursRepository.findById(new MossadHoursComositeKey(mossadId, year)).get();
+        mossadHours.setCurrHours(mossadHours.getCurrHours() + newHours);
+        this.mossadHoursRepository.save(mossadHours);
+    }
+
+    public MossadHours findById(MossadHoursComositeKey mossadHoursComositeKey) {
+        return this.mossadHoursRepository.findById(mossadHoursComositeKey).orElse(null);
+    }
 
     public int fixMossadotHours(int mossadId, int year) {
         Date begda = new Date(year - 1, 8, 1);

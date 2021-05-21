@@ -21,7 +21,6 @@ public class ReformType {
 
 	public ReformType() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public int getReformId() {
