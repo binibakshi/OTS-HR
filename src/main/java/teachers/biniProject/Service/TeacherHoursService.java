@@ -57,22 +57,24 @@ public class TeacherHoursService {
 
     public TeacherHours save(TeacherHours teacherHours) {
         if (teacherHours.getEmpCode() == 71) {
-            return this.savedAdminHours(teacherHours);
-        } else {
-            this.updateHours(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(),
-                    teacherHours.getReformType(), teacherHours.getBegda().getYear() + 1900 + 1, teacherHours.getHours());
-            return teacherHours;
+            this.savedAdminHours(teacherHours);
         }
+        this.updateHours(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(),
+                teacherHours.getReformType(), teacherHours.getBegda().getYear() + 1900 + 1, teacherHours.getHours());
+        return teacherHours;
+
+
+
     }
 
-    private TeacherHours savedAdminHours(TeacherHours teacherHours) {
+    private void savedAdminHours(TeacherHours teacherHours) {
         //Get old hours
         double oldHours = this.teacherHoursRepository.findByEmpIdAndMossadIdAndEmpCode(teacherHours.getEmpId(),
                 teacherHours.getMossadId(), teacherHours.getEmpCode(), teacherHours.getBegda(), teacherHours.getEndda()).
                 stream().mapToDouble(TeacherHours::getHours).sum();
         this.mossodHoursService.updateMossadHours(teacherHours.getMossadId(), teacherHours.getBegda(),
-                teacherHours.getEndda(),teacherHours.getHours(), (float)(oldHours));
-        return teacherHours;
+                teacherHours.getEndda(), teacherHours.getHours(), (float) (oldHours));
+
     }
 
     public List<TeacherHours> saveAll(List<TeacherHours> teacherHoursList) {

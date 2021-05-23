@@ -50,7 +50,6 @@ public class TeacherEmploymentDetailsService {
         if (status != null && status.size() != 0) {
             selectedRecords.removeIf(el -> !status.contains(el.getStatus()));
         }
-
         return selectedRecords;
     }
 
