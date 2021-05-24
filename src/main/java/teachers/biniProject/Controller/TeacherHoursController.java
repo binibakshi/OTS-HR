@@ -7,7 +7,6 @@ import teachers.biniProject.Entity.TeacherHours;
 import teachers.biniProject.HelperClasses.GapsTeacherHours;
 import teachers.biniProject.Service.TeacherHoursService;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,9 +35,7 @@ public class TeacherHoursController {
         return this.teacherHoursService.cleanSave(teacherHoursList);
     }
 
-
     @GetMapping("/byEmpIdAndMossadId")
-    @Transactional
     public List<TeacherHours> getByEmpAndMossad(@RequestParam(name = "empId") String empId,
                                                 @RequestParam(name = "mossadId") int mossadId,
                                                 @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
@@ -46,10 +43,18 @@ public class TeacherHoursController {
         return this.teacherHoursService.findByMossadIdAndEmpId(empId, mossadId, begda, endda);
     }
 
+    @GetMapping("/byMossadAndCode")
+    public List<TeacherHours> getByMossadAndCode(@RequestParam(name = "mossadId") int mossadId,
+                                                 @RequestParam(name = "empCode") int empCode,
+                                                 @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
+                                                 @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {
+        return this.teacherHoursService.findByMossadIdAndEmpCode(mossadId, empCode, begda, endda);
+
+    }
+
     @GetMapping("/findGaps")
     public List<GapsTeacherHours> findAllGaps(@RequestParam(name = "year") int year,
                                               @RequestParam(name = "mossadId") int mossadId) {
         return this.teacherHoursService.findAllGaps(mossadId, year);
     }
-
 }

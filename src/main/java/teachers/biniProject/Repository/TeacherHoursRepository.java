@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import teachers.biniProject.Entity.TeacherHours;
 import teachers.biniProject.HelperClasses.HoursByEmpIdAndReform;
 
@@ -13,32 +14,11 @@ import java.util.List;
 
 public interface TeacherHoursRepository extends JpaRepository<TeacherHours, Integer> {
 
-    @Query(value = "select distinct teacher_hours.emp_id from teacher_hours where mossad_id = :mossadId AND " +
-            "begda >= :begda AND endda <= :endda",
-            nativeQuery = true)
-    List<String> findAllEmpByMossadId(@Param("mossadId") int mossadId,
-                                      @Param("begda") Date begda,
-                                      @Param("endda") Date endda);
-
-
-    @Query(value = "select * from teacher_hours where emp_id = :empId AND " +
-            "begda >= :begda AND endda <= :endda",
-            nativeQuery = true)
-    List<TeacherHours> findByEmpId(@Param("empId") String empId,
-                                   @Param("begda") Date begda,
-                                   @Param("endda") Date endda);
-
-    @Query(value = "SELECT DISTINCT reform_type from teacher_hours where emp_id = :empId AND " +
-            "begda >= :begda AND endda <= :endda",
-            nativeQuery = true)
-    List<Integer> getReformTypeByEmpId(@Param("empId") String empId,
-                                       @Param("begda") Date begda,
-                                       @Param("endda") Date endda);
-
     @Query(value = "select * from teacher_hours where mossad_id =:mossadId AND " +
-            "begda >= :begda AND endda <= :endda",
+            "emp_id = :empCode AND begda >= :begda AND endda <= :endda",
             nativeQuery = true)
-    List<TeacherHours> findByMossadId(@Param("mossadId") int mossadId,
+    List<TeacherHours> findByMossadIdAndEmpCode(@Param("mossadId") int mossadId,
+                                      @Param("empCode") int empCode,
                                       @Param("begda") Date begda,
                                       @Param("endda") Date endda);
 
@@ -61,16 +41,6 @@ public interface TeacherHoursRepository extends JpaRepository<TeacherHours, Inte
                                               @Param("endda") Date endda);
 
     @Query(value = "select * from teacher_hours where emp_id = :empId AND mossad_id =:mossadId AND " +
-            "reform_type =:reformType AND " +
-            "begda >= :begda AND endda <= :endda",
-            nativeQuery = true)
-    List<TeacherHours> findByEmpIdAndMossadIdAndReformType(@Param("empId") String empId,
-                                                           @Param("mossadId") int mossadId,
-                                                           @Param("reformType") int reformType,
-                                                           @Param("begda") Date begda,
-                                                           @Param("endda") Date endda);
-
-    @Query(value = "select * from teacher_hours where emp_id = :empId AND mossad_id =:mossadId AND " +
             "employment_code =:empCode AND " +
             "begda >= :begda AND endda <= :endda",
             nativeQuery = true)
@@ -79,19 +49,6 @@ public interface TeacherHoursRepository extends JpaRepository<TeacherHours, Inte
                                                         @Param("empCode") int empCode,
                                                         @Param("begda") Date begda,
                                                         @Param("endda") Date endda);
-
-    @Query(value = "select * from teacher_hours where emp_id = :empId AND " +
-            "( :mossadId = 0 OR mossad_id = :mossadId ) AND " +
-            "( :reformType = 0 OR  reform_type = :reformType ) AND " +
-            "( begda <= :endda AND endda >= :begda )",
-            nativeQuery = true)
-    List<TeacherHours> findOverlapping(@Param("empId") String empId,
-                                       @Param("mossadId") int mossadId,
-                                       @Param("reformType") int reformType,
-                                       @Param("begda") Date begda,
-                                       @Param("endda") Date endda);
-
-    void deleteByEmpId(String empId);
 
 
     @Query(value = "select distinct est.emp_id as empId," +
@@ -116,17 +73,6 @@ public interface TeacherHoursRepository extends JpaRepository<TeacherHours, Inte
     List<Object[]> findAllGaps(@Param("begda") Date begda,
                                @Param("endda") Date endda,
                                @Param("mossadId") int mossadId);
-
-
-    @Modifying
-    @Transactional
-    @Query(value = "delete from teacher_hours where emp_id =:empId AND mossad_id =:mossadId AND " +
-            "begda >= :begda AND endda <= :endda",
-            nativeQuery = true)
-    void deleteByEmpIdAndMossadId(@Param("empId") String empId,
-                                  @Param("mossadId") int mossadId,
-                                  @Param("begda") Date begda,
-                                  @Param("endda") Date endda);
 
     @Transactional
     @Modifying
