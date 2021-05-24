@@ -62,9 +62,6 @@ public class TeacherHoursService {
         this.updateHours(teacherHours.getEmpId(), teacherHours.getMossadId(), teacherHours.getEmpCode(),
                 teacherHours.getReformType(), teacherHours.getBegda().getYear() + 1900 + 1, teacherHours.getHours());
         return teacherHours;
-
-
-
     }
 
     private void savedAdminHours(TeacherHours teacherHours) {
@@ -130,7 +127,7 @@ public class TeacherHoursService {
                 stream().findFirst().orElse(null);
 
         if (existTeacherHours != null) {
-            existTeacherHours.setHours(hours);
+            existTeacherHours.setHours(existTeacherHours.getHours() + hours);
             if (existTeacherHours.getHours() == 0) {
                 this.deleteByEmpCode(empId, mossadId, empCode, minBegda, maxEndda);
             } else {

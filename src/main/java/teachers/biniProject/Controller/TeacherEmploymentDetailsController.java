@@ -49,7 +49,6 @@ public class TeacherEmploymentDetailsController {
                                                              @RequestParam(name = "reformType") int reformType,
                                                              @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
                                                              @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {
-
         return teacherEmploymentDetailsService.getAllByReformType(empId, mossadId, reformType, begda, endda);
     }
 

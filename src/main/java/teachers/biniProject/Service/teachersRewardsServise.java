@@ -96,7 +96,7 @@ public class TeachersRewardsServise {
         TeachersRewards teacherRewards = this.teachersRewardsRepository.findById(teachersRewardsCompositeKey).get();
         this.teachersRewardsRepository.delete(teacherRewards);
         this.teacherHoursService.updateHours(empId, mossadId, teacherRewards.getEmploymentCode(),
-                teacherRewards.getReformId(), year, teacherRewards.getHours());
+                teacherRewards.getReformId(), year, teacherRewards.getHours() * (-1));
         // update teacher hours after delete co-responding reward
 //        this.teacherEmploymentDetailsService.deleteByEmpIdAndMossadIdAndEmpCode(empId, mossadId, begda, endda, teacherRewards.getEmploymentCode());
     }
