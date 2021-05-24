@@ -14,10 +14,10 @@ import java.util.List;
 
 public interface TeacherHoursRepository extends JpaRepository<TeacherHours, Integer> {
 
-    @Query(value = "select * from teacher_hours where mossad_id =:mossadId AND " +
-            "emp_id = :empCode AND begda >= :begda AND endda <= :endda",
+    @Query(value = "select * from teacher_hours where mossad_id in :mossadId AND " +
+            "employment_code = :empCode AND begda >= :begda AND endda <= :endda",
             nativeQuery = true)
-    List<TeacherHours> findByMossadIdAndEmpCode(@Param("mossadId") int mossadId,
+    List<TeacherHours> findByMossadIdAndEmpCode(@Param("mossadId") List<Integer> mossadId,
                                       @Param("empCode") int empCode,
                                       @Param("begda") Date begda,
                                       @Param("endda") Date endda);

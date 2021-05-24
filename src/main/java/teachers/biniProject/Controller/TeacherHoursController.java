@@ -44,7 +44,7 @@ public class TeacherHoursController {
     }
 
     @GetMapping("/byMossadAndCode")
-    public List<TeacherHours> getByMossadAndCode(@RequestParam(name = "mossadId") int mossadId,
+    public List<TeacherHours> getByMossadAndCode(@RequestParam(name = "mossadId", required = false) List<Integer> mossadId,
                                                  @RequestParam(name = "empCode") int empCode,
                                                  @RequestParam(name = "begda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date begda,
                                                  @RequestParam(name = "endda") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endda) {

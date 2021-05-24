@@ -55,7 +55,7 @@ public class TeacherHoursService {
         return this.teacherHoursRepository.findByEmpIdAndMossadId(empId, mossadId, begda, endda);
     }
 
-    public List<TeacherHours> findByMossadIdAndEmpCode(int mossadId, int empCode, Date begda, Date endda) {
+    public List<TeacherHours> findByMossadIdAndEmpCode(List<Integer> mossadId, int empCode, Date begda, Date endda) {
         return this.teacherHoursRepository.findByMossadIdAndEmpCode(mossadId, empCode, begda, endda);
     }
 
