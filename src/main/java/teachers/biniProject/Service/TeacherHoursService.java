@@ -131,7 +131,7 @@ public class TeacherHoursService {
                 stream().findFirst().orElse(null);
 
         if (existTeacherHours != null) {
-            existTeacherHours.setHours(existTeacherHours.getHours() + hours);
+            existTeacherHours.setHours(hours);
             if (existTeacherHours.getHours() == 0) {
                 this.deleteByEmpCode(empId, mossadId, empCode, minBegda, maxEndda);
             } else {
