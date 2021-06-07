@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: teachers.biniProject.BiniProjectApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 26.182 s - in teachers.biniProject.BiniProjectApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 14.952 s - in teachers.biniProject.BiniProjectApplicationTests
